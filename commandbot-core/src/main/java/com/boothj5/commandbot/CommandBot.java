@@ -1,5 +1,6 @@
 package com.boothj5.commandbot;
 
+import com.boothj5.commandbot.plugins.ChatterBotPlugin;
 import com.boothj5.commandbot.plugins.EchoPlugin;
 import com.boothj5.commandbot.plugins.HttpStatusPlugin;
 import com.boothj5.commandbot.plugins.OsPropertiesPlugin;
@@ -52,5 +53,6 @@ public class CommandBot {
         plugins.register(new EchoPlugin());
         plugins.register(new OsPropertiesPlugin());
         plugins.register(new HttpStatusPlugin());
+        plugins.register(new ChatterBotPlugin());
     }
 }
