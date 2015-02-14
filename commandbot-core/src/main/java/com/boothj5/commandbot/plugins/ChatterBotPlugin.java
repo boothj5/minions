@@ -31,7 +31,7 @@ public class ChatterBotPlugin implements CommandBotPlugin {
 
     @Override
     public String getHelp() {
-        return "Chatterbot plugin";
+        return COMMAND + " [message] - Send a message to chatterbot.";
     }
 
     @Override

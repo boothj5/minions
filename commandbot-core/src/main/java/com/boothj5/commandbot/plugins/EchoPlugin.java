@@ -19,7 +19,7 @@ public class EchoPlugin implements CommandBotPlugin {
 
     @Override
     public String getHelp() {
-        return "Echo something.";
+        return COMMAND + " [message] - Echo something.";
     }
 
     @Override

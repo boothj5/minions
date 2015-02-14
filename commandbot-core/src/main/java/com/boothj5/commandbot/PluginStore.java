@@ -1,9 +1,6 @@
 package com.boothj5.commandbot;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PluginStore {
     private final Map<String, CommandBotPlugin> plugins;
@@ -20,26 +17,18 @@ public class PluginStore {
         return plugins.containsKey(command);
     }
 
-    public CommandBotPlugin get(String command) {
-        return plugins.get(command);
+    public List<String> commandList() {
+        List<String> result = new ArrayList<>();
+        Set<String> commandSet = plugins.keySet();
+
+        for (String command: commandSet) {
+            result.add(command);
+        }
+
+        return result;
     }
 
-    public String getHelp() {
-        StringBuilder result = new StringBuilder();
-        result.append("\n");
-        result.append(":list - ");
-        result.append("Show this list.");
-        result.append("\n");
-        List<Object> commands = Arrays.asList(plugins.keySet().toArray());
-        for (Object command : commands) {
-            String commandStr = (String)command;
-            String help = plugins.get(command).getHelp();
-            result.append(":");
-            result.append(commandStr);
-            result.append(" - ");
-            result.append(help);
-            result.append("\n");
-        }
-        return result.toString();
+    public CommandBotPlugin get(String command) {
+        return plugins.get(command);
     }
 }

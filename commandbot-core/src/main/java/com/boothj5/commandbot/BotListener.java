@@ -9,21 +9,25 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import static java.lang.String.format;
 
 public class BotListener implements PacketListener {
     private static final Logger LOG = LoggerFactory.getLogger(BotListener.class);
 
-    public static final String LIST_COMMAND = ":list";
+    public static final String HELP_COMMAND = "help";
 
     private final PluginStore plugins;
     private final MultiUserChat muc;
     private final String myNick;
+    private final String commandPrefix;
 
-    public BotListener(PluginStore plugins, MultiUserChat muc, String myNick) {
+    public BotListener(PluginStore plugins, String commandPrefix, MultiUserChat muc, String myNick) {
         this.plugins = plugins;
         this.muc = muc;
         this.myNick = myNick;
+        this.commandPrefix = commandPrefix;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class BotListener implements PacketListener {
                 Message messageStanza = (Message) packet;
                 String message = messageStanza.getBody();
                 if (validCommand(messageStanza)) {
-                    if (message.equals(LIST_COMMAND)) {
+                    if (message.equals(commandPrefix + HELP_COMMAND)) {
                         handleListCommand();
                     } else {
                         handlePluginCommand(messageStanza);
@@ -57,13 +61,24 @@ public class BotListener implements PacketListener {
     }
 
     private void handleListCommand() throws XMPPException {
-        String help = plugins.getHelp();
-        muc.sendMessage(help);
+        List<String> commands = plugins.commandList();
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n");
+        builder.append(commandPrefix);
+        builder.append(HELP_COMMAND);
+        builder.append(" - Show this help.");
+        builder.append("\n");
+        for (String command : commands) {
+            builder.append(commandPrefix);
+            builder.append(plugins.get(command).getHelp());
+            builder.append("\n");
+        }
+        muc.sendMessage(builder.toString());
     }
 
     private String parseCommand(String message) {
         String[] tokens = StringUtils.split(message, " ");
-        return tokens[0].substring(1);
+        return tokens[0].substring(commandPrefix.length());
     }
 
     private boolean validCommand(Message messageStanza) {
@@ -75,7 +90,7 @@ public class BotListener implements PacketListener {
             LOG.debug("Received: " + messageStanza.getBody());
         }
 
-        boolean isCommand = messageStanza.getBody().startsWith(":");
+        boolean isCommand = messageStanza.getBody().startsWith(commandPrefix);
 
         return containsBody && !delayed && !fromMe && isCommand;
     }

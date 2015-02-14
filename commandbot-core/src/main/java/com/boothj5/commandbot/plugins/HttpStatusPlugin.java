@@ -22,7 +22,7 @@ public class HttpStatusPlugin implements CommandBotPlugin {
 
     @Override
     public String getHelp() {
-        return "Get the http status code for a URL.";
+        return COMMAND + " [url] - Get the http status code for a URL.";
     }
 
     @Override

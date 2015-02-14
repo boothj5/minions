@@ -9,16 +9,16 @@ import java.util.Properties;
 
 public class OsPropertiesPlugin implements CommandBotPlugin {
 
-    private static final String PROPS = "props";
+    private static final String COMMAND = "props";
 
     @Override
     public String getCommand() {
-        return PROPS;
+        return COMMAND;
     }
 
     @Override
     public String getHelp() {
-        return "Show OS system properties.";
+        return COMMAND + " - Show OS system properties.";
     }
 
     @Override

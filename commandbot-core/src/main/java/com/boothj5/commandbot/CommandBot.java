@@ -4,6 +4,7 @@ import com.boothj5.commandbot.plugins.ChatterBotPlugin;
 import com.boothj5.commandbot.plugins.EchoPlugin;
 import com.boothj5.commandbot.plugins.HttpStatusPlugin;
 import com.boothj5.commandbot.plugins.OsPropertiesPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -15,35 +16,67 @@ import static java.lang.String.format;
 
 public class CommandBot {
     private static final Logger LOG = LoggerFactory.getLogger(CommandBot.class);
+    private static final int SLEEP_MINUTES = 180;
+    private final String user;
+    private final String service;
+    private final String password;
+    private final String resource;
+    private final int port;
+    private final String server;
+    private final String room;
+    private final String roomNickname;
+    private final String roomPassword;
+    private final String commandPrefix;
 
-    private static final int SLEEP_MINUTES = 120;
-    public static final String BAREJID = "commandbot";
-    public static final String PASSWORD = "password";
-    public static final String RESOURCE = "daemon";
-    public static final String SERVER = "localhost";
-    public static final String SERVICE = "ejabberd.local";
-    public static final String ROOMJID = "botroom@conference.ejabberd.local";
-    public static final String ROOM_NICK = "commandbot";
-    public static final int PORT = 5242;
+    public CommandBot(String user,
+                      String service,
+                      String password,
+                      String resource,
+                      int port,
+                      String server,
+                      String room,
+                      String roomNickname,
+                      String roomPassword,
+                      String commandPrefix) {
+        this.user = user;
+        this.service = service;
+        this.password = password;
+        this.resource = resource;
+        this.port = port;
+        this.server = server;
+        this.room = room;
+        this.roomNickname = roomNickname;
+        this.roomPassword = roomPassword;
+        this.commandPrefix = commandPrefix;
+    }
 
     public void run() throws XMPPException, InterruptedException {
         PluginStore plugins = new PluginStore();
         registerPlugins(plugins);
 
         LOG.debug("Starting CommandBot");
-        ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(SERVER, PORT, SERVICE);
+        ConnectionConfiguration connectionConfiguration;
+        if (StringUtils.isNotBlank(server)) {
+            connectionConfiguration = new ConnectionConfiguration(server, port, service);
+        } else {
+            connectionConfiguration = new ConnectionConfiguration(service, port);
+        }
+
         XMPPConnection conn = new XMPPConnection(connectionConfiguration);
         conn.connect();
-        conn.login(BAREJID, PASSWORD, RESOURCE);
-        LOG.debug(format("Logged in: %s@%s", BAREJID, SERVICE));
+        conn.login(user, password, resource);
+        LOG.debug(format("Logged in: %s@%s", user, service));
 
-        MultiUserChat muc = new MultiUserChat(conn, ROOMJID);
-        muc.join(ROOM_NICK);
-        LOG.debug(format("Joined: %s as %s", ROOMJID, ROOM_NICK));
+        MultiUserChat muc = new MultiUserChat(conn, room);
+        if (StringUtils.isBlank(roomPassword)) {
+            muc.join(roomNickname);
+        } else {
+            muc.join(roomNickname, roomPassword);
+        }
 
-        muc.sendMessage("Here are my commands..." + plugins.getHelp());
+        LOG.debug(format("Joined: %s as %s", room, room));
 
-        BotListener listener = new BotListener(plugins, muc, ROOM_NICK);
+        BotListener listener = new BotListener(plugins, commandPrefix, muc, roomNickname);
         muc.addMessageListener(listener);
 
         Thread.sleep(60 * 1000 * SLEEP_MINUTES);
