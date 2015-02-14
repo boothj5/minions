@@ -27,7 +27,7 @@ public class CommandBotMain {
             commandPrefix = commandPrefixProperty;
         }
 
-        CommandBot commandBot = new CommandBotBuilder()
+        final CommandBot commandBot = new CommandBotBuilder()
                 .withUser(user)
                 .withService(service)
                 .withPassword(password)

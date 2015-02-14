@@ -16,7 +16,6 @@ import static java.lang.String.format;
 
 public class CommandBot {
     private static final Logger LOG = LoggerFactory.getLogger(CommandBot.class);
-    private static final int SLEEP_MINUTES = 180;
     private final String user;
     private final String service;
     private final String password;
@@ -79,7 +78,16 @@ public class CommandBot {
         BotListener listener = new BotListener(plugins, commandPrefix, muc, roomNickname);
         muc.addMessageListener(listener);
 
-        Thread.sleep(60 * 1000 * SLEEP_MINUTES);
+        try {
+            Object lock = new Object();
+            synchronized (lock) {
+                while (true) {
+                    lock.wait();
+                }
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void registerPlugins(PluginStore plugins) {
