@@ -8,5 +8,6 @@ mvn package && java \
     -Dminions.service.port=5242 \
     -Dminions.room.jid=botroom@conference.ejabberd.local \
     -Dminions.room.nick=minions \
+    -Dminions.refresh.seconds=10 \
     -jar target/minions-core-1.0-SNAPSHOT.jar
 

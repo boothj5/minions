@@ -1,31 +1,19 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.Minion;
 import com.boothj5.minions.api.MinionsException;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 
 import static java.lang.String.format;
 
 public class MinionsRunner {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
+
     private final String user;
     private final String service;
     private final String password;
@@ -37,18 +25,11 @@ public class MinionsRunner {
     private final String roomPassword;
     private final String minionsPrefix;
     private final String minionsDir;
+    private final int refreshSeconds;
 
-    public MinionsRunner(String user,
-                         String service,
-                         String password,
-                         String resource,
-                         int port,
-                         String server,
-                         String room,
-                         String roomNickname,
-                         String roomPassword,
-                         String minionsPrefix,
-                         String minionsDir) {
+    public MinionsRunner(String user, String service, String password, String resource, int port, String server,
+                         String room, String roomNickname, String roomPassword, String minionsPrefix, String minionsDir,
+                         int refreshSeconds) {
         this.user = user;
         this.service = service;
         this.password = password;
@@ -60,12 +41,12 @@ public class MinionsRunner {
         this.roomPassword = roomPassword;
         this.minionsPrefix = minionsPrefix;
         this.minionsDir = minionsDir;
+        this.refreshSeconds = refreshSeconds;
     }
 
     public void run() throws MinionsException {
         try {
-            MinionStore minions = new MinionStore();
-            registerMinions(minions);
+            MinionStore minions = new MinionStore(minionsDir, refreshSeconds);
 
             LOG.debug("Starting MinionsRunner");
             ConnectionConfiguration connectionConfiguration;
@@ -98,36 +79,10 @@ public class MinionsRunner {
                     lock.wait();
                 }
             }
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-            throw new MinionsException("Error");
-        }
-    }
-
-    private void registerMinions(MinionStore minions)
-            throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        File minionsDirFile = new File(minionsDir);
-        File[] files = minionsDirFile.listFiles();
-        URL[] urls = new URL[files.length];
-        List<String> minionClasses = new ArrayList<>();
-
-        for (int i = 0; i < files.length; i++) {
-            urls[i] = files[i].toURI().toURL();
-            InputStream in = new FileInputStream(files[i]);
-            JarInputStream stream = new JarInputStream(in);
-            Manifest manifest = stream.getManifest();
-            minionClasses.add(manifest.getMainAttributes().getValue("MinionClass"));
-        }
-
-        URLClassLoader loader = new URLClassLoader(urls);
-
-        for (String minionClass : minionClasses) {
-            Class<?> clazz = Class.forName(minionClass, true, loader);
-            Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
-            Constructor<? extends Minion> ctor = minionClazz.getConstructor();
-            Minion minion = ctor.newInstance();
-
-            minions.register(minion);
+        } catch (XMPPException xmppe) {
+            throw new MinionsException("XMPP exception.", xmppe);
+        } catch (InterruptedException ie) {
+            throw new MinionsException("Main thread interrupted.", ie);
         }
     }
 }

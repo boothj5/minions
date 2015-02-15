@@ -5,13 +5,14 @@ public class MinoionsBuilder {
     private String user;
     private String password;
     private String resource;
-    private int port = 5222;
+    private int port;
     private String server;
     private String room;
     private String roomNickname;
     private String roomPassword;
     private String minionsPrefix;
     private String minionsDir;
+    private int refreshSeconds;
 
     public MinoionsBuilder withUser(String user) {
         this.user = user;
@@ -68,7 +69,12 @@ public class MinoionsBuilder {
         return this;
     }
 
+    public MinoionsBuilder withRefreshSeconds(int refreshSeconds) {
+        this.refreshSeconds = refreshSeconds;
+        return this;
+    }
+
     public MinionsRunner build() {
-        return new MinionsRunner(user, service, password, resource, port, server, room, roomNickname, roomPassword, minionsPrefix, minionsDir);
+        return new MinionsRunner(user, service, password, resource, port, server, room, roomNickname, roomPassword, minionsPrefix, minionsDir, refreshSeconds);
     }
 }

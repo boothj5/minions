@@ -35,10 +35,12 @@ public class ChatterBotMinion implements Minion {
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+        String think = null;
         try {
-            muc.sendMessage(botsession.think(message.substring(8)));
+            think = botsession.think(message.substring(8));
         } catch (Exception e) {
-            throw new MinionsException("Error sending message: " + message);
+            throw new MinionsException("Error talking to chatterbot.", e);
         }
+        muc.sendMessage(think);
     }
 }

@@ -1,5 +1,6 @@
 package com.boothj5.minions;
 
+import com.boothj5.minions.api.Minion;
 import com.boothj5.minions.api.MinionsException;
 import com.boothj5.minions.api.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
@@ -45,36 +46,50 @@ public class MinionsListener implements PacketListener {
                     }
                 }
             }
-        } catch (MinionsException e) {
-            e.printStackTrace();
+        } catch (MinionsException me) {
+            LOG.error("Error processing packet: ", me);
         }
     }
 
     private void handleMinionsCommand(Message message) throws MinionsException {
-        String command = parseCommand(message.getBody());
-        if (minions.exists(command)) {
-            LOG.debug(format("Handling command: %s", command));
-            minions.get(command).onMessage(muc, message.getFrom(), message.getBody());
-        } else {
-            LOG.debug(format("Minion does not exist: %s", command));
-            muc.sendMessage("No such minion: " + command);
+        try {
+            String command = parseCommand(message.getBody());
+
+            minions.lock();
+            Minion minion = minions.get(command);
+            if (minion != null) {
+                LOG.debug(format("Handling command: %s", command));
+                minion.onMessage(muc, message.getFrom(), message.getBody());
+            } else {
+                LOG.debug(format("Minion does not exist: %s", command));
+                muc.sendMessage("No such minion: " + command);
+            }
+            minions.unlock();
+        } catch (InterruptedException ie) {
+            throw new MinionsException("Command handler interrupted.", ie);
         }
     }
 
     private void handleListCommand() throws MinionsException {
-        List<String> commands = minions.commandList();
-        StringBuilder builder = new StringBuilder();
-        builder.append("\n");
-        builder.append(minionsPrefix);
-        builder.append(HELP_COMMAND);
-        builder.append(" - Show this help.");
-        builder.append("\n");
-        for (String command : commands) {
-            builder.append(minionsPrefix);
-            builder.append(minions.get(command).getHelp());
+        try {
+            minions.lock();
+            List<String> commands = minions.commandList();
+            StringBuilder builder = new StringBuilder();
             builder.append("\n");
+            builder.append(minionsPrefix);
+            builder.append(HELP_COMMAND);
+            builder.append(" - Show this help.");
+            builder.append("\n");
+            for (String command : commands) {
+                builder.append(minionsPrefix);
+                builder.append(minions.get(command).getHelp());
+                builder.append("\n");
+            }
+            muc.sendMessage(builder.toString());
+            minions.unlock();
+        } catch (InterruptedException ie) {
+            throw new MinionsException("List command interrupted.", ie);
         }
-        muc.sendMessage(builder.toString());
     }
 
     private String parseCommand(String message) {

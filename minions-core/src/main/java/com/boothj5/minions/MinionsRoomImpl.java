@@ -17,8 +17,7 @@ public class MinionsRoomImpl implements MinionsRoom {
         try {
             muc.sendMessage(message);
         } catch (XMPPException e) {
-            e.printStackTrace();
-            throw new MinionsException("Error sending message:" + message);
+            throw new MinionsException("Error sending message:" + message, e);
         }
     }
 }
