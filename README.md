@@ -42,7 +42,7 @@ Run the starter script from the `minions-core` folder:
 ```
 
 # Creating a plugin
-Declate the Minions API as a dependency:
+Declare the Minions API as a dependency:
 
 ```xml
 <dependency>
