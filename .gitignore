@@ -19,3 +19,5 @@ minions-contrib/httpstatus-minion/httpstatus-minion.iml
 minions-contrib/osproperties-minion/target/
 minions-contrib/osproperties-minion/osproperties-minion.iml
 
+minions-contrib/binary-minion/target/
+minions-contrib/binary-minion/binary-minion.iml
