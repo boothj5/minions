@@ -59,7 +59,8 @@ public class MinionsListener implements PacketListener {
             Minion minion = minions.get(command);
             if (minion != null) {
                 LOG.debug(format("Handling command: %s", command));
-                minion.onMessage(muc, message.getFrom(), message.getBody());
+                String from = org.jivesoftware.smack.util.StringUtils.parseResource(message.getFrom());
+                minion.onMessage(muc, from, message.getBody());
             } else {
                 LOG.debug(format("Minion does not exist: %s", command));
                 muc.sendMessage("No such minion: " + command);

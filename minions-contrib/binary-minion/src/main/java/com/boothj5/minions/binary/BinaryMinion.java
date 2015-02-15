@@ -20,7 +20,6 @@ public class BinaryMinion implements Minion {
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        String[] jid = StringUtils.split(from, "/");
         try {
             String[] split = StringUtils.split(message, " ");
             String command = split[1];
@@ -28,20 +27,20 @@ public class BinaryMinion implements Minion {
                 case "to": {
                     Integer integer = Integer.valueOf(split[2]);
                     String result = Integer.toBinaryString(integer);
-                    muc.sendMessage(jid[1] + ": " + result);
+                    muc.sendMessage(from + ": " + result);
                     break;
                 }
                 case "from": {
                     int result = Integer.parseInt(split[2], 2);
-                    muc.sendMessage(jid[1] + ": " + String.valueOf(result));
+                    muc.sendMessage(from + ": " + String.valueOf(result));
                     break;
                 }
                 default:
-                    muc.sendMessage(jid[1] + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
+                    muc.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
                     break;
             }
         } catch (RuntimeException re) {
-            muc.sendMessage(jid[1] + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
+            muc.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
         }
     }
 }
