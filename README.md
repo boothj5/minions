@@ -128,7 +128,7 @@ cp target/echo-minion-1.0-SNAPSHOT-jar-with-dependencies.jar ~/.local/share/mini
 The plugin will be available on the next refresh (`minions.refresh.seconds`).
 
 #Using Minions
-When the Minions bot is present in the chat room, use the following to list available commands, (assuming the default prefix '!' is configured:
+When the Minions bot is present in the chat room, use the following to list available commands, (assuming the default prefix '!'):
 
 ```
 !help
