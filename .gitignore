@@ -1,21 +1,21 @@
 .idea/
-commandbot.iml
-commandbot-core/target/
-commandbot-core/commandbot-core.iml
-commandbot-core/dependency-reduced-pom.xml
+minions.iml
+minions-core/target/
+minions-core/minions-core.iml
+minions-core/dependency-reduced-pom.xml
 
-commandbot-api/target/
-commandbot-api/commandbot-api.iml
+minions-api/target/
+minions-api/minions-api.iml
 
-commandbot-contrib/chatterbot-plugin/target/
-commandbot-contrib/chatterbot-plugin/chatterbot-plugin.iml
+minions-contrib/chatterbot-minion/target/
+minions-contrib/chatterbot-minion/chatterbot-minion.iml
 
-commandbot-contrib/echo-plugin/target/
-commandbot-contrib/echo-plugin/echo-plugin.iml
+minions-contrib/echo-minion/target/
+minions-contrib/echo-minion/echo-minion.iml
 
-commandbot-contrib/httpstatus-plugin/target/
-commandbot-contrib/httpstatus-plugin/httpstatus-plugin.iml
+minions-contrib/httpstatus-minion/target/
+minions-contrib/httpstatus-minion/httpstatus-minion.iml
 
-commandbot-contrib/osproperties-plugin/target/
-commandbot-contrib/osproperties-plugin/osproperties-plugin.iml
+minions-contrib/osproperties-minion/target/
+minions-contrib/osproperties-minion/osproperties-minion.iml
 
