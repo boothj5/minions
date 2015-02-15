@@ -1,18 +1,17 @@
 package com.boothj5.commandbot.plugins;
 
+import com.boothj5.commandbot.CommandBotException;
 import com.boothj5.commandbot.CommandBotPlugin;
+import com.boothj5.commandbot.CommandBotRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import java.io.IOException;
 
 public class HttpStatusPlugin implements CommandBotPlugin {
-
     public static final String COMMAND = "status";
 
     @Override
@@ -26,7 +25,7 @@ public class HttpStatusPlugin implements CommandBotPlugin {
     }
 
     @Override
-    public void onMessage(MultiUserChat muc, String from, String message) throws XMPPException {
+    public void onMessage(CommandBotRoom muc, String from, String message) throws CommandBotException {
         String[] split = StringUtils.split(message, " ");
 
         HttpClient client = HttpClientBuilder.create().build();

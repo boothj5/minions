@@ -1,15 +1,11 @@
 package com.boothj5.commandbot.plugins;
 
+import com.boothj5.commandbot.CommandBotException;
 import com.boothj5.commandbot.CommandBotPlugin;
+import com.boothj5.commandbot.CommandBotRoom;
 import org.apache.commons.lang3.StringUtils;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EchoPlugin implements CommandBotPlugin {
-    private static final Logger LOG = LoggerFactory.getLogger(EchoPlugin.class);
-
     private static final String COMMAND = "echo";
 
     @Override
@@ -23,7 +19,7 @@ public class EchoPlugin implements CommandBotPlugin {
     }
 
     @Override
-    public void onMessage(MultiUserChat muc, String from, String message) throws XMPPException {
+    public void onMessage(CommandBotRoom muc, String from, String message) throws CommandBotException {
         String[] jid = StringUtils.split(from, "/");
         try {
             String toEcho = message.substring(COMMAND.length() + 2);

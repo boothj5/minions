@@ -1,15 +1,14 @@
 package com.boothj5.commandbot.plugins;
 
+import com.boothj5.commandbot.CommandBotException;
 import com.boothj5.commandbot.CommandBotPlugin;
+import com.boothj5.commandbot.CommandBotRoom;
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 
 public class ChatterBotPlugin implements CommandBotPlugin {
-
     public static final String COMMAND = "chatter";
     private final ChatterBotFactory factory;
     private ChatterBotSession botsession;
@@ -35,11 +34,11 @@ public class ChatterBotPlugin implements CommandBotPlugin {
     }
 
     @Override
-    public void onMessage(MultiUserChat muc, String from, String message) throws XMPPException {
+    public void onMessage(CommandBotRoom muc, String from, String message) throws CommandBotException {
         try {
             muc.sendMessage(botsession.think(message.substring(8)));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new CommandBotException("Error sending message: " + message);
         }
     }
 }

@@ -2,7 +2,6 @@ package com.boothj5.commandbot;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -19,13 +18,13 @@ public class BotListener implements PacketListener {
     public static final String HELP_COMMAND = "help";
 
     private final PluginStore plugins;
-    private final MultiUserChat muc;
+    private final CommandBotRoom muc;
     private final String myNick;
     private final String commandPrefix;
 
     public BotListener(PluginStore plugins, String commandPrefix, MultiUserChat muc, String myNick) {
         this.plugins = plugins;
-        this.muc = muc;
+        this.muc = new CommandBotRoomImpl(muc);
         this.myNick = myNick;
         this.commandPrefix = commandPrefix;
     }
@@ -44,12 +43,12 @@ public class BotListener implements PacketListener {
                     }
                 }
             }
-        } catch (XMPPException e) {
+        } catch (CommandBotException e) {
             e.printStackTrace();
         }
     }
 
-    private void handlePluginCommand(Message message) throws XMPPException {
+    private void handlePluginCommand(Message message) throws CommandBotException {
         String command = parseCommand(message.getBody());
         if (plugins.exists(command)) {
             LOG.debug(format("Handling command: %s", command));
@@ -60,7 +59,7 @@ public class BotListener implements PacketListener {
         }
     }
 
-    private void handleListCommand() throws XMPPException {
+    private void handleListCommand() throws CommandBotException {
         List<String> commands = plugins.commandList();
         StringBuilder builder = new StringBuilder();
         builder.append("\n");

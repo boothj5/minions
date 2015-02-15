@@ -1,14 +1,13 @@
 package com.boothj5.commandbot.plugins;
 
+import com.boothj5.commandbot.CommandBotException;
 import com.boothj5.commandbot.CommandBotPlugin;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import com.boothj5.commandbot.CommandBotRoom;
 
 import java.util.Enumeration;
 import java.util.Properties;
 
 public class OsPropertiesPlugin implements CommandBotPlugin {
-
     private static final String COMMAND = "props";
 
     @Override
@@ -22,7 +21,7 @@ public class OsPropertiesPlugin implements CommandBotPlugin {
     }
 
     @Override
-    public void onMessage(MultiUserChat muc, String from, String message) throws XMPPException {
+    public void onMessage(CommandBotRoom muc, String from, String message) throws CommandBotException {
         StringBuilder result = new StringBuilder();
         Properties properties = System.getProperties();
         Enumeration keys = properties.keys();
