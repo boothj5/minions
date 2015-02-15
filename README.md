@@ -70,12 +70,11 @@ public class EchoMinion implements Minion {
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        String[] jid = StringUtils.split(from, "/");
         try {
             String toEcho = message.substring(COMMAND.length() + 2);
-            muc.sendMessage(jid[1] + " said: " + toEcho);
+            muc.sendMessage(from + " said: " + toEcho);
         } catch (RuntimeException e) {
-            muc.sendMessage(jid[1] + " didn't say anything for me to echo");
+            muc.sendMessage(from + " didn't say anything for me to echo");
         }
     }
 }
