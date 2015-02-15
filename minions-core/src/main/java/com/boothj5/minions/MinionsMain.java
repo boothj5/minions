@@ -42,7 +42,7 @@ public class MinionsMain {
         service = System.getProperty("minions.user.service");
         user = System.getProperty("minions.user.name");
         password = System.getProperty("minions.user.password");
-        resource = System.getProperty("minions.user.resou0rce");
+        resource = System.getProperty("minions.user.resource");
         server = System.getProperty("minions.service.server");
 
         final String portProperty = System.getProperty("minions.service.port");
