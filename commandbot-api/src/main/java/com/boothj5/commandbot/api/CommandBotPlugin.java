@@ -1,4 +1,4 @@
-package com.boothj5.commandbot;
+package com.boothj5.commandbot.api;
 
 public interface CommandBotPlugin {
     String getCommand();

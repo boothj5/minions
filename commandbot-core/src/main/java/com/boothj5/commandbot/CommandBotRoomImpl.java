@@ -1,9 +1,11 @@
 package com.boothj5.commandbot;
 
+import com.boothj5.commandbot.api.CommandBotException;
+import com.boothj5.commandbot.api.CommandBotRoom;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-public class CommandBotRoomImpl implements CommandBotRoom{
+public class CommandBotRoomImpl implements CommandBotRoom {
     private final MultiUserChat muc;
 
     public CommandBotRoomImpl(MultiUserChat muc) {

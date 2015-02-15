@@ -9,3 +9,4 @@ mvn package && java \
     -Dcommandbot.room.jid=botroom@conference.ejabberd.local \
     -Dcommandbot.room.nick=commandbot \
     -jar target/commandbot-core-1.0-SNAPSHOT.jar
+

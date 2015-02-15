@@ -1,5 +1,7 @@
 package com.boothj5.commandbot;
 
+import com.boothj5.commandbot.api.CommandBotException;
+import com.boothj5.commandbot.api.CommandBotRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;

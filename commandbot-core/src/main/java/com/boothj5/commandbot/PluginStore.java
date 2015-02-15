@@ -1,5 +1,7 @@
 package com.boothj5.commandbot;
 
+import com.boothj5.commandbot.api.CommandBotPlugin;
+
 import java.util.*;
 
 public class PluginStore {

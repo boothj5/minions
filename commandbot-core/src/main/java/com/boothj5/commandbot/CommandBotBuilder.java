@@ -11,6 +11,7 @@ public class CommandBotBuilder {
     private String roomNickname;
     private String roomPassword;
     private String commandPrefix;
+    private String pluginsDir;
 
     public CommandBotBuilder withUser(String user) {
         this.user = user;
@@ -62,7 +63,12 @@ public class CommandBotBuilder {
         return this;
     }
 
+    public CommandBotBuilder withPluginsDir(String pluginsDir) {
+        this.pluginsDir = pluginsDir;
+        return this;
+    }
+
     public CommandBot build() {
-        return new CommandBot(user, service, password, resource, port, server, room, roomNickname, roomPassword, commandPrefix);
+        return new CommandBot(user, service, password, resource, port, server, room, roomNickname, roomPassword, commandPrefix, pluginsDir);
     }
 }

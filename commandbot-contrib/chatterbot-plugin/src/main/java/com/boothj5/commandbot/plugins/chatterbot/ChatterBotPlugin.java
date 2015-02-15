@@ -1,8 +1,8 @@
-package com.boothj5.commandbot.plugins;
+package com.boothj5.commandbot.plugins.chatterbot;
 
-import com.boothj5.commandbot.CommandBotException;
-import com.boothj5.commandbot.CommandBotPlugin;
-import com.boothj5.commandbot.CommandBotRoom;
+import com.boothj5.commandbot.api.CommandBotException;
+import com.boothj5.commandbot.api.CommandBotPlugin;
+import com.boothj5.commandbot.api.CommandBotRoom;
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;

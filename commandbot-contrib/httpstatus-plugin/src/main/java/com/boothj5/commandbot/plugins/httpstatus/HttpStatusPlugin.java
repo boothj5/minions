@@ -1,8 +1,8 @@
-package com.boothj5.commandbot.plugins;
+package com.boothj5.commandbot.plugins.httpstatus;
 
-import com.boothj5.commandbot.CommandBotException;
-import com.boothj5.commandbot.CommandBotPlugin;
-import com.boothj5.commandbot.CommandBotRoom;
+import com.boothj5.commandbot.api.CommandBotException;
+import com.boothj5.commandbot.api.CommandBotPlugin;
+import com.boothj5.commandbot.api.CommandBotRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

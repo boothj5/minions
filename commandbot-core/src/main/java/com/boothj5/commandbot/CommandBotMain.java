@@ -1,10 +1,10 @@
 package com.boothj5.commandbot;
 
+import com.boothj5.commandbot.api.CommandBotException;
 import org.apache.commons.lang3.StringUtils;
-import org.jivesoftware.smack.XMPPException;
 
 public class CommandBotMain {
-    public static void main(String[] args) throws XMPPException, InterruptedException {
+    public static void main(String[] args) throws CommandBotException {
         final String service = System.getProperty("commandbot.user.service");
         final String user = System.getProperty("commandbot.user.name");
         final String password = System.getProperty("commandbot.user.password");
@@ -27,6 +27,12 @@ public class CommandBotMain {
             commandPrefix = commandPrefixProperty;
         }
 
+        String pluginsDir = System.getProperty("user.home") + "/.local/share/commandbot/plugins";
+        final String pluginsDirProperty = System.getProperty("commandbot.pluginsdir");
+        if (!StringUtils.isBlank(pluginsDirProperty)) {
+            pluginsDir = pluginsDirProperty;
+        }
+
         final CommandBot commandBot = new CommandBotBuilder()
                 .withUser(user)
                 .withService(service)
@@ -38,6 +44,7 @@ public class CommandBotMain {
                 .withRoomNickname(roomNickname)
                 .withRoomPassword(roomPassword)
                 .withCommandPrefix(commandPrefix)
+                .withPluginsDir(pluginsDir)
                 .build();
 
         commandBot.run();

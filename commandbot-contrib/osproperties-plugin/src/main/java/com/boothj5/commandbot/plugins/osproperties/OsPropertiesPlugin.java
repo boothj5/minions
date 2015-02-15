@@ -1,8 +1,8 @@
-package com.boothj5.commandbot.plugins;
+package com.boothj5.commandbot.plugins.osproperties;
 
-import com.boothj5.commandbot.CommandBotException;
-import com.boothj5.commandbot.CommandBotPlugin;
-import com.boothj5.commandbot.CommandBotRoom;
+import com.boothj5.commandbot.api.CommandBotException;
+import com.boothj5.commandbot.api.CommandBotPlugin;
+import com.boothj5.commandbot.api.CommandBotRoom;
 
 import java.util.Enumeration;
 import java.util.Properties;
