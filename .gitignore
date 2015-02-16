@@ -21,3 +21,6 @@ minions-contrib/osproperties-minion/osproperties-minion.iml
 
 minions-contrib/binary-minion/target/
 minions-contrib/binary-minion/binary-minion.iml
+
+minions-contrib/calculator-minion/target/
+minions-contrib/calculator-minion/calculator-minion.iml
