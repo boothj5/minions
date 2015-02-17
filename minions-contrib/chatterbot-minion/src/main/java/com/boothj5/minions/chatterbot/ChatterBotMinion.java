@@ -37,7 +37,7 @@ public class ChatterBotMinion extends Minion {
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         String think;
         try {
-            think = botsession.think(message.substring(8));
+            think = botsession.think(message);
         } catch (Exception e) {
             muc.sendMessage("Error talking to chatterbot.");
             return;

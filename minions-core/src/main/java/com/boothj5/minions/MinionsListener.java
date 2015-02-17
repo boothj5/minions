@@ -52,7 +52,13 @@ public class MinionsListener implements PacketListener {
             if (minion != null) {
                 LOG.debug(format("Handling command: %s", command));
                 String from = org.jivesoftware.smack.util.StringUtils.parseResource(message.getFrom());
-                minion.onMessageWrapper(muc, from, message.getBody());
+                String subMessage;
+                try {
+                    subMessage = message.getBody().substring(minionsPrefix.length() + command.length() + 1);
+                } catch (IndexOutOfBoundsException e) {
+                    subMessage = "";
+                }
+                minion.onMessageWrapper(muc, from, subMessage);
             } else {
                 LOG.debug(format("Minion does not exist: %s", command));
                 muc.sendMessage("No such minion: " + command);

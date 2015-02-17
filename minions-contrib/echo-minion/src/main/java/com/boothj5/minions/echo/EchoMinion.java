@@ -19,11 +19,11 @@ public class EchoMinion extends Minion {
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        try {
-            String toEcho = message.substring(COMMAND.length() + 2);
-            muc.sendMessage(from + " said: " + toEcho);
-        } catch (RuntimeException e) {
+        String trimmed = message.trim();
+        if ("".equals(trimmed)) {
             muc.sendMessage(from + " didn't say anything for me to echo");
+        } else {
+            muc.sendMessage(from + " said: " + trimmed);
         }
     }
 }

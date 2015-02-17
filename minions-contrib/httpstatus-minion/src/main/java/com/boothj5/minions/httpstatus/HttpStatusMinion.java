@@ -27,14 +27,15 @@ public class HttpStatusMinion extends Minion {
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         String[] split = StringUtils.split(message, " ");
+        String uri = split[0];
         try {
             HttpClient client = HttpClientBuilder.create().build();
-            HttpGet get = new HttpGet(split[1]);
+            HttpGet get = new HttpGet(uri);
             HttpResponse response = client.execute(get);
             response.getEntity().getContent().close();
-            muc.sendMessage("Status " + split[1] + ": " + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase());
+            muc.sendMessage("Status " + uri + ": " + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase());
         } catch (IOException e) {
-            muc.sendMessage("Could not connect " + split[1] + ": " + e.getMessage());
+            muc.sendMessage("Could not connect " + uri + ": " + e.getMessage());
         }
     }
 }

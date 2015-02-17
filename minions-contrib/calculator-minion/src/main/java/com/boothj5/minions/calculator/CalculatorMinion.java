@@ -23,8 +23,7 @@ public class CalculatorMinion extends Minion {
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
-            String expressionStr = message.substring(6);
-            Expression expression = new ExpressionBuilder(expressionStr).build();
+            Expression expression = new ExpressionBuilder(message).build();
             ValidationResult validationResult = expression.validate();
             if (!validationResult.isValid()) {
                 muc.sendMessage(from + ": " + validationResult.getErrors());
