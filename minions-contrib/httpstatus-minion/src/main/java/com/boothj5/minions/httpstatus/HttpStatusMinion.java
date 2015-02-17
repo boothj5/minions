@@ -1,8 +1,8 @@
 package com.boothj5.minions.httpstatus;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,7 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 
-public class HttpStatusMinion implements Minion {
+public class HttpStatusMinion extends Minion {
     public static final String COMMAND = "status";
 
     @Override
@@ -27,15 +27,13 @@ public class HttpStatusMinion implements Minion {
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         String[] split = StringUtils.split(message, " ");
-
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet(split[1]);
         try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet get = new HttpGet(split[1]);
             HttpResponse response = client.execute(get);
             response.getEntity().getContent().close();
             muc.sendMessage("Status " + split[1] + ": " + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase());
         } catch (IOException e) {
-            e.printStackTrace();
             muc.sendMessage("Could not connect " + split[1] + ": " + e.getMessage());
         }
     }

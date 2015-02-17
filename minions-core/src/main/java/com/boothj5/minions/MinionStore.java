@@ -1,20 +1,18 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -97,8 +95,8 @@ public class MinionStore {
                 Minion minion = ctor.newInstance();
                 minions.put(minion.getCommand(), minion);
             }
-        } catch (IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new MinionsException("Error loading minions.", e);
+        } catch (Throwable t) {
+            throw new MinionsException(t);
         }
     }
 }

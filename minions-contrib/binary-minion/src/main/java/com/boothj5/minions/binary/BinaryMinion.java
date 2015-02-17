@@ -1,11 +1,11 @@
 package com.boothj5.minions.binary;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 
-public class BinaryMinion implements Minion {
+public class BinaryMinion extends Minion {
     private final String COMMAND = "bin";
 
     @Override

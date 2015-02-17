@@ -1,6 +1,5 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.MinionsException;
 import org.apache.commons.lang3.StringUtils;
 
 public class MinionsMain {

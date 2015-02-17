@@ -1,14 +1,14 @@
 package com.boothj5.minions.chatterbot;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 
-public class ChatterBotMinion implements Minion {
+public class ChatterBotMinion extends Minion {
     public static final String COMMAND = "chatter";
     private final ChatterBotFactory factory;
     private ChatterBotSession botsession;
@@ -35,12 +35,14 @@ public class ChatterBotMinion implements Minion {
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        String think = null;
+        String think;
         try {
             think = botsession.think(message.substring(8));
         } catch (Exception e) {
-            throw new MinionsException("Error talking to chatterbot.", e);
+            muc.sendMessage("Error talking to chatterbot.");
+            return;
         }
+
         muc.sendMessage(think);
     }
 }

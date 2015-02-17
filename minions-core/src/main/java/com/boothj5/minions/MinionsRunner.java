@@ -1,10 +1,8 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.MinionsException;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,10 +77,8 @@ public class MinionsRunner {
                     lock.wait();
                 }
             }
-        } catch (XMPPException xmppe) {
-            throw new MinionsException("XMPP exception.", xmppe);
-        } catch (InterruptedException ie) {
-            throw new MinionsException("Main thread interrupted.", ie);
+        } catch (Throwable t) {
+            throw new MinionsException(t);
         }
     }
 }

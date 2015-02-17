@@ -1,10 +1,10 @@
 package com.boothj5.minions.echo;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 
-public class EchoMinion implements Minion {
+public class EchoMinion extends Minion {
     private static final String COMMAND = "echo";
 
     @Override

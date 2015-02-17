@@ -1,8 +1,5 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
@@ -34,44 +31,41 @@ public class MinionsListener implements PacketListener {
 
     @Override
     public void processPacket(Packet packet) {
-        try {
-            if (packet instanceof Message) {
-                Message messageStanza = (Message) packet;
-                String message = messageStanza.getBody();
-                if (validCommand(messageStanza)) {
-                    if (message.equals(minionsPrefix + HELP_COMMAND)) {
-                        handleListCommand();
-                    } else {
-                        handleMinionsCommand(messageStanza);
-                    }
+        if (packet instanceof Message) {
+            Message messageStanza = (Message) packet;
+            String message = messageStanza.getBody();
+            if (validCommand(messageStanza)) {
+                if (message.equals(minionsPrefix + HELP_COMMAND)) {
+                    handleListCommand();
+                } else {
+                    handleMinionsCommand(messageStanza);
                 }
             }
-        } catch (MinionsException me) {
-            LOG.error("Error processing packet: ", me);
         }
     }
 
-    private void handleMinionsCommand(Message message) throws MinionsException {
+    private void handleMinionsCommand(Message message) {
         try {
             String command = parseCommand(message.getBody());
-
             minions.lock();
             Minion minion = minions.get(command);
             if (minion != null) {
                 LOG.debug(format("Handling command: %s", command));
                 String from = org.jivesoftware.smack.util.StringUtils.parseResource(message.getFrom());
-                minion.onMessage(muc, from, message.getBody());
+                minion.onMessageWrapper(muc, from, message.getBody());
             } else {
                 LOG.debug(format("Minion does not exist: %s", command));
                 muc.sendMessage("No such minion: " + command);
             }
             minions.unlock();
         } catch (InterruptedException ie) {
-            throw new MinionsException("Command handler interrupted.", ie);
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
         }
     }
 
-    private void handleListCommand() throws MinionsException {
+    private void handleListCommand() {
         try {
             minions.lock();
             List<String> commands = minions.commandList();
@@ -89,7 +83,9 @@ public class MinionsListener implements PacketListener {
             muc.sendMessage(builder.toString());
             minions.unlock();
         } catch (InterruptedException ie) {
-            throw new MinionsException("List command interrupted.", ie);
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
         }
     }
 

@@ -1,7 +1,5 @@
 package com.boothj5.minions;
 
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
@@ -17,7 +15,7 @@ public class MinionsRoomImpl implements MinionsRoom {
         try {
             muc.sendMessage(message);
         } catch (XMPPException e) {
-            throw new MinionsException("Error sending message:" + message, e);
+            throw new MinionsException(e);
         }
     }
 }

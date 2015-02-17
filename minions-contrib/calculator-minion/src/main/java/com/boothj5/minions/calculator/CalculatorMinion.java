@@ -1,13 +1,13 @@
 package com.boothj5.minions.calculator;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.ValidationResult;
 
-public class CalculatorMinion implements Minion {
+public class CalculatorMinion extends Minion {
     private final String COMMAND = "calc";
 
     @Override
@@ -32,7 +32,7 @@ public class CalculatorMinion implements Minion {
                 double result = expression.evaluate();
                 muc.sendMessage(from + ": " + result);
             }
-        } catch (Throwable t) {
+        } catch (RuntimeException rte) {
             muc.sendMessage(from + ": Invalid usage.");
         }
     }

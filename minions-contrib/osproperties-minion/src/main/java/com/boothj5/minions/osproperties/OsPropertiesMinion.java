@@ -1,13 +1,13 @@
 package com.boothj5.minions.osproperties;
 
-import com.boothj5.minions.api.Minion;
-import com.boothj5.minions.api.MinionsException;
-import com.boothj5.minions.api.MinionsRoom;
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 
 import java.util.Enumeration;
 import java.util.Properties;
 
-public class OsPropertiesMinion implements Minion {
+public class OsPropertiesMinion extends Minion {
     private static final String COMMAND = "props";
 
     @Override
