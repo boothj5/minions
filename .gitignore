@@ -24,3 +24,6 @@ minions-contrib/binary-minion/binary-minion.iml
 
 minions-contrib/calculator-minion/target/
 minions-contrib/calculator-minion/calculator-minion.iml
+
+minions-contrib/digest-minion/target/
+minions-contrib/digest-minion/digest-minion.iml
