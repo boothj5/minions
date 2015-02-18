@@ -70,7 +70,6 @@ public class EchoMinion extends Minion {
   @Override
   public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
     String trimmed = message.trim();
-  
     if ("".equals(trimmed)) {
       muc.sendMessage(from + " didn't say anything for me to echo");
     } else {
