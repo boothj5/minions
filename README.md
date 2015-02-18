@@ -141,13 +141,17 @@ When the Minions bot is present in the chat room, use the following to list avai
 Example output:
 
 ```
-18:11 - minions: 
+22:17 - boothj5: !help
+22:17 - minions:
         !help - Show this help.
         !status [url] - Get the http status code for a URL.
+        !digest - Calculate various digests of a given value. Send 'help' for more information.
+        !calc [expression] - Calculate result of evaluating expression.
+        !apples give|take - Give or take an apple from the minion.
+        !bin to|from [value] - Convert integer to binary, or binary to integer.
         !chatter [message] - Send a message to chatterbot.
         !echo [message] - Echo something.
-        !props - Show OS system properties.
-```
+        !props - Show OS system properties.```
 
 To execute a command, enter the command with the prefix, and any args required e.g.:
 
