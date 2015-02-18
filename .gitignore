@@ -27,3 +27,6 @@ minions-contrib/calculator-minion/calculator-minion.iml
 
 minions-contrib/digest-minion/target/
 minions-contrib/digest-minion/digest-minion.iml
+
+minions-contrib/apples-minion/target/
+minions-contrib/apples-minion/apples-minion.iml
