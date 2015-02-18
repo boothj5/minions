@@ -44,7 +44,6 @@ public class MinionsRunner {
 
     public void run() throws MinionsException {
         try {
-            MinionStore minions = new MinionStore(minionsDir, refreshSeconds);
 
             LOG.debug("Starting MinionsRunner");
             ConnectionConfiguration connectionConfiguration;
@@ -68,6 +67,7 @@ public class MinionsRunner {
 
             LOG.debug(format("Joined: %s as %s", room, room));
 
+            MinionStore minions = new MinionStore(minionsDir, refreshSeconds, muc);
             MinionsListener listener = new MinionsListener(minions, minionsPrefix, muc, roomNickname);
             muc.addMessageListener(listener);
 

@@ -1,5 +1,6 @@
 package com.boothj5.minions;
 
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,10 @@ import java.util.jar.Manifest;
 public class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
     public static final String MANIFEST_MINIONCLASS = "MinionClass";
-    private Map<String, Minion> minions;
-    private String minionsDir;
+    private final MultiUserChat muc;
+    private final Map<String, Minion> minions;
+    private final String minionsDir;
+    private final Map<String, Long> jarFiles;
 
     private boolean isLocked = false;
 
@@ -36,9 +39,11 @@ public class MinionStore {
         notify();
     }
 
-    public MinionStore(String minionsDir, int refreshSeconds) {
+    public MinionStore(String minionsDir, int refreshSeconds, MultiUserChat muc) {
         this.minionsDir = minionsDir;
         this.minions = new HashMap<>();
+        this.jarFiles = new HashMap<>();
+        this.muc = muc;
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
@@ -72,6 +77,7 @@ public class MinionStore {
 
     private void load() throws MinionsException {
         try {
+            Map<String, Long> newJarFiles = new HashMap<>();
             minions.clear();
             File minionsDirFile = new File(minionsDir);
             File[] files = minionsDirFile.listFiles();
@@ -79,6 +85,7 @@ public class MinionStore {
             List<String> minionClasses = new ArrayList<>();
 
             for (int i = 0; i < files.length; i++) {
+                newJarFiles.put(files[i].getName(), files[i].lastModified());
                 urls[i] = files[i].toURI().toURL();
                 InputStream in = new FileInputStream(files[i]);
                 JarInputStream stream = new JarInputStream(in);
@@ -95,6 +102,43 @@ public class MinionStore {
                 Minion minion = ctor.newInstance();
                 minions.put(minion.getCommand(), minion);
             }
+
+            Map<String, Long> toUpdate = new HashMap<>();
+            Map<String, Long> toAdd = new HashMap<>();
+            for (String newJarFile : newJarFiles.keySet()) {
+                if (jarFiles.containsKey(newJarFile)) {
+                    Long timestamp = jarFiles.get(newJarFile);
+                    if (!timestamp.equals(newJarFiles.get(newJarFile))) {
+                        toUpdate.put(newJarFile, newJarFiles.get(newJarFile));
+                        LOG.debug("Updated JAR: " + newJarFile);
+                        muc.sendMessage("Updated JAR: " + newJarFile);
+                    }
+                } else {
+                    toAdd.put(newJarFile, newJarFiles.get(newJarFile));
+                    LOG.debug("Added JAR: " + newJarFile);
+                    muc.sendMessage("Added JAR: " + newJarFile);
+                }
+            }
+
+            List<String> toRemove = new ArrayList<>();
+            for (String jarFile : jarFiles.keySet()) {
+                if (!newJarFiles.containsKey(jarFile)) {
+                    toRemove.add(jarFile);
+                    LOG.debug("Removed JAR: " + jarFile);
+                    muc.sendMessage("Removed JAR: " + jarFile);
+                }
+            }
+
+            for (String update : toUpdate.keySet()) {
+                jarFiles.put(update, toUpdate.get(update));
+            }
+            for (String add : toAdd.keySet()) {
+                jarFiles.put(add, toAdd.get(add));
+            }
+            for (String removeFile : toRemove) {
+                jarFiles.remove(removeFile);
+            }
+
         } catch (Throwable t) {
             throw new MinionsException(t);
         }
