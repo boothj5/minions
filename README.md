@@ -19,7 +19,7 @@ To run Minions, first build and locally install the Minions API using Maven, fro
 mvn clean install
 ```
 
-Edit the `runMinions.sh` script in the `minions-core folder`, to set your configuration options:
+Edit the `runMinions.sh` script in the `minions-core` folder, to set your configuration options:
 
 Property | Description
 -------- | -----------
