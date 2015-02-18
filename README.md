@@ -21,17 +21,19 @@ mvn clean install
 
 Edit the `runMinions.sh` script in the `minions-core folder`, to set your configuration options:
 
-`minions.user.name` - The user name (JID localpart) for the account Minions should log in as.
-`minions.user.service` - The chat service (JID domainpart) for the account.
-`minions.user.resource` - The resource (JID resourcepart) for login.
-`minions.user.password` - The password for the account.
-`minions.service.server` - Optional server if not the same as service.
-`minions.service.port` - Optional port if not the default 5222.
-`minions.room.jid` - The JID of the room to join.
-`minions.room.nick` - Nickname to use in the room.
-`minions.refresh.seconds` - Polling interval to check for new plugins, defaults to 10 seconds.
-`minions.prefix` - The command prefix, defaults to '!'
-`minions.pluginsdir` - The directory in which plugins are located, defaults to ~/.local/share/minions/plugins
+Property | Description
+-------- | -----------
+`minions.user.name` | The user name (JID localpart) for the account Minions should log in as.
+`minions.user.service` | The chat service (JID domainpart) for the account.
+`minions.user.resource` | The resource (JID resourcepart) for login.
+`minions.user.password` | The password for the account.
+`minions.service.server` | Optional server if not the same as service.
+`minions.service.port` | Optional port if not the default 5222.
+`minions.room.jid` | The JID of the room to join.
+`minions.room.nick` | Nickname to use in the room.
+`minions.refresh.seconds` | Polling interval to check for new plugins, defaults to 10 seconds.
+`minions.prefix` | The command prefix, defaults to '!'
+`minions.pluginsdir` | The directory in which plugins are located, defaults to ~/.local/share/minions/plugins
 
 Run the starter script from the `minions-core` folder:
 
