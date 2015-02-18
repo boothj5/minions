@@ -5,11 +5,12 @@ XMPP chat bot, with plugin architecture for implementing commands.
 Minions runs as a bot in a XMPP MUC chat room, and responds to commands.  Commands are implemented as plugins, and may be loaded at runtime by dropping the JAR file in the plugins directory.
 
 # Project structure
-`minions-api`: The interface to be implemented by Minion plugins.
 
-`minions-core`: The Minions chat bot.
-
-`minions-contrib`: Example Minion plugins.
+Folder | Contents
+------ | --------
+`minions-api` | The interface to be implemented by Minion plugins.
+`minions-core` | The Minions chat bot.
+`minions-contrib` | Example Minion plugins.
 
 # Running Minions
 To run Minions, first build and locally install the Minions API using Maven, from the `minions-api` directory:
