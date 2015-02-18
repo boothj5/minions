@@ -8,16 +8,10 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class OsPropertiesMinion extends Minion {
-    private static final String COMMAND = "props";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " - Show OS system properties.";
+        return "- Show OS system properties.";
     }
 
     @Override

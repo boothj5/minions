@@ -32,6 +32,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.apples.ApplesMinion</MinionClass>
+                            <MinionCommand>apples</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>

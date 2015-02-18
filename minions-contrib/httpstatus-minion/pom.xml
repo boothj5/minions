@@ -42,6 +42,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.httpstatus.HttpStatusMinion</MinionClass>
+                            <MinionCommand>status</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>

@@ -5,17 +5,16 @@ import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 public class ApplesMinion extends Minion {
-    private static final String COMMAND = "apples";
     public static final String MINIONS_APPLES_PROPERTY = "minions.apples";
 
     @Override
-    public String getCommand() {
-        return COMMAND;
+    public String getHelp() {
+        return "give|take - Give or take an apple from the minion.";
     }
 
     @Override
-    public String getHelp() {
-        return COMMAND + " give|take - Give or take an apple from the minion.";
+    public void onRemove() {
+        System.clearProperty(MINIONS_APPLES_PROPERTY);
     }
 
     @Override

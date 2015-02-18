@@ -12,16 +12,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.IOException;
 
 public class HttpStatusMinion extends Minion {
-    public static final String COMMAND = "status";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " [url] - Get the http status code for a URL.";
+        return "[url] - Get the http status code for a URL.";
     }
 
     @Override

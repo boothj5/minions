@@ -6,11 +6,10 @@ import org.slf4j.LoggerFactory;
 public abstract class Minion {
     private static final Logger LOG = LoggerFactory.getLogger(Minion.class);
 
-    public abstract String getCommand();
     public abstract String getHelp();
     public abstract void onMessage(MinionsRoom muc, String from, String message) throws MinionsException;
 
-    void onMessageWrapper(MinionsRoom muc, String from, String message) {
+    final void onMessageWrapper(MinionsRoom muc, String from, String message) {
         try {
             onMessage(muc, from, message);
         } catch (RuntimeException rte) {
@@ -18,5 +17,9 @@ public abstract class Minion {
         } catch (MinionsException me) {
             LOG.error("MinionsException", me);
         }
+    }
+
+    public void onRemove() {
+
     }
 }

@@ -36,7 +36,7 @@ public class MinionsListener implements PacketListener {
             String message = messageStanza.getBody();
             if (validCommand(messageStanza)) {
                 if (message.equals(minionsPrefix + HELP_COMMAND)) {
-                    handleListCommand();
+                    handleHelp();
                 } else {
                     handleMinionsCommand(messageStanza);
                 }
@@ -71,7 +71,7 @@ public class MinionsListener implements PacketListener {
         }
     }
 
-    private void handleListCommand() {
+    private void handleHelp() {
         try {
             minions.lock();
             List<String> commands = minions.commandList();
@@ -80,11 +80,12 @@ public class MinionsListener implements PacketListener {
             builder.append(minionsPrefix);
             builder.append(HELP_COMMAND);
             builder.append(" - Show this help.");
-            builder.append("\n");
             for (String command : commands) {
-                builder.append(minionsPrefix);
-                builder.append(minions.get(command).getHelp());
                 builder.append("\n");
+                builder.append(minionsPrefix);
+                builder.append(command);
+                builder.append(" ");
+                builder.append(minions.get(command).getHelp());
             }
             muc.sendMessage(builder.toString());
             minions.unlock();

@@ -6,16 +6,10 @@ import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 
 public class BinaryMinion extends Minion {
-    private final String COMMAND = "bin";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " to|from [value] - Convert integer to binary, or binary to integer.";
+        return "to|from [value] - Convert integer to binary, or binary to integer.";
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
 
 public class ChatterBotMinion extends Minion {
-    public static final String COMMAND = "chatter";
     private final ChatterBotFactory factory;
     private ChatterBotSession botsession;
 
@@ -23,14 +22,10 @@ public class ChatterBotMinion extends Minion {
             e.printStackTrace();
         }
     }
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " [message] - Send a message to chatterbot.";
+        return "[message] - Send a message to chatterbot.";
     }
 
     @Override

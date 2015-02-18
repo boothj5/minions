@@ -42,6 +42,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.digest.DigestMinion</MinionClass>
+                            <MinionCommand>digest</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>

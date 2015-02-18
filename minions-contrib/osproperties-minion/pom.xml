@@ -32,6 +32,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.osproperties.OsPropertiesMinion</MinionClass>
+                            <MinionCommand>props</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>

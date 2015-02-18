@@ -8,16 +8,10 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.ValidationResult;
 
 public class CalculatorMinion extends Minion {
-    private final String COMMAND = "calc";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " [expression] - Calculate result of evaluating expression.";
+        return "[expression] - Calculate result of evaluating expression.";
     }
 
     @Override

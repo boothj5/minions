@@ -5,16 +5,10 @@ import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 public class EchoMinion extends Minion {
-    private static final String COMMAND = "echo";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " [message] - Echo something.";
+        return "[message] - Echo something.";
     }
 
     @Override

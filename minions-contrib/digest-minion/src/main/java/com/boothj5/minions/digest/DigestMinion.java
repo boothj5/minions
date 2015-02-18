@@ -13,16 +13,10 @@ public class DigestMinion extends Minion {
     public static final String HELP = "help";
     public static final String SHA1 = "sha1";
     public static final String SHA1BASE64 = "sha1base64";
-    private final String COMMAND = "digest";
-
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
 
     @Override
     public String getHelp() {
-        return COMMAND + " - Calculate various digests of a given value. Send 'help' for more information.";
+        return "- Calculate various digests of a given value. Send 'help' for more information.";
     }
 
     @Override

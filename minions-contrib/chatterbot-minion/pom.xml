@@ -37,6 +37,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.chatterbot.ChatterBotMinion</MinionClass>
+                            <MinionCommand>chatter</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>

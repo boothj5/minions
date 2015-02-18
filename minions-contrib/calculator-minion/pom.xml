@@ -37,6 +37,7 @@
                         </manifest>
                         <manifestEntries>
                             <MinionClass>com.boothj5.minions.calculator.CalculatorMinion</MinionClass>
+                            <MinionCommand>calc</MinionCommand>
                         </manifestEntries>
                     </archive>
                 </configuration>
