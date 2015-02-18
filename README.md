@@ -55,32 +55,37 @@ Declare the Minions API as a dependency:
 Using the `echo-minion` as an example,  create your implementation of the `Minion` interface:
 
 ```java
-public class EchoMinion implements Minion {
-    private static final String COMMAND = "echo";
-    
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
+package com.boothj5.minions.echo;
 
-    @Override
-    public String getHelp() {
-        return COMMAND + " [message] - Echo something.";
-    }
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 
-    @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        try {
-            String toEcho = message.substring(COMMAND.length() + 2);
-            muc.sendMessage(from + " said: " + toEcho);
-        } catch (RuntimeException e) {
-            muc.sendMessage(from + " didn't say anything for me to echo");
-        }
+public class EchoMinion extends Minion {
+  @Override
+  public String getHelp() {
+    return "[message] - Echo something.";
+  }
+
+  @Override
+  public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    String trimmed = message.trim();
+  
+    if ("".equals(trimmed)) {
+      muc.sendMessage(from + " didn't say anything for me to echo");
+    } else {
+      muc.sendMessage(from + " said: " + trimmed);
     }
+  }
 }
 ```
 
-The plugin needs to be packaged as a fat jar (with dependencies) and must include a Manifest attribute `MinionClass` to let Minions know how to load it.  Example from `echo-minion`:
+The plugin needs to be packaged as a fat jar (with dependencies) and must include two Manifest attributes:
+
+`MinionClass` - Implementation of the `Minion` interface.  
+`MinionCommand` - The command name.
+
+Example from `echo-minion`:
 
 ```xml
 <plugin>
@@ -97,6 +102,7 @@ The plugin needs to be packaged as a fat jar (with dependencies) and must includ
       </manifest>
       <manifestEntries>
         <MinionClass>com.boothj5.minions.echo.EchoMinion</MinionClass>
+        <MinionCommand>com.boothj5.minions.echo.EchoMinion</MinionCommand>
       </manifestEntries>
     </archive>
   </configuration>
