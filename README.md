@@ -53,7 +53,7 @@ Declare the Minions API as a dependency:
 </dependency>
 ```
 
-Using the `echo-minion` as an example,  create your implementation of the `Minion` interface:
+Using the `echo-minion` as an example,  extend the `Minion` class:
 
 ```java
 package com.boothj5.minions.echo;
