@@ -102,7 +102,7 @@ Example from `echo-minion`:
       </manifest>
       <manifestEntries>
         <MinionClass>com.boothj5.minions.echo.EchoMinion</MinionClass>
-        <MinionCommand>com.boothj5.minions.echo.EchoMinion</MinionCommand>
+        <MinionCommand>echo</MinionCommand>
       </manifestEntries>
     </archive>
   </configuration>
