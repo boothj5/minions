@@ -151,7 +151,8 @@ Example output:
         !bin to|from [value] - Convert integer to binary, or binary to integer.
         !chatter [message] - Send a message to chatterbot.
         !echo [message] - Echo something.
-        !props - Show OS system properties.```
+        !props - Show OS system properties.
+```
 
 To execute a command, enter the command with the prefix, and any args required e.g.:
 
