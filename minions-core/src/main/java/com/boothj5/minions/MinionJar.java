@@ -17,19 +17,15 @@ public class MinionJar {
     private static final String MANIFEST_COMMAND = "MinionCommand" ;
 
     private final File file;
-    private final long timestamp;
-    private final String className;
-    private final String command;
+    private final Manifest manifest;
 
     public MinionJar(File file) throws IOException {
         this.file = file;
         InputStream in = new FileInputStream(file);
         JarInputStream stream = new JarInputStream(in);
-        Manifest manifest = stream.getManifest();
-
-        this.timestamp = file.lastModified();
-        this.className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
-        this.command = manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
+        this.manifest = stream.getManifest();
+        stream.close();
+        in.close();
     }
 
     public String getName() {
@@ -37,7 +33,7 @@ public class MinionJar {
     }
 
     public Long getTimestamp() {
-        return timestamp;
+        return file.lastModified();
     }
 
     public URL getURL() throws MalformedURLException {
@@ -45,11 +41,12 @@ public class MinionJar {
     }
 
     public String getCommand() {
-        return command;
+        return manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
     }
 
     public Minion loadMinionClass(URLClassLoader loader)
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        String className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
         Class<?> clazz = Class.forName(className, true, loader);
         Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
         Constructor<? extends Minion> ctr = minionClazz.getConstructor();
