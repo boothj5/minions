@@ -5,11 +5,12 @@ XMPP chat bot, with plugin architecture for implementing commands.
 Minions runs as a bot in a XMPP MUC chat room, and responds to commands.  Commands are implemented as plugins, and may be loaded at runtime by dropping the JAR file in the plugins directory.
 
 # Project structure
-`minions-api`: The interface to be implemented by Minion plugins.
 
-`minions-core`: The Minions chat bot.
-
-`minions-contrib`: Example Minion plugins.
+Folder | Contents
+------ | --------
+`minions-api` | The interface to be implemented by Minion plugins.
+`minions-core` | The Minions chat bot.
+`minions-contrib` | Example Minion plugins.
 
 # Running Minions
 To run Minions, first build and locally install the Minions API using Maven, from the `minions-api` directory:
@@ -19,21 +20,21 @@ To run Minions, first build and locally install the Minions API using Maven, fro
 mvn clean install
 ```
 
-Edit the `runMinions.sh` script in the `minions-core folder`, to set your configuration options:
+Edit the `runMinions.sh` script in the `minions-core` folder, to set your configuration options:
 
-```
-minions.user.name - The user name (JID localpart) for the account Minions should log in as.
-minions.user.service - The chat service (JID domainpart) for the account.
-minions.user.resource - The resource (JID resourcepart) for login.
-minions.user.password - The password for the account.
-minions.service.server - Optional server if not the same as service.
-minions.service.port - Optional port if not the default 5222.
-minions.room.jid - The JID of the room to join.
-minions.room.nick - Nickname to use in the room.
-minions.refresh.seconds - Polling interval to check for new plugins, defaults to 10 seconds.
-minions.prefix - The command prefix, defaults to '!'
-minions.pluginsdir - The directory in which plugins are located, defaults to ~/.local/share/minions/plugins
-```
+Property | Description
+-------- | -----------
+`minions.user.name` | The user name (JID localpart) for the account Minions should log in as.
+`minions.user.service` | The chat service (JID domainpart) for the account.
+`minions.user.resource` | The resource (JID resourcepart) for login.
+`minions.user.password` | The password for the account.
+`minions.service.server` | Optional server if not the same as service.
+`minions.service.port` | Optional port if not the default 5222.
+`minions.room.jid` | The JID of the room to join.
+`minions.room.nick` | Nickname to use in the room.
+`minions.refresh.seconds` | Polling interval to check for new plugins, defaults to 10 seconds.
+`minions.prefix` | The command prefix, defaults to '!'
+`minions.pluginsdir` | The directory in which plugins are located, defaults to ~/.local/share/minions/plugins
 
 Run the starter script from the `minions-core` folder:
 
@@ -52,35 +53,39 @@ Declare the Minions API as a dependency:
 </dependency>
 ```
 
-Using the `echo-minion` as an example,  create your implementation of the `Minion` interface:
+Using the `echo-minion` as an example,  extend the `Minion` class:
 
 ```java
-public class EchoMinion implements Minion {
-    private static final String COMMAND = "echo";
-    
-    @Override
-    public String getCommand() {
-        return COMMAND;
-    }
+package com.boothj5.minions.echo;
 
-    @Override
-    public String getHelp() {
-        return COMMAND + " [message] - Echo something.";
-    }
+import com.boothj5.minions.Minion;
+import com.boothj5.minions.MinionsException;
+import com.boothj5.minions.MinionsRoom;
 
-    @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        try {
-            String toEcho = message.substring(COMMAND.length() + 2);
-            muc.sendMessage(from + " said: " + toEcho);
-        } catch (RuntimeException e) {
-            muc.sendMessage(from + " didn't say anything for me to echo");
-        }
+public class EchoMinion extends Minion {
+  @Override
+  public String getHelp() {
+    return "[message] - Echo something.";
+  }
+
+  @Override
+  public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    String trimmed = message.trim();
+    if ("".equals(trimmed)) {
+      muc.sendMessage(from + " didn't say anything for me to echo");
+    } else {
+      muc.sendMessage(from + " said: " + trimmed);
     }
+  }
 }
 ```
 
-The plugin needs to be packaged as a fat jar (with dependencies) and must include a Manifest attribute `MinionClass` to let Minions know how to load it.  Example from `echo-minion`:
+The plugin needs to be packaged as a fat jar (with dependencies) and must include two Manifest attributes:
+
+`MinionClass` - Implementation of the `Minion` interface.  
+`MinionCommand` - The command name.
+
+Example from `echo-minion`:
 
 ```xml
 <plugin>
@@ -97,6 +102,7 @@ The plugin needs to be packaged as a fat jar (with dependencies) and must includ
       </manifest>
       <manifestEntries>
         <MinionClass>com.boothj5.minions.echo.EchoMinion</MinionClass>
+        <MinionCommand>echo</MinionCommand>
       </manifestEntries>
     </archive>
   </configuration>
@@ -136,9 +142,14 @@ When the Minions bot is present in the chat room, use the following to list avai
 Example output:
 
 ```
-18:11 - minions: 
+22:17 - boothj5: !help
+22:17 - minions:
         !help - Show this help.
         !status [url] - Get the http status code for a URL.
+        !digest - Calculate various digests of a given value. Send 'help' for more information.
+        !calc [expression] - Calculate result of evaluating expression.
+        !apples give|take - Give or take an apple from the minion.
+        !bin to|from [value] - Convert integer to binary, or binary to integer.
         !chatter [message] - Send a message to chatterbot.
         !echo [message] - Echo something.
         !props - Show OS system properties.
