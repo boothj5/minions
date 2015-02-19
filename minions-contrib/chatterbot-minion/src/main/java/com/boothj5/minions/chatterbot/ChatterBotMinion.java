@@ -7,8 +7,12 @@ import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChatterBotMinion extends Minion {
+    private static final Logger LOG = LoggerFactory.getLogger(ChatterBotMinion.class);
+
     private final ChatterBotFactory factory;
     private ChatterBotSession botsession;
 
@@ -32,7 +36,9 @@ public class ChatterBotMinion extends Minion {
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         String think;
         try {
+            LOG.debug("Sending to bot: " + message);
             think = botsession.think(message);
+            LOG.debug("Received from bot:" + think);
         } catch (Exception e) {
             muc.sendMessage("Error talking to chatterbot.");
             return;
