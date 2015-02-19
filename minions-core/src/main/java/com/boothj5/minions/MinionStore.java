@@ -4,27 +4,22 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 
 public class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
-    public static final String MANIFEST_CLASS = "MinionClass";
-    private static final String MANIFEST_COMMAND = "MinionCommand" ;
     private final MultiUserChat muc;
-    private final Map<String, Minion> minions;
-    private final String minionsDir;
-    private final Map<String, JarMetadata> currentJars;
+    private final Minions minions;
+    private final String minionsDirProp;
+    private final Map<String, MinionJar> currentJars;
 
     private boolean isLocked = false;
 
@@ -40,9 +35,9 @@ public class MinionStore {
         notify();
     }
 
-    public MinionStore(String minionsDir, int refreshSeconds, MultiUserChat muc) {
-        this.minionsDir = minionsDir;
-        this.minions = new HashMap<>();
+    public MinionStore(String minionsDirProp, int refreshSeconds, MultiUserChat muc) {
+        this.minionsDirProp = minionsDirProp;
+        this.minions = new Minions();
         this.currentJars = new HashMap<>();
         this.muc = muc;
 
@@ -62,14 +57,7 @@ public class MinionStore {
     }
 
     public List<String> commandList() {
-        List<String> result = new ArrayList<>();
-        Set<String> commandSet = minions.keySet();
-
-        for (String command: commandSet) {
-            result.add(command);
-        }
-
-        return result;
+        return minions.getCommands();
     }
 
     public Minion get(String command) {
@@ -78,75 +66,54 @@ public class MinionStore {
 
     private void load() throws MinionsException {
         try {
-            File minionsDirFile = new File(minionsDir);
-            File[] newJarFiles = minionsDirFile.listFiles();
-            Map<String, JarMetadata> newJars = new HashMap<>();
+            Map<String, MinionJar> newJars = new HashMap<>();
+            Map<String, MinionJar> jarsToLoad = new HashMap<>();
 
-            if (newJarFiles != null) {
-                List<URL> urlList = new ArrayList<>();
+            List<URL> urlList = new ArrayList<>();
+            List<String> jarsToRemove = new ArrayList<>();
 
-                Map<String, JarMetadata> jarsToLoad = new HashMap<>();
-                List<String> jarsToRemove = new ArrayList<>();
+            MinionsDir minionsDir = new MinionsDir(minionsDirProp);
+            List<MinionJar> newMinionJars = minionsDir.listMinionJars();
 
-                for (File newJarFile : newJarFiles) {
-                    InputStream in = new FileInputStream(newJarFile);
-                    JarInputStream stream = new JarInputStream(in);
-                    Manifest manifest = stream.getManifest();
-
-                    long timestamp = newJarFile.lastModified();
-                    String className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
-                    String command = manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
-
-                    JarMetadata newJar = new JarMetadata(timestamp, command, className);
-                    newJars.put(newJarFile.getName(), newJar);
-
-                    if (currentJars.containsKey(newJarFile.getName())) {
-
-                        JarMetadata currentJar = currentJars.get(newJarFile.getName());
-                        if (!currentJar.getTimestamp().equals(newJar.getTimestamp())) {
-                            jarsToLoad.put(newJarFile.getName(), newJar);
-                            urlList.add(newJarFile.toURI().toURL());
-                            LOG.debug("Updated JAR: " + newJarFile.getName());
-                            muc.sendMessage("Updated JAR: " + newJarFile.getName());
-                        }
-                    } else {
-                        jarsToLoad.put(newJarFile.getName(), newJar);
-                        urlList.add(newJarFile.toURI().toURL());
-                        LOG.debug("Added JAR: " + newJarFile.getName());
-                        muc.sendMessage("Added JAR: " + newJarFile.getName());
+            for (MinionJar newMinionJar : newMinionJars) {
+                newJars.put(newMinionJar.getName(), newMinionJar);
+                if (currentJars.containsKey(newMinionJar.getName())) {
+                    MinionJar currentMinionJar = currentJars.get(newMinionJar.getName());
+                    if (!currentMinionJar.getTimestamp().equals(newMinionJar.getTimestamp())) {
+                        jarsToLoad.put(newMinionJar.getName(), newMinionJar);
+                        urlList.add(newMinionJar.getURL());
+                        LOG.debug("Updated JAR: " + newMinionJar.getName());
+                        muc.sendMessage("Updated JAR: " + newMinionJar.getName());
                     }
+                } else {
+                    jarsToLoad.put(newMinionJar.getName(), newMinionJar);
+                    urlList.add(newMinionJar.getURL());
+                    LOG.debug("Added JAR: " + newMinionJar.getName());
+                    muc.sendMessage("Added JAR: " + newMinionJar.getName());
                 }
+            }
 
-                for (String jarFile : currentJars.keySet()) {
-                    if (!newJars.containsKey(jarFile)) {
-                        String command = currentJars.get(jarFile).getCommand();
-                        Minion minionToRemove = minions.get(command);
-                        minionToRemove.onRemove();
-                        minions.remove(command);
-                        jarsToRemove.add(jarFile);
-                        LOG.debug("Removed JAR: " + jarFile);
-                        muc.sendMessage("Removed JAR: " + jarFile);
-                    }
+            for (String currentJar : currentJars.keySet()) {
+                if (!newJars.containsKey(currentJar)) {
+                    minions.remove(currentJars.get(currentJar).getCommand());
+                    jarsToRemove.add(currentJar);
+                    LOG.debug("Removed JAR: " + currentJar);
+                    muc.sendMessage("Removed JAR: " + currentJar);
                 }
+            }
 
-                URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
+            URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
 
-                for (String jarToLoad : jarsToLoad.keySet()) {
-                    String minionClass = newJars.get(jarToLoad).getClassName();
-                    String minionCommand = newJars.get(jarToLoad).getCommand();
-                    Class<?> clazz = Class.forName(minionClass, true, loader);
-                    Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
-                    Constructor<? extends Minion> ctr = minionClazz.getConstructor();
-                    Minion minion = ctr.newInstance();
-                    minions.put(minionCommand, minion);
-                }
+            for (String jarToLoad : jarsToLoad.keySet()) {
+                MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
+                minions.add(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
+            }
 
-                for (String addJar : jarsToLoad.keySet()) {
-                    currentJars.put(addJar, jarsToLoad.get(addJar));
-                }
-                for (String removeJar : jarsToRemove) {
-                    currentJars.remove(removeJar);
-                }
+            for (String jarToLoad : jarsToLoad.keySet()) {
+                currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
+            }
+            for (String jarToRemove : jarsToRemove) {
+                currentJars.remove(jarToRemove);
             }
 
         } catch (Throwable t) {
