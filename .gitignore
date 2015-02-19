@@ -34,3 +34,6 @@ minions-contrib/digest-minion/digest-minion.iml
 
 minions-contrib/apples-minion/target/
 minions-contrib/apples-minion/apples-minion.iml
+
+minions-contrib/spellchecker-minion/target/
+minions-contrib/spellchecker-minion/spellchecker-minion.iml
