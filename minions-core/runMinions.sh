@@ -1,5 +1,5 @@
 #!/bin/sh
-mvn package && java \
+mvn clean package 1>/dev/null 2>&1 && nohup java \
     -Dminions.user.name=commandbot \
     -Dminions.user.service=ejabberd.local \
     -Dminions.user.resource=daemon \
@@ -9,5 +9,5 @@ mvn package && java \
     -Dminions.room.jid=botroom@conference.ejabberd.local \
     -Dminions.room.nick=minions \
     -Dminions.refresh.seconds=10 \
-    -jar target/minions-core-1.0-SNAPSHOT.jar
+    -jar target/minions-core-1.0-SNAPSHOT.jar 1>/dev/null 2>&1 &
 
