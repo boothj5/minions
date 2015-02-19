@@ -105,11 +105,6 @@ public class MinionsListener implements PacketListener {
         boolean containsBody = messageStanza.getBody() != null;
         boolean delayed = messageStanza.toXML().contains("delay");
         boolean fromMe = messageStanza.getFrom().endsWith(myNick);
-
-        if (containsBody && !delayed && !fromMe) {
-            LOG.debug("Received: " + messageStanza.getBody());
-        }
-
         boolean isCommand = messageStanza.getBody().startsWith(minionsPrefix);
 
         return containsBody && !delayed && !fromMe && isCommand;
