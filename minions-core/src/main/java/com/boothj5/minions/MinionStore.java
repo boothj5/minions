@@ -20,6 +20,7 @@ public class MinionStore {
     private final Minions minions;
     private final String minionsDirProp;
     private final Map<String, MinionJar> currentJars;
+    private boolean loaded;
 
     private boolean isLocked = false;
 
@@ -40,6 +41,7 @@ public class MinionStore {
         this.minions = new Minions();
         this.currentJars = new HashMap<>();
         this.muc = muc;
+        this.loaded = false;
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
@@ -83,13 +85,17 @@ public class MinionStore {
                         jarsToLoad.put(newMinionJar.getName(), newMinionJar);
                         urlList.add(newMinionJar.getURL());
                         LOG.debug("Updated JAR: " + newMinionJar.getName());
-                        muc.sendMessage("Updated JAR: " + newMinionJar.getName());
+                        if (loaded) {
+                            muc.sendMessage("Updated JAR: " + newMinionJar.getName());
+                        }
                     }
                 } else {
                     jarsToLoad.put(newMinionJar.getName(), newMinionJar);
                     urlList.add(newMinionJar.getURL());
                     LOG.debug("Added JAR: " + newMinionJar.getName());
-                    muc.sendMessage("Added JAR: " + newMinionJar.getName());
+                    if (loaded) {
+                        muc.sendMessage("Added JAR: " + newMinionJar.getName());
+                    }
                 }
             }
 
@@ -98,7 +104,9 @@ public class MinionStore {
                     minions.remove(currentJars.get(currentJar).getCommand());
                     jarsToRemove.add(currentJar);
                     LOG.debug("Removed JAR: " + currentJar);
-                    muc.sendMessage("Removed JAR: " + currentJar);
+                    if (loaded) {
+                        muc.sendMessage("Removed JAR: " + currentJar);
+                    }
                 }
             }
 
@@ -115,6 +123,8 @@ public class MinionStore {
             for (String jarToRemove : jarsToRemove) {
                 currentJars.remove(jarToRemove);
             }
+
+            loaded = true;
 
         } catch (Throwable t) {
             throw new MinionsException(t);
