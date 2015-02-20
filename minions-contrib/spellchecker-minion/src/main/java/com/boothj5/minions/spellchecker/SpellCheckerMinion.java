@@ -14,6 +14,12 @@ import java.util.List;
 
 public class SpellCheckerMinion extends Minion {
     private static final Logger LOG = LoggerFactory.getLogger(SpellCheckerMinion.class);
+    private final JLanguageTool langTool;
+
+    public SpellCheckerMinion() throws IOException {
+        langTool = new JLanguageTool(new BritishEnglish());
+        langTool.activateDefaultPatternRules();
+    }
 
     @Override
     public String getHelp() {
@@ -23,20 +29,21 @@ public class SpellCheckerMinion extends Minion {
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
-            JLanguageTool langTool = new JLanguageTool(new BritishEnglish());
-            langTool.activateDefaultPatternRules();
             List<RuleMatch> matches = langTool.check(message);
+            String result = "";
 
             for (RuleMatch match : matches) {
-                String result =
-                        "\n" +
-                        "Potential error at line " + match.getLine() +
-                        ", column " + match.getColumn() +
-                        ": " + match.getMessage() +
-                        "\n" +
-                        "Suggested correction: " + match.getSuggestedReplacements();
-
+                if (!"Capitalization".equals(match.getRule().getCategory().toString())) {
+                    String word = message.substring(match.getColumn() - 1, match.getEndColumn() - 1);
+                    result += "\n" +
+                            match.getRule().getCategory().toString() + ": " + word + "\n" +
+                            "Suggestions: " + match.getSuggestedReplacements() + "\n";
+                }
+            }
+            if (!result.equals("")) {
                 muc.sendMessage(result);
+            } else {
+                muc.sendMessage("No suggestions.");
             }
         } catch (IOException e) {
             LOG.debug("Failed to initialise spell checker.");
