@@ -12,38 +12,67 @@ import org.slf4j.LoggerFactory;
 
 public class ChatterBotMinion extends Minion {
     private static final Logger LOG = LoggerFactory.getLogger(ChatterBotMinion.class);
+    private String botName;
 
-    private final ChatterBotFactory factory;
-    private ChatterBotSession botsession;
+    private ChatterBotSession jabberwackyBotSession;
+    private ChatterBotSession cleverBotSession;
+    private ChatterBotSession chosenSession;
 
     public ChatterBotMinion() {
-        factory = new ChatterBotFactory();
-        ChatterBot bot = null;
+        ChatterBotFactory factory = new ChatterBotFactory();
+        ChatterBot cleverBot;
+        ChatterBot jabberwackyBot;
         try {
-            bot = factory.create(ChatterBotType.JABBERWACKY);
-            botsession = bot.createSession();
+            jabberwackyBot = factory.create(ChatterBotType.JABBERWACKY);
+            jabberwackyBotSession = jabberwackyBot.createSession();
         } catch (Exception e) {
+            LOG.debug("Error loading jabberwacky");
             e.printStackTrace();
         }
+        try {
+            cleverBot = factory.create(ChatterBotType.CLEVERBOT);
+            cleverBotSession = cleverBot.createSession();
+        } catch (Exception e) {
+            LOG.debug("Error loading cleverbot");
+            e.printStackTrace();
+        }
+
+        chosenSession = jabberwackyBotSession != null ? jabberwackyBotSession : cleverBotSession;
+        botName = jabberwackyBotSession != null ? "jabberwacky" : "cleverbot";
     }
 
     @Override
     public String getHelp() {
-        return "[message] - Send a message to chatterbot.";
+        return "[message|set bot] - Send a message to chatterbot. Set bot to cleverbot, or jabberwacky";
     }
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
-        String think;
-        try {
-            LOG.debug("Sending to bot: " + message);
-            think = botsession.think(message);
-            LOG.debug("Received from bot:" + think);
-        } catch (Exception e) {
-            muc.sendMessage("Error talking to chatterbot.");
-            return;
+        switch (message) {
+            case "set cleverbot":
+                chosenSession = cleverBotSession;
+                botName = "cleverbot";
+                LOG.debug("Bot set to cleverbot");
+                muc.sendMessage("Bot set to cleverbot");
+                break;
+            case "set jabberwacky":
+                chosenSession = jabberwackyBotSession;
+                botName = "jabberwacky";
+                LOG.debug("Bot set to jabberwacky");
+                muc.sendMessage("Bot set to jabberwacky");
+                break;
+            default:
+                String response;
+                try {
+                    LOG.debug("Sending to bot: " + message);
+                    response = chosenSession.think(message);
+                    LOG.debug("Received from bot:" + response);
+                } catch (Exception e) {
+                    muc.sendMessage("Error talking to chatterbot: " + botName);
+                    return;
+                }
+                muc.sendMessage(botName + " -> " + from + ": " + response);
+                break;
         }
-
-        muc.sendMessage(think);
     }
 }
