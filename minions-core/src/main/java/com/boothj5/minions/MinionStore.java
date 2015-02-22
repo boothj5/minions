@@ -130,4 +130,11 @@ public class MinionStore {
             throw new MinionsException(t);
         }
     }
+
+    public List<MinionJar> getJars() {
+        List<MinionJar> result = new ArrayList<>();
+        result.addAll(currentJars.values());
+
+        return result;
+    }
 }
