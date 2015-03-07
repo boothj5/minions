@@ -1,10 +1,8 @@
 .DS_Store
-*/.DS_Store
-minions-core/minions.log
-minions-core/nohup.out
-minions-core/runMinions.sh.bak
 .idea/
+*/.DS_Store
 minions.iml
+runMinions.sh.bak
 minions-core/target/
 minions-core/minions-core.iml
 minions-core/dependency-reduced-pom.xml
