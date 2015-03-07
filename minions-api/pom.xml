@@ -10,7 +10,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.boothj5.minions</groupId>
     <artifactId>minions-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 
