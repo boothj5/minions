@@ -25,21 +25,20 @@ public class MinionsRunner {
     private final String minionsDir;
     private final int refreshSeconds;
 
-    public MinionsRunner(String user, String service, String password, String resource, int port, String server,
-                         String room, String roomNickname, String roomPassword, String minionsPrefix, String minionsDir,
-                         int refreshSeconds) {
-        this.user = user;
-        this.service = service;
-        this.password = password;
-        this.resource = resource;
-        this.port = port;
-        this.server = server;
-        this.room = room;
-        this.roomNickname = roomNickname;
-        this.roomPassword = roomPassword;
-        this.minionsPrefix = minionsPrefix;
-        this.minionsDir = minionsDir;
-        this.refreshSeconds = refreshSeconds;
+    public MinionsRunner() {
+        PropertiesReader reader = new PropertiesReader();
+        this.user = reader.getUser();
+        this.service = reader.getService();
+        this.password = reader.getPassword();
+        this.resource = reader.getResource();
+        this.port = reader.getPort();
+        this.server = reader.getServer();
+        this.room = reader.getRoom();
+        this.roomNickname = reader.getRoomNick();
+        this.roomPassword = reader.getRoomPassword();
+        this.minionsPrefix = reader.getPrefix();
+        this.minionsDir = reader.getPluginsDir();
+        this.refreshSeconds = reader.getRefreshSeconds();
     }
 
     public void run() throws MinionsException {

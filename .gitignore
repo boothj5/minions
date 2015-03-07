@@ -2,6 +2,7 @@
 */.DS_Store
 minions-core/minions.log
 minions-core/nohup.out
+minions-core/runMinions.sh.bak
 .idea/
 minions.iml
 minions-core/target/
