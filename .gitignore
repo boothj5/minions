@@ -2,6 +2,7 @@
 .idea/
 */.DS_Store
 minions.iml
+minions.log
 runMinions.sh.bak
 minions-core/target/
 minions-core/minions-core.iml
