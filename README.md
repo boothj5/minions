@@ -13,13 +13,13 @@ Folder | Contents
 `minions-contrib` | Example Minion plugins.
 
 # Running Minions
-To build Minions, from the project root run:
+First build Minions, from the project root run:
 
 ```
 mvn clean install
 ```
 
-Create a YAML file with your configuration, and example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml):
+Then create a YAML file with your configuration, and example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml):
 
 ```
 user: 
@@ -38,10 +38,10 @@ plugins
     dir: The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
 ```
 
-Run the starter script from the `minions-core` folder:
+Run the Jar file passing your configuration file as an argument:
 
 ```
-./runMinions.sh
+java -jar minions-core/target/minions-core-1.0-SNAPSHOT.jar minions.yml
 ```
 
 # Creating a plugin
