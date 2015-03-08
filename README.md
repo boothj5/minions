@@ -37,7 +37,7 @@ Then create a YAML file with your configuration:
 &nbsp;&nbsp;&nbsp;&nbsp;`prefix:` The command prefix, defaults to `!`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`dir:` The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`<br>
 
-An example can ber found [here](https://github.com/boothj5/minions/blob/master/minions.yml)
+An example can be found [here](https://github.com/boothj5/minions/blob/master/minions.yml)
 
 Run the Jar file passing your configuration file as an argument:
 
