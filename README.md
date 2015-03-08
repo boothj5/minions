@@ -32,6 +32,7 @@ service
 room
     jid: The JID of the room to join.
     nick: Nickname to use in the room, `minions` by default.
+    password: Password for the room if required.
 plugins
     refreshSeconds: Polling interval to check for new plugins, defaults to `10` seconds.
     prefix: The command prefix, defaults to `!`
@@ -132,7 +133,7 @@ Copy the fat jar to the plugins directory, e.g. for the `echo-minion`:
 cp target/echo-minion-1.0-SNAPSHOT-jar-with-dependencies.jar ~/.local/share/minions/plugins/.
 ```
 
-The plugin will be available on the next refresh (`minions.refresh.seconds`).
+The plugin will be available on the next refresh.
 
 #Using Minions
 When the Minions bot is present in the chat room, use the following to list available commands, (assuming the default prefix '!'):
@@ -155,6 +156,12 @@ Example output:
         !chatter [message] - Send a message to chatterbot.
         !echo [message] - Echo something.
         !props - Show OS system properties.
+```
+
+To list Jars that are currently loaded:
+
+```
+!jars
 ```
 
 To execute a command, enter the command with the prefix, and any args required e.g.:
