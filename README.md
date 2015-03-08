@@ -19,7 +19,7 @@ First build Minions, from the project root run:
 mvn clean install
 ```
 
-Then create a YAML file with your configuration, and example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml):
+Then create a YAML file with your configuration:
 
 ```
 user: 
@@ -38,6 +38,8 @@ plugins
     prefix: The command prefix, defaults to `!`
     dir: The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
 ```
+
+An example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml)
 
 Run the Jar file passing your configuration file as an argument:
 
