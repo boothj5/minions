@@ -1,6 +1,5 @@
 user:
-    name: commandbot
-    service: ejabberd.local
+    name: commandbot@ejabberd.local
     resource: daemon
     password: password
 

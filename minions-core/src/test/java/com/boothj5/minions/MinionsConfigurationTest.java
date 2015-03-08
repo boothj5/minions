@@ -35,26 +35,10 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void throwsExceptionWhenNoUserService() {
-        Map<String, Map<String, Object>> config = new HashMap<>();
-        Map<String, Object> user = new HashMap<>();
-        user.put("name", "username");
-        config.put("user", user);
-
-        try {
-            new MinionsConfiguration(config);
-            fail("Expected MinionsException not thrown");
-        } catch (MinionsException me) {
-            assertEquals("Missing configuration property: user.service", me.getMessage());
-        }
-    }
-
-    @Test
     public void throwsExceptionWhenNoUserPassword() {
         Map<String, Map<String, Object>> config = new HashMap<>();
         Map<String, Object> user = new HashMap<>();
-        user.put("name", "username");
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         config.put("user", user);
 
         try {
@@ -97,16 +81,14 @@ public class MinionsConfigurationTest {
         Map<String, Map<String, Object>> config = new HashMap<>();
         addValidRoom(config);
         Map<String, Object> user = new HashMap<>();
-        String expected = "username";
-        user.put("name", expected);
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         user.put("password", "userpassword");
         config.put("user", user);
 
         MinionsConfiguration minionsConfiguration = new MinionsConfiguration(config);
         String actual = minionsConfiguration.getUser();
 
-        assertEquals(expected, actual);
+        assertEquals("username", actual);
     }
 
     @Test
@@ -114,16 +96,14 @@ public class MinionsConfigurationTest {
         Map<String, Map<String, Object>> config = new HashMap<>();
         addValidRoom(config);
         Map<String, Object> user = new HashMap<>();
-        String expected = "userservice";
-        user.put("name", "username");
-        user.put("service", expected);
+        user.put("name", "username@chatservice");
         user.put("password", "userpassword");
         config.put("user", user);
 
         MinionsConfiguration minionsConfiguration = new MinionsConfiguration(config);
         String actual = minionsConfiguration.getService();
 
-        assertEquals(expected, actual);
+        assertEquals("chatservice", actual);
     }
 
     @Test
@@ -132,8 +112,7 @@ public class MinionsConfigurationTest {
         addValidRoom(config);
         Map<String, Object> user = new HashMap<>();
         String expected = "userpassword";
-        user.put("name", "username");
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         user.put("password", expected);
         config.put("user", user);
 
@@ -149,8 +128,7 @@ public class MinionsConfigurationTest {
         addValidRoom(config);
         Map<String, Object> user = new HashMap<>();
         String expected = "userresource";
-        user.put("name", "username");
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         user.put("password", "userpassword");
         user.put("resource", expected);
         config.put("user", user);
@@ -167,8 +145,7 @@ public class MinionsConfigurationTest {
         addValidRoom(config);
         Map<String, Object> user = new HashMap<>();
         String expected = "minions-core";
-        user.put("name", "username");
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         user.put("password", "userpassword");
         config.put("user", user);
 
@@ -456,8 +433,7 @@ public class MinionsConfigurationTest {
 
     private void addValidUser(Map<String, Map<String, Object>> config) {
         Map<String, Object> user = new HashMap<>();
-        user.put("name", "username");
-        user.put("service", "userservice");
+        user.put("name", "username@chatservice");
         user.put("password", "userpassword");
         config.put("user", user);
     }

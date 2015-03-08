@@ -93,9 +93,11 @@ public class MinionsConfiguration {
         } else {
             if (user.get("name") == null) {
                 throw new MinionsException("Missing configuration property: user.name");
-            }
-            if (user.get("service") == null) {
-                throw new MinionsException("Missing configuration property: user.service");
+            } else {
+                String jid = (String) user.get("name");
+                if (!jid.contains("@")) {
+                    throw new MinionsException("Invalid property user.name, specify a valid Jabber ID");
+                }
             }
             if (user.get("password") == null) {
                 throw new MinionsException("Missing configuration property: user.password");
@@ -145,8 +147,10 @@ public class MinionsConfiguration {
     }
 
     private void loadUserConfig(Map<String, Object> user) {
-        userName = (String) user.get("name");
-        userService = (String) user.get("service");
+        String jid = (String) user.get("name");
+        String[] split = jid.split("@");
+        userName = split[0];
+        userService = split[1];
         userPassword = (String) user.get("password");
         if (user.get("resource") != null) {
             userResource = (String) user.get("resource");
