@@ -12,62 +12,40 @@ import static java.lang.String.format;
 public class MinionsRunner {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
 
-    private final String user;
-    private final String service;
-    private final String password;
-    private final String resource;
-    private final int port;
-    private final String server;
-    private final String room;
-    private final String roomNickname;
-    private final String roomPassword;
-    private final String minionsPrefix;
-    private final String minionsDir;
-    private final int refreshSeconds;
+    private final MinionsConfiguration config;
 
-    public MinionsRunner() {
-        PropertiesReader reader = new PropertiesReader();
-        this.user = reader.getUser();
-        this.service = reader.getService();
-        this.password = reader.getPassword();
-        this.resource = reader.getResource();
-        this.port = reader.getPort();
-        this.server = reader.getServer();
-        this.room = reader.getRoom();
-        this.roomNickname = reader.getRoomNick();
-        this.roomPassword = reader.getRoomPassword();
-        this.minionsPrefix = reader.getPrefix();
-        this.minionsDir = reader.getPluginsDir();
-        this.refreshSeconds = reader.getRefreshSeconds();
+    public MinionsRunner(MinionsConfiguration config) {
+        this.config = config;
     }
 
     public void run() throws MinionsException {
         try {
-
             LOG.debug("Starting MinionsRunner");
             ConnectionConfiguration connectionConfiguration;
-            if (StringUtils.isNotBlank(server)) {
-                connectionConfiguration = new ConnectionConfiguration(server, port, service);
+            if (StringUtils.isNotBlank(config.getServer())) {
+                connectionConfiguration = new ConnectionConfiguration(config.getServer(), config.getPort(), config.getService());
             } else {
-                connectionConfiguration = new ConnectionConfiguration(service, port);
+                connectionConfiguration = new ConnectionConfiguration(config.getService(), config.getPort());
             }
 
             XMPPConnection conn = new XMPPConnection(connectionConfiguration);
             conn.connect();
-            conn.login(user, password, resource);
-            LOG.debug(format("Logged in: %s@%s", user, service));
+            conn.login(config.getUser(), config.getPassword(), config.getResource());
+            LOG.debug(format("Logged in: %s@%s", config.getUser(), config.getService()));
 
-            MultiUserChat muc = new MultiUserChat(conn, room);
-            if (StringUtils.isBlank(roomPassword)) {
-                muc.join(roomNickname);
+            MultiUserChat muc = new MultiUserChat(conn, config.getRoom());
+            if (StringUtils.isBlank(config.getRoomPassword())) {
+                muc.join(config.getRoomNick());
             } else {
-                muc.join(roomNickname, roomPassword);
+                muc.join(config.getRoomNick(), config.getRoomPassword());
             }
 
-            LOG.debug(format("Joined: %s as %s", room, room));
+            LOG.debug(format("Joined: %s as %s", config.getRoom(), config.getRoomNick()));
 
-            MinionStore minions = new MinionStore(minionsDir, refreshSeconds, muc);
-            MinionsListener listener = new MinionsListener(minions, minionsPrefix, muc, roomNickname);
+            MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
+
+            MinionsListener listener = new MinionsListener(minions, config.getPrefix(), muc, config.getRoomNick());
+
             muc.addMessageListener(listener);
 
             Object lock = new Object();

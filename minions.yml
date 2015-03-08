@@ -1,0 +1,19 @@
+user:
+    name: commandbot
+    service: ejabberd.local
+    resource: daemon
+    password: password
+
+service:
+    server: localhost
+    port: 5242
+
+room:
+    jid: botroom@conference.ejabberd.local
+    nick: command-bot
+    password: m1n10n5
+
+plugins:
+    dir: /home/boothj5/.local/share/minions/plugins
+    refreshSeconds: 30
+    prefix: ":"

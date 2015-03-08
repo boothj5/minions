@@ -1,9 +1,10 @@
 .DS_Store
 .idea/
 */.DS_Store
+cirrus-minions.yml
+whatsnotapp-minions.yml
+
 minions.iml
-minions.log
-runMinions.sh.bak
 minions-core/target/
 minions-core/minions-core.iml
 minions-core/dependency-reduced-pom.xml
