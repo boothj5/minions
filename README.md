@@ -21,7 +21,7 @@ mvn clean install
 
 Then create a YAML file with your configuration:
 
-`user:` 
+`user:`<br>
 `name:` The user name for the account Minions should log in as.
 `resource:` The resource for login, `minions-core` by default.
 `password:` The password for the account.
