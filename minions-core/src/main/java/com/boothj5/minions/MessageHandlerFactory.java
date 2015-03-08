@@ -17,39 +17,34 @@ public class MessageHandlerFactory {
     }
 
     MessageHandler create(Message stanza) {
-        if (validBotCommand(stanza)) {
-            return new BotCommandHandler(stanza, minions, minionsPrefix, muc);
-        } else if (validMinionsCommand(stanza)) {
-            return new MinionCommandHandler(stanza, minions, minionsPrefix, muc);
+        if (stanza.getBody() != null) {
+            if (botCommand(stanza)) {
+                return new BotCommandHandler(stanza, minions, minionsPrefix, muc);
+            } else if (minionsCommand(stanza)) {
+                return new MinionCommandHandler(stanza, minions, minionsPrefix, muc);
+            } else {
+                return new DefaultMessageHandler(stanza, minions, minionsPrefix, muc);
+            }
         } else {
             return new DefaultMessageHandler(stanza, minions, minionsPrefix, muc);
         }
     }
 
-    private boolean validBotCommand(Message messageStanza) {
-        boolean containsBody = messageStanza.getBody() != null;
+    private boolean botCommand(Message messageStanza) {
         boolean delayed = messageStanza.toXML().contains("delay");
         boolean fromMe = messageStanza.getFrom().endsWith(myNick);
-        boolean isCommand = messageStanza.getBody().startsWith(myNick + ":");
-        int length = messageStanza.getBody().length();
+        String help = minionsPrefix + "help";
+        String jars = minionsPrefix + "jars";
+        boolean isCommand = help.equals(messageStanza.getBody()) || jars.equals(messageStanza.getBody());
 
-        if (containsBody) {
-            return !delayed && !fromMe && isCommand && length > myNick.length() + 1;
-        } else {
-            return false;
-        }
+        return !delayed && !fromMe && isCommand;
     }
 
-    private boolean validMinionsCommand(Message messageStanza) {
-        boolean containsBody = messageStanza.getBody() != null;
+    private boolean minionsCommand(Message messageStanza) {
         boolean delayed = messageStanza.toXML().contains("delay");
         boolean fromMe = messageStanza.getFrom().endsWith(myNick);
         boolean isCommand = messageStanza.getBody().startsWith(minionsPrefix);
 
-        if (containsBody) {
-            return !delayed && !fromMe && isCommand;
-        } else {
-            return false;
-        }
+        return !delayed && !fromMe && isCommand;
     }
 }

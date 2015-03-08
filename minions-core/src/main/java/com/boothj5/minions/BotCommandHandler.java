@@ -1,6 +1,5 @@
 package com.boothj5.minions;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.packet.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ public class BotCommandHandler extends MessageHandler {
 
     @Override
     public void execute() {
-        String command = parseBotCommand(stanza.getBody());
+        String command = stanza.getBody().substring(minionsPrefix.length());
         try {
             switch (command) {
                 case "help":
@@ -36,11 +35,6 @@ public class BotCommandHandler extends MessageHandler {
         } catch (MinionsException e) {
             e.printStackTrace();
         }
-    }
-
-    private String parseBotCommand(String message) {
-        int i = StringUtils.indexOf(message, ':');
-        return message.substring(i + 2).trim();
     }
 
     private void handleJars() {
