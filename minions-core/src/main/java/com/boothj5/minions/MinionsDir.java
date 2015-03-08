@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MinionsDir {
-    final File dir;
+    private final File dir;
 
     MinionsDir(String minionsDir) {
         dir = new File(minionsDir);
