@@ -13,33 +13,38 @@ Folder | Contents
 `minions-contrib` | Example Minion plugins.
 
 # Running Minions
-To run Minions, first build and locally install the Minions API using Maven, from the `minions-api` directory:
-
+First build Minions, from the project root run:
 
 ```
 mvn clean install
 ```
 
-Edit the `runMinions.sh` script in the `minions-core` folder, to set your configuration options:
-
-Property | Description
--------- | -----------
-`minions.user.name` | The user name (JID localpart) for the account Minions should log in as.
-`minions.user.service` | The chat service (JID domainpart) for the account.
-`minions.user.resource` | The resource (JID resourcepart) for login.
-`minions.user.password` | The password for the account.
-`minions.service.server` | Optional server if not the same as service.
-`minions.service.port` | Optional port if not the default 5222.
-`minions.room.jid` | The JID of the room to join.
-`minions.room.nick` | Nickname to use in the room.
-`minions.refresh.seconds` | Polling interval to check for new plugins, defaults to 10 seconds.
-`minions.prefix` | The command prefix, defaults to '!'
-`minions.pluginsdir` | The directory in which plugins are located, defaults to ~/.local/share/minions/plugins
-
-Run the starter script from the `minions-core` folder:
+Then create a YAML file with your configuration:
 
 ```
-./runMinions.sh
+user: 
+    name: The user name for the account Minions should log in as.
+    resource: The resource for login, `minions-core` by default.
+    password: The password for the account.
+service
+    server: Optional server if not the same as domain part of the username.
+    port: Optional port if not the default 5222.
+room
+    jid: The JID of the room to join.
+    nick: Nickname to use in the room, `minions` by default.
+    password: Password for the room if required.
+plugins
+    refreshSeconds: Polling interval to check for new plugins, defaults to `10` seconds.
+    prefix: The command prefix, defaults to `!`
+    dir: The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
+```
+
+An example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml)
+
+Run the Jar file passing your configuration file as an argument:
+
+```
+java -jar minions-core/target/minions-core-1.0-SNAPSHOT.jar minions.yml
 ```
 
 # Creating a plugin
@@ -130,7 +135,7 @@ Copy the fat jar to the plugins directory, e.g. for the `echo-minion`:
 cp target/echo-minion-1.0-SNAPSHOT-jar-with-dependencies.jar ~/.local/share/minions/plugins/.
 ```
 
-The plugin will be available on the next refresh (`minions.refresh.seconds`).
+The plugin will be available on the next refresh.
 
 #Using Minions
 When the Minions bot is present in the chat room, use the following to list available commands, (assuming the default prefix '!'):
@@ -153,6 +158,12 @@ Example output:
         !chatter [message] - Send a message to chatterbot.
         !echo [message] - Echo something.
         !props - Show OS system properties.
+```
+
+To list Jars that are currently loaded:
+
+```
+!jars
 ```
 
 To execute a command, enter the command with the prefix, and any args required e.g.:
