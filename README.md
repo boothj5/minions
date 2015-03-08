@@ -24,7 +24,7 @@ Create a YAML file with your configuration, and example can ber found at [here](
 | Property | Description |
 | -------- | ----------- |
 | `user` | | 
-|     `name` | The user name for the account Minions should log in as. |
+| &nbsp;`name` | The user name for the account Minions should log in as. |
 |     `resource` | The resource for login, `minions-core` by default. |
 |     `password` | The password for the account. |
 | `service` | |
