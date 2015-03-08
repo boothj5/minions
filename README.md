@@ -21,23 +21,22 @@ mvn clean install
 
 Then create a YAML file with your configuration:
 
-```
-user: 
-    name: The user name for the account Minions should log in as.
-    resource: The resource for login, `minions-core` by default.
-    password: The password for the account.
-service
-    server: Optional server if not the same as domain part of the username.
-    port: Optional port if not the default 5222.
-room
-    jid: The JID of the room to join.
-    nick: Nickname to use in the room, `minions` by default.
-    password: Password for the room if required.
-plugins
-    refreshSeconds: Polling interval to check for new plugins, defaults to `10` seconds.
-    prefix: The command prefix, defaults to `!`
-    dir: The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
-```
+`user:` 
+    `name:` The user name for the account Minions should log in as.
+    `resource:` The resource for login, `minions-core` by default.
+    `password:` The password for the account.
+`service:`
+    `server:` Optional server if not the same as domain part of the username.
+    `port:` Optional port if not the default `5222`.
+`room:`
+    `jid:` The JID of the room to join.
+    `nick:` Nickname to use in the room, `minions` by default.
+    `password:` Password for the room if required.
+`plugins:`
+    `refreshSeconds:` Polling interval to check for new plugins, defaults to `10` seconds.
+    `prefix:` The command prefix, defaults to `!`
+    `dir:` The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
+
 
 An example can ber found at [here](https://github.com/boothj5/minions/blob/master/minions.yml)
 
