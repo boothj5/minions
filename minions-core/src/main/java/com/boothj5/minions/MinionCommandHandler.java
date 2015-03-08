@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
-public class MinionCommandHandler extends MessageHandler {
+class MinionCommandHandler extends MessageHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MinionCommandHandler.class);
 
     MinionCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {

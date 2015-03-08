@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 
-public class MinionsRunner {
+class MinionsRunner {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
 
     private final MinionsConfiguration config;
 
-    public MinionsRunner(MinionsConfiguration config) {
+    MinionsRunner(MinionsConfiguration config) {
         this.config = config;
     }
 
-    public void run() throws MinionsException {
+    void run() throws MinionsException {
         try {
             LOG.debug("Starting MinionsRunner");
             ConnectionConfiguration connectionConfiguration;

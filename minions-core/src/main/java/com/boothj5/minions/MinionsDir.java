@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MinionsDir {
+class MinionsDir {
     final File dir;
 
-    public MinionsDir(String minionsDir) {
+    MinionsDir(String minionsDir) {
         dir = new File(minionsDir);
     }
 
-    public List<MinionJar> listMinionJars() throws IOException {
+    List<MinionJar> listMinionJars() throws IOException {
         List<MinionJar> result = new ArrayList<>();
 
         File[] files = dir.listFiles();

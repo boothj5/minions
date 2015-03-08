@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
-public class MinionsMain {
+class MinionsMain {
     public static void main(String[] args) throws MinionsException {
         if (args.length < 1) {
             throw new MinionsException("No configuration file specified.");

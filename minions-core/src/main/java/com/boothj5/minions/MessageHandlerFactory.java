@@ -3,7 +3,7 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-public class MessageHandlerFactory {
+class MessageHandlerFactory {
     private final MinionStore minions;
     private final String minionsPrefix;
     private final MinionsRoom muc;

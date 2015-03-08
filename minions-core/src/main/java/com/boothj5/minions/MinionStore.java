@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MinionStore {
+class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
     private final MultiUserChat muc;
     private final Minions minions;
@@ -24,19 +24,19 @@ public class MinionStore {
 
     private boolean isLocked = false;
 
-    public synchronized void lock() throws InterruptedException {
+    synchronized void lock() throws InterruptedException {
         while(isLocked){
             wait();
         }
         isLocked = true;
     }
 
-    public synchronized void unlock() {
+    synchronized void unlock() {
         isLocked = false;
         notify();
     }
 
-    public MinionStore(String minionsDirProp, int refreshSeconds, MultiUserChat muc) {
+    MinionStore(String minionsDirProp, int refreshSeconds, MultiUserChat muc) {
         this.minionsDirProp = minionsDirProp;
         this.minions = new Minions();
         this.currentJars = new HashMap<>();
@@ -58,11 +58,11 @@ public class MinionStore {
         }, 0, refreshSeconds, TimeUnit.SECONDS);
     }
 
-    public List<String> commandList() {
+    List<String> commandList() {
         return minions.getCommands();
     }
 
-    public Minion get(String command) {
+    Minion get(String command) {
         return minions.get(command);
     }
 
@@ -131,7 +131,7 @@ public class MinionStore {
         }
     }
 
-    public List<MinionJar> getJars() {
+    List<MinionJar> getJars() {
         List<MinionJar> result = new ArrayList<>();
         result.addAll(currentJars.values());
 

@@ -11,8 +11,8 @@ import java.net.URLClassLoader;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-public class MinionJar {
-    public static final String MANIFEST_CLASS = "MinionClass";
+class MinionJar {
+    private static final String MANIFEST_CLASS = "MinionClass";
     private static final String MANIFEST_COMMAND = "MinionCommand" ;
 
     private final String name;
@@ -21,7 +21,7 @@ public class MinionJar {
     private final String command;
     private final String className;
 
-    public MinionJar(File file) throws IOException {
+    MinionJar(File file) throws IOException {
         name = file.getName();
         timestamp = file.lastModified();
         url = file.toURI().toURL();
@@ -34,23 +34,23 @@ public class MinionJar {
         in.close();
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public Long getTimestamp() {
+    Long getTimestamp() {
         return timestamp;
     }
 
-    public URL getURL() {
+    URL getURL() {
         return url;
     }
 
-    public String getCommand() {
+    String getCommand() {
         return command;
     }
 
-    public Minion loadMinionClass(URLClassLoader loader)
+    Minion loadMinionClass(URLClassLoader loader)
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<?> clazz = Class.forName(className, true, loader);
         Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);

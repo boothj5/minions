@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class BotCommandHandler extends MessageHandler {
+class BotCommandHandler extends MessageHandler {
     private static final Logger LOG = LoggerFactory.getLogger(BotCommandHandler.class);
 
     BotCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
@@ -16,7 +16,7 @@ public class BotCommandHandler extends MessageHandler {
     }
 
     @Override
-    public void execute() {
+    void execute() {
         String command = stanza.getBody().substring(minionsPrefix.length());
         try {
             switch (command) {

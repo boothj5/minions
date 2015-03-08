@@ -3,10 +3,10 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-public class MinionsRoomImpl implements MinionsRoom {
+class MinionsRoomImpl implements MinionsRoom {
     private final MultiUserChat muc;
 
-    public MinionsRoomImpl(MultiUserChat muc) {
+    MinionsRoomImpl(MultiUserChat muc) {
         this.muc = muc;
     }
 

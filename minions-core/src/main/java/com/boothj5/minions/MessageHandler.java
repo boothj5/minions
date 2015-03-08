@@ -2,7 +2,7 @@ package com.boothj5.minions;
 
 import org.jivesoftware.smack.packet.Message;
 
-public abstract class MessageHandler {
+abstract class MessageHandler {
     protected final Message stanza;
     protected final MinionStore minions;
     protected final String minionsPrefix;

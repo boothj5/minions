@@ -5,10 +5,10 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-public class MinionsListener implements PacketListener {
+class MinionsListener implements PacketListener {
     private final MessageHandlerFactory messageHandlerFactory;
 
-    public MinionsListener(MinionStore minions, String minionsPrefix, MultiUserChat muc, String myNick) {
+    MinionsListener(MinionStore minions, String minionsPrefix, MultiUserChat muc, String myNick) {
         messageHandlerFactory = new MessageHandlerFactory(minions, minionsPrefix, muc, myNick);
     }
 

@@ -2,14 +2,14 @@ package com.boothj5.minions;
 
 import java.util.Map;
 
-public class MinionsConfiguration {
+class MinionsConfiguration {
 
-    public static final String DEFAULT_RESOURCE = "minions-core";
-    public static final int DEFAULT_PORT = 5222;
-    public static final String DEFAULT_ROOM_NICK = "minions";
-    public static final String DEFAULT_PLUGINS_DIR = System.getProperty("user.home") + "/.local/share/minions/plugins";
-    public static final int DEFAULT_REFRESH_SECONDS = 10;
-    public static final String DEFAULT_PREFIX = "!";
+    private static final String DEFAULT_RESOURCE = "minions-core";
+    private static final int DEFAULT_PORT = 5222;
+    private static final String DEFAULT_ROOM_NICK = "minions";
+    private static final String DEFAULT_PLUGINS_DIR = System.getProperty("user.home") + "/.local/share/minions/plugins";
+    private static final int DEFAULT_REFRESH_SECONDS = 10;
+    private static final String DEFAULT_PREFIX = "!";
     private String userService;
 
     private String userName;
@@ -24,7 +24,7 @@ public class MinionsConfiguration {
     private int pluginsRefreshSeconds = DEFAULT_REFRESH_SECONDS;
     private String pluginsPrefix = DEFAULT_PREFIX;
 
-    public MinionsConfiguration(Map<String, Map<String, Object>> config) throws MinionsException {
+    MinionsConfiguration(Map<String, Map<String, Object>> config) throws MinionsException {
         Map<String, Object> user = config.get("user");
         Map<String, Object> service = config.get("service");
         Map<String, Object> room = config.get("room");
@@ -39,51 +39,51 @@ public class MinionsConfiguration {
         loadPluginsConfig(plugins);
     }
 
-    public String getUser() {
+    String getUser() {
         return userName;
     }
 
-    public String getService() {
+    String getService() {
         return userService;
     }
 
-    public String getResource() {
+    String getResource() {
         return userResource;
     }
 
-    public String getPassword() {
+    String getPassword() {
         return userPassword;
     }
 
-    public String getServer() {
+    String getServer() {
         return serviceServer;
     }
 
-    public int getPort() {
+    int getPort() {
         return servicePort;
     }
 
-    public String getRoom() {
+    String getRoom() {
         return roomJid;
     }
 
-    public String getRoomNick() {
+    String getRoomNick() {
         return roomNick;
     }
 
-    public int getRefreshSeconds() {
+    int getRefreshSeconds() {
         return pluginsRefreshSeconds;
     }
 
-    public String getPrefix() {
+    String getPrefix() {
         return pluginsPrefix;
     }
 
-    public String getPluginsDir() {
+    String getPluginsDir() {
         return pluginsDir;
     }
 
-    public String getRoomPassword() {
+    String getRoomPassword() {
         return roomPassword;
     }
 
