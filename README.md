@@ -13,7 +13,7 @@ Folder | Contents
 `minions-contrib` | Example Minion plugins.
 
 # Running Minions
-To run Minions, in the project root run:
+To build Minions, from the project root run:
 
 ```
 mvn clean install
@@ -24,19 +24,19 @@ Create a YAML file with your configuration, and example can ber found at [here](
 Property | Description
 -------- | -----------
 `user` | 
-`name` | The user name for the account Minions should log in as.
-`resource` | The resource for login, `minions-core` by default.
-`password` | The password for the account.
+    `name` | The user name for the account Minions should log in as.
+    `resource` | The resource for login, `minions-core` by default.
+    `password` | The password for the account.
 `service` |
-`server` | Optional server if not the same as domain part of the username.
-`port` | Optional port if not the default 5222.
+    `server` | Optional server if not the same as domain part of the username.
+    `port` | Optional port if not the default 5222.
 `room` |
-`jid` | The JID of the room to join.
-`nick` | Nickname to use in the room, `minions` by default.
+    `jid` | The JID of the room to join.
+    `nick` | Nickname to use in the room, `minions` by default.
 `plugins` |
-`refreshSeconds` | Polling interval to check for new plugins, defaults to `10` seconds.
-`prefix` | The command prefix, defaults to `!`
-`dir` | The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
+    `refreshSeconds` | Polling interval to check for new plugins, defaults to `10` seconds.
+    `prefix` | The command prefix, defaults to `!`
+    `dir` | The directory in which plugins are located, defaults to `~/.local/share/minions/plugins`
 
 Run the starter script from the `minions-core` folder:
 
