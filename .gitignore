@@ -3,6 +3,7 @@
 */.DS_Store
 cirrus-minions.yml
 whatsnotapp-minions.yml
+local-minions.yml
 
 minions.iml
 minions-core/target/
@@ -38,3 +39,6 @@ minions-contrib/apples-minion/apples-minion.iml
 
 minions-contrib/spellchecker-minion/target/
 minions-contrib/spellchecker-minion/spellchecker-minion.iml
+
+minions-contrib/chuck-minion/target/
+minions-contrib/chuck-minion/chuck-minion.iml
