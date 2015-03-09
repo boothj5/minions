@@ -42,3 +42,6 @@ minions-contrib/spellchecker-minion/spellchecker-minion.iml
 
 minions-contrib/chuck-minion/target/
 minions-contrib/chuck-minion/chuck-minion.iml
+
+minions-contrib/catfact-minion/target/
+minions-contrib/catfact-minion/catfact-minion.iml
