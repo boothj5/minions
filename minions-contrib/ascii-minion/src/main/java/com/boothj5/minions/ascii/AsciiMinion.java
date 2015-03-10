@@ -30,6 +30,7 @@ public class AsciiMinion extends Minion {
         graphics.drawString(message, 6, 24);
 
         StringBuilder sbMain = new StringBuilder();
+        sbMain.append("\n");
         for (int y = 0; y < 32; y++) {
             StringBuilder sb = new StringBuilder();
             for (int x = 0; x < 144; x++) {
