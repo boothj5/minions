@@ -48,3 +48,6 @@ minions-contrib/catfact-minion/catfact-minion.iml
 
 minions-contrib/ip-minion/target/
 minions-contrib/ip-minion/ip-minion.iml
+
+minions-contrib/ascii-minion/target/
+minions-contrib/ascii-minion/ascii-minion.iml
