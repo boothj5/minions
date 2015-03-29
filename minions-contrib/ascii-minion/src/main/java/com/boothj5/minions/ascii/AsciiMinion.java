@@ -11,7 +11,7 @@ public class AsciiMinion extends Minion {
 
     @Override
     public String getHelp() {
-        return writeMessage("HELP");
+        return "text - Render text in ASCII";
     }
 
     @Override

@@ -51,3 +51,6 @@ minions-contrib/ip-minion/ip-minion.iml
 
 minions-contrib/ascii-minion/target/
 minions-contrib/ascii-minion/ascii-minion.iml
+
+minions-contrib/travis-minion/target/
+minions-contrib/travis-minion/travis-minion.iml
