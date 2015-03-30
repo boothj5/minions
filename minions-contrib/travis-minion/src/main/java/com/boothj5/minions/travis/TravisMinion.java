@@ -22,27 +22,55 @@ public class TravisMinion extends Minion {
 
     @Override
     public String getHelp() {
-        return "project - Show build status of project";
+        return "project branch - Show build status for branch of project";
     }
 
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         HttpClient client = HttpClientBuilder.create().build();
-        String url = "https://api.travis-ci.org/repos/" + message;
+
+        String[] split = message.trim().split(" ");
+        if (split.length != 2) {
+            muc.sendMessage("Please enter a project and branch, e.g. boothj5/profanity master");
+            return;
+        }
+
+        String repository = split[0];
+        String branch = split[1];
+
+        String summaryUrl = "https://api.travis-ci.org/repos/" + repository;
+        String branchUrl = summaryUrl + "/branches/" + branch;
 
         try {
-            HttpGet get = new HttpGet(url);
-            get.addHeader("Accept", "application/vnd.travis-ci.2+json");
-            HttpResponse response = client.execute(get);
-            String body = EntityUtils.toString(response.getEntity());
-            TravisResponse travisResponse = objectMapper.readValue(body, TravisResponse.class);
-            TravisResponse.TravisRepo repo = travisResponse.getRepo();
+            HttpGet summaryGet = new HttpGet(summaryUrl);
+            summaryGet.addHeader("User-Agent", "travis-minion/1.0.0");
+            summaryGet.addHeader("Accept", "application/vnd.travis-ci.2+json");
+            HttpResponse summaryResponse = client.execute(summaryGet);
+            String summaryBody = EntityUtils.toString(summaryResponse.getEntity());
+            TravisRepoSummary travisRepoSummary = objectMapper.readValue(summaryBody, TravisRepoSummary.class);
+            TravisRepoSummary.TravisRepo travisRepo = travisRepoSummary.getRepo();
+
+            HttpGet branchGet = new HttpGet(branchUrl);
+            branchGet.addHeader("User-Agent", "travis-minion/1.0.0");
+            branchGet.addHeader("Accept", "application/vnd.travis-ci.2+json");
+
+            HttpResponse branchResponse = client.execute(branchGet);
+            String branchBody = EntityUtils.toString(branchResponse.getEntity());
+            TravisBranchSummary travisBranchSummary = objectMapper.readValue(branchBody, TravisBranchSummary.class);
+            TravisBranchSummary.TravisBranch travisBranch = travisBranchSummary.getBranch();
+            TravisBranchSummary.TravisCommit travisCommit = travisBranchSummary.getCommit();
+
             String result = "\n" +
-                    "Project: " + repo.getSlug() + " (" + repo.getDescription() + ")\n" +
-                    "Build number: " + repo.getLastBuildNumber() + "\n" +
-                    "Result: " + repo.getLastBuildState() + "\n" +
-                    "Duration: " + repo.getLastBuildDuration() + " seconds";
+                    "Project: " + travisRepo.getSlug() + " (" + travisRepo.getDescription() + ")\n" +
+                    "Result: " + travisBranch.getState() + "\n" +
+                    "Duration: " + travisBranch.getDuration() + " seconds\n" +
+                    "Commit ID: " + travisCommit.getSha() + "\n" +
+                    "Message: " + travisCommit.getMessage() + "\n" +
+                    "Author: " + travisCommit.getAuthorName() + " (" + travisCommit.getAuthorEmail() + ")\n" +
+                    "Committer: " + travisCommit.getCommitterName() + " (" + travisCommit.getCommitterEmail() + ")\n" +
+                    "View diff: " + travisCommit.getCompareUrl();
             muc.sendMessage(result);
+
         } catch (IOException e) {
             muc.sendMessage("Could not get project.");
             throw new MinionsException(e);

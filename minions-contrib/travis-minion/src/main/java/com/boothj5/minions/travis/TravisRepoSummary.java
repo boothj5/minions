@@ -1,11 +1,13 @@
 package com.boothj5.minions.travis;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TravisResponse {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TravisRepoSummary {
     TravisRepo repo;
 
-    public TravisResponse() {
+    public TravisRepoSummary() {
 
     }
 
@@ -13,6 +15,7 @@ public class TravisResponse {
         return repo;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     class TravisRepo {
         int id;
         String slug;
