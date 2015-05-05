@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 class Minions {
-
     private final HashMap<String, Minion> map;
 
     Minions() {
@@ -47,5 +46,12 @@ class Minions {
 
     void add(String command, Minion minion) {
         map.put(command, minion);
+    }
+
+    void onRoomMessage(String body, String from, MinionsRoom muc) {
+        for (String name : map.keySet()) {
+            Minion minion = map.get(name);
+            minion.onMessageWrapper(muc, from, body);
+        }
     }
 }

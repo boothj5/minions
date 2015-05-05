@@ -27,8 +27,8 @@ import java.util.List;
 class BotCommandHandler extends MessageHandler {
     private static final Logger LOG = LoggerFactory.getLogger(BotCommandHandler.class);
 
-    BotCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
-        super(stanza, minions, minionsPrefix, muc);
+    BotCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
+        super(stanza, minions, minionsPrefix, muc, myNick);
     }
 
     @Override

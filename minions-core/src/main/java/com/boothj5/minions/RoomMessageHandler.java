@@ -18,20 +18,14 @@ package com.boothj5.minions;
 
 import org.jivesoftware.smack.packet.Message;
 
-abstract class MessageHandler {
-    final Message stanza;
-    final MinionStore minions;
-    final String minionsPrefix;
-    final MinionsRoom muc;
-    final String myNick;
-
-    MessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
-        this.stanza = stanza;
-        this.minions = minions;
-        this.minionsPrefix = minionsPrefix;
-        this.muc = muc;
-        this.myNick = myNick;
+class RoomMessageHandler extends MessageHandler {
+    RoomMessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
+        super(stanza, minions, minionsPrefix, muc, myNick);
     }
 
-    abstract void execute();
+    @Override
+    void execute() {
+        String from = org.jivesoftware.smack.util.StringUtils.parseResource(stanza.getFrom());
+        minions.onRoomMessage(stanza.getBody(), from, muc);
+    }
 }

@@ -47,7 +47,7 @@ public class ChatterBotMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         switch (message) {
             case "set cleverbot":
                 chosenSession = cleverBotSession;

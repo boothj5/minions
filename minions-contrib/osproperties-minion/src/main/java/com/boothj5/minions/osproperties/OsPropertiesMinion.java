@@ -15,7 +15,7 @@ public class OsPropertiesMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         StringBuilder result = new StringBuilder();
         Properties properties = System.getProperties();
         Enumeration keys = properties.keys();

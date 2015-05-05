@@ -26,8 +26,8 @@ import static java.lang.String.format;
 class MinionCommandHandler extends MessageHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MinionCommandHandler.class);
 
-    MinionCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
-        super(stanza, minions, minionsPrefix, muc);
+    MinionCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc,  String myNick) {
+        super(stanza, minions, minionsPrefix, muc, myNick);
     }
 
     @Override
@@ -45,7 +45,7 @@ class MinionCommandHandler extends MessageHandler {
                 } catch (IndexOutOfBoundsException e) {
                     subMessage = "";
                 }
-                minion.onMessageWrapper(muc, from, subMessage);
+                minion.onCommandWrapper(muc, from, subMessage);
             } else {
                 LOG.debug(format("Minion does not exist: %s", command));
                 muc.sendMessage("No such minion: " + command);

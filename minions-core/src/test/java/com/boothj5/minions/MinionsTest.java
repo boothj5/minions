@@ -28,7 +28,7 @@ public class MinionsTest {
             }
 
             @Override
-            public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+            public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
 
             }
         };
@@ -51,7 +51,7 @@ public class MinionsTest {
             }
 
             @Override
-            public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+            public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
 
             }
         };
@@ -72,7 +72,7 @@ public class MinionsTest {
             }
 
             @Override
-            public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+            public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
 
             }
         };

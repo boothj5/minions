@@ -13,7 +13,7 @@ public class BinaryMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
             String[] split = StringUtils.split(message, " ");
             String command = split[0];

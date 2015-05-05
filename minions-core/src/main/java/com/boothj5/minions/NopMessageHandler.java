@@ -18,13 +18,11 @@ package com.boothj5.minions;
 
 import org.jivesoftware.smack.packet.Message;
 
-class DefaultMessageHandler extends MessageHandler {
-    DefaultMessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
-        super(stanza, minions, minionsPrefix, muc);
+class NopMessageHandler extends MessageHandler {
+    NopMessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
+        super(stanza, minions, minionsPrefix, muc, myNick);
     }
 
     @Override
-    void execute() {
-
-    }
+    void execute() {}
 }

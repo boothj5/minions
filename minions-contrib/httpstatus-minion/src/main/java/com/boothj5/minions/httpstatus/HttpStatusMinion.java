@@ -19,7 +19,7 @@ public class HttpStatusMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         String[] split = StringUtils.split(message, " ");
         String uri = split[0];
         try {

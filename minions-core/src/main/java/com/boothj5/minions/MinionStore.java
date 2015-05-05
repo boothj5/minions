@@ -153,4 +153,8 @@ class MinionStore {
 
         return result;
     }
+
+    void onRoomMessage(String body, String from, MinionsRoom muc) {
+        minions.onRoomMessage(body, from, muc);
+    }
 }

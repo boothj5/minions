@@ -57,3 +57,6 @@ minions-contrib/travis-minion/travis-minion.iml
 
 minions-contrib/uuid-minion/target/
 minions-contrib/uuid-minion/uuid-minion.iml
+
+minions-contrib/eddie-minion/target/
+minions-contrib/eddie-minion/eddie-minion.iml

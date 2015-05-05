@@ -27,7 +27,7 @@ public class SpellCheckerMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
             List<RuleMatch> matches = langTool.check(message);
             String result = "";

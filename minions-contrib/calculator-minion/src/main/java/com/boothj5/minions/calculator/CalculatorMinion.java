@@ -15,7 +15,7 @@ public class CalculatorMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
             Expression expression = new ExpressionBuilder(message).build();
             ValidationResult validationResult = expression.validate();

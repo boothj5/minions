@@ -35,15 +35,24 @@ class MessageHandlerFactory {
     MessageHandler create(Message stanza) {
         if (stanza.getBody() != null) {
             if (botCommand(stanza)) {
-                return new BotCommandHandler(stanza, minions, minionsPrefix, muc);
+                return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
             } else if (minionsCommand(stanza)) {
-                return new MinionCommandHandler(stanza, minions, minionsPrefix, muc);
+                return new MinionCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+            } else if (regularMessage(stanza)) {
+                return new RoomMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
             } else {
-                return new DefaultMessageHandler(stanza, minions, minionsPrefix, muc);
+                return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
             }
         } else {
-            return new DefaultMessageHandler(stanza, minions, minionsPrefix, muc);
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
+    }
+
+    private boolean regularMessage(Message messageStanza) {
+        boolean delayed = messageStanza.toXML().contains("delay");
+        boolean fromMe = messageStanza.getFrom().endsWith(myNick);
+
+        return !delayed && !fromMe;
     }
 
     private boolean botCommand(Message messageStanza) {

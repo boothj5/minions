@@ -28,7 +28,7 @@ public class IpMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         muc.sendMessage("");
         try {
             HttpClient client = HttpClientBuilder.create().build();

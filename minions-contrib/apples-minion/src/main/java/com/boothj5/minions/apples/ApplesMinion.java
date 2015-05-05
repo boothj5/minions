@@ -18,7 +18,7 @@ public class ApplesMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         String currentStr = System.getProperty(MINIONS_APPLES_PROPERTY);
         int total = currentStr == null ? 0 : Integer.valueOf(currentStr);
 

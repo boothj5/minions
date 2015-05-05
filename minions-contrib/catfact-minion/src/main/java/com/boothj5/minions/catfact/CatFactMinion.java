@@ -25,7 +25,7 @@ public class CatFactMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         try {
             HttpClient client = HttpClientBuilder.create().build();
             String url = "http://catfacts-api.appspot.com/api/facts?number=1";

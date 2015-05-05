@@ -23,7 +23,16 @@ public abstract class Minion {
     private static final Logger LOG = LoggerFactory.getLogger(Minion.class);
 
     public abstract String getHelp();
-    public abstract void onMessage(MinionsRoom muc, String from, String message) throws MinionsException;
+
+    final void onCommandWrapper(MinionsRoom muc, String from, String message) {
+        try {
+            onCommand(muc, from, message);
+        } catch (RuntimeException rte) {
+            LOG.error("Minions RuntimeException", rte);
+        } catch (MinionsException me) {
+            LOG.error("MinionsException", me);
+        }
+    }
 
     final void onMessageWrapper(MinionsRoom muc, String from, String message) {
         try {
@@ -35,7 +44,9 @@ public abstract class Minion {
         }
     }
 
-    public void onRemove() {
+    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {}
 
-    }
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {}
+
+    public void onRemove() {}
 }

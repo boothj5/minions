@@ -15,7 +15,7 @@ public class AsciiMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom minionsRoom, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom minionsRoom, String from, String message) throws MinionsException {
         String response = writeMessage(message);
         minionsRoom.sendMessage(response);
     }

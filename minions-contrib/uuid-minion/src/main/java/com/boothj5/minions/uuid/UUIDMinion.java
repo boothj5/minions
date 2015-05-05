@@ -13,7 +13,7 @@ public class UUIDMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
         UUID uuid = UUID.randomUUID();
         muc.sendMessage(from + ": " + uuid.toString());
     }
