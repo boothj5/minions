@@ -37,8 +37,8 @@ public class ChatterBotMinion extends Minion {
             e.printStackTrace();
         }
 
-        chosenSession = jabberwackyBotSession != null ? jabberwackyBotSession : cleverBotSession;
-        botName = jabberwackyBotSession != null ? "jabberwacky" : "cleverbot";
+        chosenSession = cleverBotSession != null ? cleverBotSession : jabberwackyBotSession;
+        botName = cleverBotSession != null ? "cleverbot" : "jabberwacky";
     }
 
     @Override
@@ -68,6 +68,7 @@ public class ChatterBotMinion extends Minion {
                     response = chosenSession.think(message);
                     LOG.debug("Received from bot:" + response);
                 } catch (Exception e) {
+                    LOG.debug("Error from cleverbot:", e);
                     muc.sendMessage("Error talking to chatterbot: " + botName);
                     return;
                 }
