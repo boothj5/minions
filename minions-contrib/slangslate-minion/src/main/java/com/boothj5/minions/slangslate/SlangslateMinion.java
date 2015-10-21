@@ -54,7 +54,7 @@ public class SlangslateMinion extends Minion {
             String result = getSlang(slang);
 
             if (result != null) {
-                muc.sendMessage(from + ": " + result);
+                muc.sendMessage(trimmed + " = " + result);
             } else {
                 muc.sendMessage("Soz " + from + ", idk");
             }
