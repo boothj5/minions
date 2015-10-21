@@ -60,3 +60,6 @@ minions-contrib/uuid-minion/uuid-minion.iml
 
 minions-contrib/eddie-minion/target/
 minions-contrib/eddie-minion/eddie-minion.iml
+
+minions-contrib/slangslate-minion/target/
+minions-contrib/slangslate-minion/slangslate-minion.iml
