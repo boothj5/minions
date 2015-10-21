@@ -48,7 +48,7 @@ public class SlangslateMinion extends Minion {
 
                 muc.sendMessage(from + " said: " + result);
             } catch (IOException | RuntimeException e) {
-                muc.sendMessage("Sorry " + from + ", idk");
+                muc.sendMessage("Soz " + from + ", idk");
                 throw new MinionsException(e);
             }
         }
