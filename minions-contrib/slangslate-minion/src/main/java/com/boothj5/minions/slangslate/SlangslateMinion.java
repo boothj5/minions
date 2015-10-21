@@ -25,17 +25,19 @@ public class SlangslateMinion extends Minion {
             muc.sendMessage(from + " nothing doesn't mean anything.");
         } else {
             try {
+                String slang = trimmed.toLowerCase();
+
                 HttpClient client = HttpClientBuilder.create().build();
 
-                HttpGet get = new HttpGet("http://www.noslang.com/search.php?st=" + trimmed + "&submit=Search");
+                HttpGet get = new HttpGet("http://www.noslang.com/search.php?st=" + slang + "&submit=Search");
                 HttpResponse response = client.execute(get);
 
                 HttpEntity entity = response.getEntity();
                 String responseString = EntityUtils.toString(entity, "UTF-8");
 
                 // <a name="yh"></a><abbr title="yeah"><b>
-                String findStart = "<a name=\"" + trimmed + "\"></a><abbr title=\"";
-                String findEnd = "\"><b>" + trimmed + "</b>";
+                String findStart = "<a name=\"" + slang + "\"></a><abbr title=\"";
+                String findEnd = "\"><b>" + slang + "</b>";
                 int foundStart = responseString.indexOf(findStart);
                 int start = foundStart + findStart.length();
 
@@ -45,8 +47,8 @@ public class SlangslateMinion extends Minion {
                 String result = startRemoved.substring(0, end);
 
                 muc.sendMessage(from + " said: " + result);
-            } catch (IOException e) {
-                muc.sendMessage("Don't know what happened.");
+            } catch (IOException | RuntimeException e) {
+                muc.sendMessage("Sorry " + from + ", idk");
                 throw new MinionsException(e);
             }
         }
