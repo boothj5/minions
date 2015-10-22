@@ -30,55 +30,48 @@ public class SlangslateMinion extends Minion {
 
     @Override
     public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
-        String trimmed = message.trim();
-        if ("".equals(trimmed)) {
+        String arg = message.trim();
+
+        if ("".equals(arg)) {
             muc.sendMessage(from + " nothing doesn't mean anything.");
-        } else if (lastMessages.containsKey(trimmed)) {
-            String lastMessage = lastMessages.get(trimmed);
 
-            String translatedMessage = "";
+        } else if (lastMessages.containsKey(arg)) {
+            String origMessage = lastMessages.get(arg);
+            String transMessage = "";
 
-            String[] words = lastMessage.split(" ");
-            for (String word : words) {
-                String translatedWord = getSlang(word);
-                if (translatedWord != null) {
-                    translatedMessage += translatedWord + " ";
-                } else {
-                    translatedMessage += word + " ";
-                }
+            String[] words = origMessage.split(" ");
+            for (String origWord : words) {
+                String transWord = translate(origWord);
+                transMessage += transWord != null ? transWord + " " : origWord + " ";
             }
 
-            muc.sendMessage(trimmed + " said: " + translatedMessage);
+            muc.sendMessage(arg + " said: " + transMessage);
+
         } else {
-            String slang = trimmed.toLowerCase();
-            String result = getSlang(slang);
-
-            if (result != null) {
-                muc.sendMessage(trimmed + " = " + result);
-            } else {
-                muc.sendMessage("Soz " + from + ", idk");
-            }
+            String translated = translate(arg);
+            String responseMessage = translated != null ? arg + " = " + translated : "Soz " + from + ", idk";
+            muc.sendMessage(responseMessage);
         }
     }
 
-    private String getSlang(String slang) {
+    private String translate(String slang) {
         try {
+            String slangLower = slang.toLowerCase();
             HttpClient client = HttpClientBuilder.create().build();
 
-            HttpGet get = new HttpGet("http://www.noslang.com/search.php?st=" + slang + "&submit=Search");
+            HttpGet get = new HttpGet("http://www.noslang.com/search.php?st=" + slangLower + "&submit=Search");
             HttpResponse response = client.execute(get);
 
             HttpEntity entity = response.getEntity();
             String responseString = EntityUtils.toString(entity, "UTF-8");
 
             // <a name="yh"></a><abbr title="yeah"><b>
-            String findStart = "<a name=\"" + slang + "\"></a><abbr title=\"";
-            String findEnd = "\"><b>" + slang + "</b>";
+            String findStart = "<a name=\"" + slangLower + "\"></a><abbr title=\"";
+            String findEnd = "\"><b>" + slangLower + "</b>";
             int foundStart = responseString.indexOf(findStart);
             int start = foundStart + findStart.length();
 
             String startRemoved = responseString.substring(start);
-
             int end = startRemoved.indexOf(findEnd);
 
             return startRemoved.substring(0, end);
