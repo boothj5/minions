@@ -49,14 +49,18 @@ public class ChatterBotMinion extends Minion {
     @Override
     public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
         String myNick = muc.getNick();
-        if (message.startsWith(myNick + ":") && message.length() > myNick.length() + 1) {
-            String text = message.substring(myNick.length() + 1).trim();
-            if (text.length() > 0) {
-                String response = getReply(text);
-                if (response == null) {
-                    muc.sendMessage("Error talking to chatterbot: " + botName);
-                } else {
-                    muc.sendMessage(from + ": " + response);
+        String[] split = message.split("[:]");
+        if (split.length > 0) {
+            boolean match = split[0].equalsIgnoreCase(myNick);
+            if (match && message.length() > myNick.length() + 1) {
+                String text = message.substring(myNick.length() + 1).trim();
+                if (text.length() > 0) {
+                    String response = getReply(text);
+                    if (response == null) {
+                        muc.sendMessage("Error talking to chatterbot: " + botName);
+                    } else {
+                        muc.sendMessage(from + ": " + response);
+                    }
                 }
             }
         }
