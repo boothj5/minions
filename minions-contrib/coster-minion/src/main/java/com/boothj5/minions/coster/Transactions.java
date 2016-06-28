@@ -1,5 +1,12 @@
 package com.boothj5.minions.coster;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +14,23 @@ import java.util.List;
 import java.util.Map;
 
 public class Transactions {
+    private static final String CSV_PATH = System.getProperty("user.home") + "/.local/share/minions/transactions.csv";
     private final Map<String, Float> spenders = new HashMap<>();
+
+    public Transactions() {
+        File csvFile = new File(CSV_PATH);
+        if (csvFile.exists()) {
+            try {
+                CSVReader reader = new CSVReader(new FileReader(CSV_PATH), ',');
+                String[] nextLine;
+                while ((nextLine = reader.readNext()) != null) {
+                    spenders.put(nextLine[0], round(Float.parseFloat(nextLine[1])));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void add(String spender, Float amount) {
         if (spenders.containsKey(spender)) {
@@ -15,6 +38,8 @@ public class Transactions {
         } else {
             spenders.put(spender, amount);
         }
+
+        save();
     }
 
     public Float get(String spender) {
@@ -24,11 +49,13 @@ public class Transactions {
     public void clear(String spender) {
         if (spenders.containsKey(spender)) {
             spenders.remove(spender);
+            save();
         }
     }
 
     public void clear() {
         spenders.clear();
+        save();
     }
 
     public List<String> getSpenders() {
@@ -93,6 +120,19 @@ public class Transactions {
         return bd.floatValue();
     }
 
+    private void save() {
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(CSV_PATH), ',');
+            for (String spender : spenders.keySet()) {
+                String amount = String.format("%.2f", spenders.get(spender));
+                String[] entry = { spender, amount };
+                writer.writeNext(entry);
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

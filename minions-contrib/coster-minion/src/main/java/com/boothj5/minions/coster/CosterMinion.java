@@ -35,13 +35,14 @@ public class CosterMinion extends Minion {
         switch (command) {
             case HELP:
                 String help =
-                        "\n" + "help - Show this help." +
-                        "\n" + "spend <amount> - Add an amount to your current total" +
-                        "\n" + "clear - Clear your current amount." +
-                        "\n" + "reset - Reset all spenders." +
-                        "\n" + "show - Show current spenders." +
-                        "\n" + "split - Split amount and show who owes who what." +
-                        "\n" + "split2 - Split amount and show who owes who what reduced.";
+                    "\n" + "help - Show this help." +
+                    "\n" + "spend <amount> - Add an amount to your current total" +
+                    "\n" + "spendfor <nick> <amount> - Add an amount to another person's total" +
+                    "\n" + "clear - Clear your current amount" +
+                    "\n" + "reset - Reset all spenders" +
+                    "\n" + "show - Show current spenders" +
+                    "\n" + "split - Work out what people owe each other" +
+                    "\n" + "split2 - Work out what people owe each other, and minimise transactions";
                 muc.sendMessage(help);
                 break;
             case SPEND:
