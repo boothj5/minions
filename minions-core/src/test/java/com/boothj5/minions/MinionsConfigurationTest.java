@@ -251,7 +251,7 @@ public class MinionsConfigurationTest {
         config.put("room", room);
 
         MinionsConfiguration minionsConfiguration = new MinionsConfiguration(config);
-        String actual = minionsConfiguration.getRoomNick();
+        String actual = minionsConfiguration.getMinionsNick();
 
         assertEquals(expected, actual);
     }
@@ -265,7 +265,7 @@ public class MinionsConfigurationTest {
         config.put("room", room);
 
         MinionsConfiguration minionsConfiguration = new MinionsConfiguration(config);
-        String actual = minionsConfiguration.getRoomNick();
+        String actual = minionsConfiguration.getMinionsNick();
 
         assertEquals("minions", actual);
     }

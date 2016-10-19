@@ -19,8 +19,8 @@ package com.boothj5.minions;
 import java.util.Map;
 
 class MinionsConfiguration {
-    static final String HELP = "help";
-    static final String JARS = "jars";
+    static final String CMD_HELP = "help";
+    static final String CMD_JARS = "jars";
 
     private static final String DEFAULT_RESOURCE = "minions-core";
     private static final int DEFAULT_PORT = 5222;
@@ -36,7 +36,7 @@ class MinionsConfiguration {
     private String serviceServer;
     private int servicePort = DEFAULT_PORT;
     private String roomJid;
-    private String roomNick = DEFAULT_ROOM_NICK;
+    private String minionsNick = DEFAULT_ROOM_NICK;
     private String roomPassword;
     private String pluginsDir = DEFAULT_PLUGINS_DIR;
     private int pluginsRefreshSeconds = DEFAULT_REFRESH_SECONDS;
@@ -85,8 +85,8 @@ class MinionsConfiguration {
         return roomJid;
     }
 
-    String getRoomNick() {
-        return roomNick;
+    String getMinionsNick() {
+        return minionsNick;
     }
 
     int getRefreshSeconds() {
@@ -150,7 +150,7 @@ class MinionsConfiguration {
     private void loadRoomConfig(Map<String, Object> room) {
         roomJid = (String) room.get("jid");
         if (room.get("nick") != null) {
-            roomNick = (String) room.get("nick");
+            minionsNick = (String) room.get("nick");
         }
         roomPassword = (String) room.get("password");
     }

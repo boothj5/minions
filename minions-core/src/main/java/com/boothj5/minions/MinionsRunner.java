@@ -51,17 +51,16 @@ class MinionsRunner {
 
             MultiUserChat muc = new MultiUserChat(conn, config.getRoom());
             if (StringUtils.isBlank(config.getRoomPassword())) {
-                muc.join(config.getRoomNick());
+                muc.join(config.getMinionsNick());
             } else {
-                muc.join(config.getRoomNick(), config.getRoomPassword());
+                muc.join(config.getMinionsNick(), config.getRoomPassword());
             }
 
-            LOG.debug(format("Joined: %s as %s", config.getRoom(), config.getRoomNick()));
+            LOG.debug(format("Joined: %s as %s", config.getRoom(), config.getMinionsNick()));
 
             MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
 
-            MinionsListener listener = new MinionsListener(minions, config.getPrefix(), muc, config.getRoomNick());
-
+            MinionsListener listener = new MinionsListener(config, minions, muc);
             muc.addMessageListener(listener);
 
             Object lock = new Object();

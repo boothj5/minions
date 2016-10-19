@@ -60,16 +60,14 @@ class MinionStore {
         this.loaded = false;
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
-            public void run() {
-                try {
-                    lock();
-                    load();
-                    unlock();
-                } catch (MinionsException | InterruptedException e) {
-                    LOG.error("Error loading minions.", e);
-                    e.printStackTrace();
-                }
+        scheduledExecutorService.scheduleWithFixedDelay(() -> {
+            try {
+                lock();
+                load();
+                unlock();
+            } catch (MinionsException | InterruptedException e) {
+                LOG.error("Error loading minions.", e);
+                e.printStackTrace();
             }
         }, 0, refreshSeconds, TimeUnit.SECONDS);
     }
@@ -136,9 +134,7 @@ class MinionStore {
             for (String jarToLoad : jarsToLoad.keySet()) {
                 currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
             }
-            for (String jarToRemove : jarsToRemove) {
-                currentJars.remove(jarToRemove);
-            }
+            jarsToRemove.forEach(currentJars::remove);
 
             loaded = true;
 

@@ -18,7 +18,7 @@ package com.boothj5.minions;
 
 import java.util.Optional;
 
-public class JabberID {
+class JabberID {
 
     private final String jid;
 
@@ -26,11 +26,11 @@ public class JabberID {
         this.jid = jid;
     }
 
-    public String getJid() {
+    String getJid() {
         return jid;
     }
 
-    public Optional<String> getResource() {
+    Optional<String> getResource() {
         if (jid == null) {
             return Optional.empty();
         }
