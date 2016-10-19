@@ -42,35 +42,35 @@ class MessageHandlerFactory {
         String body = stanza.getBody();
 
         if (body == null) {
-            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc);
         }
 
         if (stanza.toXML().contains("delay")) {
-            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc);
         }
 
         JabberID fromJid = new JabberID(stanza.getFrom());
         Optional<String> resource = fromJid.getResource();
         if (!resource.isPresent()) {
-            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc);
         }
 
         if (resource.get().equals(myNick)) {
-            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc);
         }
 
         if (cmdHelp.equals(body)) {
-            return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new BotCommandHandler(stanza, minions, minionsPrefix, muc);
         }
 
         if (cmdJars.equals(body)) {
-            return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new BotCommandHandler(stanza, minions, minionsPrefix, muc);
         }
 
         if (body.startsWith(minionsPrefix)) {
-            return new MinionCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+            return new MinionCommandHandler(stanza, minions, minionsPrefix, muc);
         }
 
-        return new RoomMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+        return new RoomMessageHandler(stanza, minions, minionsPrefix, muc);
     }
 }

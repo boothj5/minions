@@ -26,8 +26,8 @@ import static java.lang.String.format;
 class MinionCommandHandler extends MessageHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MinionCommandHandler.class);
 
-    MinionCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc,  String myNick) {
-        super(stanza, minions, minionsPrefix, muc, myNick);
+    MinionCommandHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
+        super(stanza, minions, minionsPrefix, muc);
     }
 
     @Override

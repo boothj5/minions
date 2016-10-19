@@ -23,14 +23,12 @@ abstract class MessageHandler {
     final MinionStore minions;
     final String minionsPrefix;
     final MinionsRoom muc;
-    final String myNick;
 
-    MessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
+    MessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
         this.stanza = stanza;
         this.minions = minions;
         this.minionsPrefix = minionsPrefix;
         this.muc = muc;
-        this.myNick = myNick;
     }
 
     abstract void execute();

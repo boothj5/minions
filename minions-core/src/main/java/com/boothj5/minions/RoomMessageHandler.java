@@ -19,8 +19,8 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.packet.Message;
 
 class RoomMessageHandler extends MessageHandler {
-    RoomMessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc, String myNick) {
-        super(stanza, minions, minionsPrefix, muc, myNick);
+    RoomMessageHandler(Message stanza, MinionStore minions, String minionsPrefix, MinionsRoom muc) {
+        super(stanza, minions, minionsPrefix, muc);
     }
 
     @Override
