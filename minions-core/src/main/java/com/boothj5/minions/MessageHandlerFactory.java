@@ -20,6 +20,9 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 class MessageHandlerFactory {
+    private static final String CMD_HELP = "!help";
+    private static final String CMD_JARS = "!jars";
+
     private final MinionStore minions;
     private final String minionsPrefix;
     private final MinionsRoom muc;
@@ -33,43 +36,30 @@ class MessageHandlerFactory {
     }
 
     MessageHandler create(Message stanza) {
-        if (stanza.getBody() != null) {
-            if (botCommand(stanza)) {
-                return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
-            } else if (minionsCommand(stanza)) {
-                return new MinionCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
-            } else if (regularMessage(stanza)) {
-                return new RoomMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
-            } else {
-                return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
-            }
-        } else {
+        if (stanza.getBody() == null) {
             return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
-    }
 
-    private boolean regularMessage(Message messageStanza) {
-        boolean delayed = messageStanza.toXML().contains("delay");
-        boolean fromMe = messageStanza.getFrom().endsWith(myNick);
+        if (stanza.toXML().contains("delay")) {
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
 
-        return !delayed && !fromMe;
-    }
+        if (stanza.getFrom().endsWith(myNick)) {
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
 
-    private boolean botCommand(Message messageStanza) {
-        boolean delayed = messageStanza.toXML().contains("delay");
-        boolean fromMe = messageStanza.getFrom().endsWith(myNick);
-        String help = minionsPrefix + "help";
-        String jars = minionsPrefix + "jars";
-        boolean isCommand = help.equals(messageStanza.getBody()) || jars.equals(messageStanza.getBody());
+        if (CMD_HELP.equals(stanza.getBody())) {
+            return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
 
-        return !delayed && !fromMe && isCommand;
-    }
+        if (CMD_JARS.equals(stanza.getBody())) {
+            return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
 
-    private boolean minionsCommand(Message messageStanza) {
-        boolean delayed = messageStanza.toXML().contains("delay");
-        boolean fromMe = messageStanza.getFrom().endsWith(myNick);
-        boolean isCommand = messageStanza.getBody().startsWith(minionsPrefix);
+        if (stanza.getBody().startsWith(minionsPrefix)) {
+            return new MinionCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
 
-        return !delayed && !fromMe && isCommand;
+        return new RoomMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
     }
 }

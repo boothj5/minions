@@ -9,35 +9,14 @@ import static org.mockito.Mockito.mock;
 
 public class MessageHandlerFactoryTest {
 
-    private static final String PREFIX = "!";
-    private static final String MY_NICK = "minions";
+    private static final String COMMAND_PREFIX = "!";
+    private static final String MINIONS_NICK = "minions";
 
-    private static final String FROM_MINIONS_FULL = "coven@chat.shakespeare.lit/" + MY_NICK;
-    private static final String FROM_FULL = "coven@chat.shakespeare.lit/thirdwitch";
-    private static final String FROM_BARE = "coven@chat.shakespeare.lit";
-    private static final String MESSAGE =
-        "<message " +
-                "from='" + FROM_FULL + "' " +
-            "id='10101' " +
-            "to='wiccarocks@shakespeare.lit/laptop' " +
-            "type='groupchat'>" +
-                "<body>mocked</body>" +
-        "</message>";
-
-    private static final String DELAYED_MESSAGE =
-        "<message " +
-            "from='" + FROM_FULL + "' " +
-            "id='10101' " +
-            "to='wiccarocks@shakespeare.lit/laptop' " +
-            "type='groupchat'>" +
-                "<body>mocked</body>" +
-                "<delay xmlns='urn:xmpp:delay' " +
-                    "from='" + FROM_BARE + "' " +
-                    "stamp='2002-09-10T23:05:37Z'/>" +
-        "</message>";
+    private static final String MINIONS_JID = "coven@chat.shakespeare.lit/" + MINIONS_NICK;
+    private static final String OCCUPANT_JID = "coven@chat.shakespeare.lit/thirdwitch";
 
     @Test
-    public void returnsNopMessageHandler() {
+    public void returnsNopMessageHandlerOnNullBody() {
         MessageHandlerFactory factory = new MessageHandlerFactory(null, null, null, null);
         Message stanza = new Message();
 
@@ -47,12 +26,37 @@ public class MessageHandlerFactoryTest {
     }
 
     @Test
-    public void returnsBotCommandHandlerForJars() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
+    public void returnsNopMessageHandlerOnDelayedMessage() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, null, null, null);
         Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "jars");
+        given(stanza.getBody()).willReturn("body");
+        given(stanza.toXML()).willReturn("<stanza...delay.../>");
+
+        MessageHandler handler = factory.create(stanza);
+
+        assertTrue(handler instanceof NopMessageHandler);
+    }
+
+    @Test
+    public void returnsNopMessageHandlerWhenFromSelf() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, null, null, MINIONS_NICK);
+        Message stanza = mock(Message.class);
+        given(stanza.getBody()).willReturn("body");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(MINIONS_JID);
+
+        MessageHandler handler = factory.create(stanza);
+
+        assertTrue(handler instanceof NopMessageHandler);
+    }
+
+    @Test
+    public void returnsBotMessageHandlerOnHelp() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, COMMAND_PREFIX, null, MINIONS_NICK);
+        Message stanza = mock(Message.class);
+        given(stanza.getBody()).willReturn("!help");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(OCCUPANT_JID);
 
         MessageHandler handler = factory.create(stanza);
 
@@ -60,12 +64,12 @@ public class MessageHandlerFactoryTest {
     }
 
     @Test
-    public void returnsBotCommandHandlerForHelp() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
+    public void returnsBotMessageHandlerOnJars() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, COMMAND_PREFIX, null, MINIONS_NICK);
         Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "help");
+        given(stanza.getBody()).willReturn("!jars");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(OCCUPANT_JID);
 
         MessageHandler handler = factory.create(stanza);
 
@@ -73,54 +77,28 @@ public class MessageHandlerFactoryTest {
     }
 
     @Test
-    public void returnsNopMessageHandlerWhenDelayedJars() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
+    public void returnsMinionsCommandHandlerOnCommand() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, COMMAND_PREFIX, null, MINIONS_NICK);
         Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(DELAYED_MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "help");
+        given(stanza.getBody()).willReturn("!cmd");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(OCCUPANT_JID);
 
         MessageHandler handler = factory.create(stanza);
 
-        assertTrue(handler instanceof NopMessageHandler);
+        assertTrue(handler instanceof MinionCommandHandler);
     }
 
     @Test
-    public void returnsNopMessageHandlerWhenDelayedHelp() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
+    public void returnsRoomMessageHandler() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, COMMAND_PREFIX, null, MINIONS_NICK);
         Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(DELAYED_MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "help");
+        given(stanza.getBody()).willReturn("Hello world!");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(OCCUPANT_JID);
 
         MessageHandler handler = factory.create(stanza);
 
-        assertTrue(handler instanceof NopMessageHandler);
-    }
-
-    @Test
-    public void returnsNopMessageHandlerWhenJarsFromMinions() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
-        Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(DELAYED_MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_MINIONS_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "help");
-
-        MessageHandler handler = factory.create(stanza);
-
-        assertTrue(handler instanceof NopMessageHandler);
-    }
-
-    @Test
-    public void returnsNopMessageHandlerWhenHelpFromMinions() {
-        MessageHandlerFactory factory = new MessageHandlerFactory(null, PREFIX, null, MY_NICK);
-        Message stanza = mock(Message.class);
-        given(stanza.toXML()).willReturn(DELAYED_MESSAGE);
-        given(stanza.getFrom()).willReturn(FROM_MINIONS_FULL);
-        given(stanza.getBody()).willReturn(PREFIX + "help");
-
-        MessageHandler handler = factory.create(stanza);
-
-        assertTrue(handler instanceof NopMessageHandler);
+        assertTrue(handler instanceof RoomMessageHandler);
     }
 }
