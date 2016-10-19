@@ -22,19 +22,20 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import java.util.Optional;
 
 class MessageHandlerFactory {
-    private static final String CMD_HELP = "!help";
-    private static final String CMD_JARS = "!jars";
-
     private final MinionStore minions;
     private final String minionsPrefix;
     private final MinionsRoom muc;
     private final String myNick;
+    private final String cmdHelp;
+    private final String cmdJars;
 
     MessageHandlerFactory(MinionStore minions, String minionsPrefix, MultiUserChat muc, String myNick) {
         this.minions = minions;
         this.minionsPrefix = minionsPrefix;
         this.muc = new MinionsRoomImpl(muc);
         this.myNick = myNick;
+        this.cmdHelp = minionsPrefix + MinionsConfiguration.HELP;
+        this.cmdJars = minionsPrefix + MinionsConfiguration.JARS;
     }
 
     MessageHandler create(Message stanza) {
@@ -58,11 +59,11 @@ class MessageHandlerFactory {
             return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (CMD_HELP.equals(body)) {
+        if (cmdHelp.equals(body)) {
             return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (CMD_JARS.equals(body)) {
+        if (cmdJars.equals(body)) {
             return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 

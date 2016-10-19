@@ -36,11 +36,11 @@ class BotCommandHandler extends MessageHandler {
         String command = stanza.getBody().substring(minionsPrefix.length());
         try {
             switch (command) {
-                case "help":
+                case MinionsConfiguration.HELP:
                     LOG.debug("Handling help.");
                     handleHelp();
                     break;
-                case "jars":
+                case MinionsConfiguration.JARS:
                     LOG.debug("Handling jars.");
                     handleJars();
                     break;

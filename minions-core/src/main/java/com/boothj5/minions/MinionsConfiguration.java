@@ -19,6 +19,8 @@ package com.boothj5.minions;
 import java.util.Map;
 
 class MinionsConfiguration {
+    static final String HELP = "help";
+    static final String JARS = "jars";
 
     private static final String DEFAULT_RESOURCE = "minions-core";
     private static final int DEFAULT_PORT = 5222;
