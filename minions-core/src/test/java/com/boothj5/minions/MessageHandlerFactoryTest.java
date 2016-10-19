@@ -12,8 +12,10 @@ public class MessageHandlerFactoryTest {
     private static final String COMMAND_PREFIX = "!";
     private static final String MINIONS_NICK = "minions";
 
+    private static final String ROOM_JID = "coven@chat.shakespeare.lit";
     private static final String MINIONS_JID = "coven@chat.shakespeare.lit/" + MINIONS_NICK;
     private static final String OCCUPANT_JID = "coven@chat.shakespeare.lit/thirdwitch";
+    private static final String OCCUPANT_ENDSWITH_MINIONS_JID = "coven@chat.shakespeare.lit/user_" + MINIONS_NICK;
 
     @Test
     public void returnsNopMessageHandlerOnNullBody() {
@@ -44,6 +46,19 @@ public class MessageHandlerFactoryTest {
         given(stanza.getBody()).willReturn("body");
         given(stanza.toXML()).willReturn("<stanza>");
         given(stanza.getFrom()).willReturn(MINIONS_JID);
+
+        MessageHandler handler = factory.create(stanza);
+
+        assertTrue(handler instanceof NopMessageHandler);
+    }
+
+    @Test
+    public void returnsNopMessageHandlerWhenMessageFromRoom() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, null, null, MINIONS_NICK);
+        Message stanza = mock(Message.class);
+        given(stanza.getBody()).willReturn("body");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(ROOM_JID);
 
         MessageHandler handler = factory.create(stanza);
 
@@ -96,6 +111,19 @@ public class MessageHandlerFactoryTest {
         given(stanza.getBody()).willReturn("Hello world!");
         given(stanza.toXML()).willReturn("<stanza>");
         given(stanza.getFrom()).willReturn(OCCUPANT_JID);
+
+        MessageHandler handler = factory.create(stanza);
+
+        assertTrue(handler instanceof RoomMessageHandler);
+    }
+
+    @Test
+    public void returnsRoomMessageHandlerWnenOccupantJidEndsWithSelf() {
+        MessageHandlerFactory factory = new MessageHandlerFactory(null, COMMAND_PREFIX, null, MINIONS_NICK);
+        Message stanza = mock(Message.class);
+        given(stanza.getBody()).willReturn("Hello world!");
+        given(stanza.toXML()).willReturn("<stanza>");
+        given(stanza.getFrom()).willReturn(OCCUPANT_ENDSWITH_MINIONS_JID);
 
         MessageHandler handler = factory.create(stanza);
 

@@ -19,6 +19,8 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
+import java.util.Optional;
+
 class MessageHandlerFactory {
     private static final String CMD_HELP = "!help";
     private static final String CMD_JARS = "!jars";
@@ -36,7 +38,9 @@ class MessageHandlerFactory {
     }
 
     MessageHandler create(Message stanza) {
-        if (stanza.getBody() == null) {
+        String body = stanza.getBody();
+
+        if (body == null) {
             return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
@@ -44,19 +48,25 @@ class MessageHandlerFactory {
             return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (stanza.getFrom().endsWith(myNick)) {
+        JabberID fromJid = new JabberID(stanza.getFrom());
+        Optional<String> resource = fromJid.getResource();
+        if (!resource.isPresent()) {
             return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (CMD_HELP.equals(stanza.getBody())) {
+        if (resource.get().equals(myNick)) {
+            return new NopMessageHandler(stanza, minions, minionsPrefix, muc, myNick);
+        }
+
+        if (CMD_HELP.equals(body)) {
             return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (CMD_JARS.equals(stanza.getBody())) {
+        if (CMD_JARS.equals(body)) {
             return new BotCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
-        if (stanza.getBody().startsWith(minionsPrefix)) {
+        if (body.startsWith(minionsPrefix)) {
             return new MinionCommandHandler(stanza, minions, minionsPrefix, muc, myNick);
         }
 
