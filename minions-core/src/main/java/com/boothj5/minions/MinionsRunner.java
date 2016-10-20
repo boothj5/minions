@@ -60,7 +60,8 @@ class MinionsRunner {
 
             MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
 
-            MinionsListener listener = new MinionsListener(config, minions, muc);
+            MinionsRoom room = new MinionsRoomImpl(muc);
+            MinionsListener listener = new MinionsListener(config, minions, room);
             muc.addMessageListener(listener);
 
             Object lock = new Object();

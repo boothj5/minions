@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +37,10 @@ class MinionsListener implements PacketListener {
     private final MinionsRoom room;
     private final MinionsConfiguration config;
 
-    MinionsListener(MinionsConfiguration config, MinionStore minions, MultiUserChat muc) {
+    MinionsListener(MinionsConfiguration config, MinionStore minions, MinionsRoom room) {
         this.config = config;
         this.minions = minions;
-        this.room = new MinionsRoomImpl(muc);
+        this.room = room;
     }
 
     @Override
@@ -71,48 +70,43 @@ class MinionsListener implements PacketListener {
             return;
         }
 
-        if (body.startsWith(config.getPrefix())) {
-            String botCommand = body.substring(config.getPrefix().length());
-
-            if (botCommand.equals(MinionsConfiguration.CMD_HELP)) {
-                LOG.debug("Handling help.");
-                sendHelp();
-                return;
-            }
-            if (botCommand.equals(MinionsConfiguration.CMD_JARS)) {
-                LOG.debug("Handling jars.");
-                sendJars();
-                return;
-            }
-
-            try {
-                String minionsCommand = parseMinionsCommand(body);
-                minions.lock();
-                Minion minion = minions.get(minionsCommand);
-                if (minion != null) {
-                    LOG.debug(format("Handling command: %s", minionsCommand));
-                    String subMessage;
-                    try {
-                        subMessage = body.substring(config.getPrefix().length() + minionsCommand.length() + 1);
-                    } catch (IndexOutOfBoundsException e) {
-                        subMessage = "";
-                    }
-                    minion.onCommandWrapper(room, occupantNick, subMessage);
-                } else {
-                    LOG.debug(format("Minion does not exist: %s", minionsCommand));
-                    room.sendMessage("No such minion: " + minionsCommand);
-                }
-                minions.unlock();
-                return;
-            } catch (InterruptedException ie) {
-                LOG.error("Interrupted waiting for minions lock", ie);
-            } catch (MinionsException me) {
-                LOG.error("Error sending message to room", me);
-            }
-
+        if (!body.startsWith(config.getPrefix())) {
+            minions.onRoomMessage(body, occupantNick, room);
+            return;
         }
 
-        minions.onRoomMessage(body, occupantNick, room);
+        String botCommand = body.substring(config.getPrefix().length());
+        if (botCommand.equals(MinionsConfiguration.CMD_HELP)) {
+            LOG.debug("Handling help.");
+            sendHelp();
+            return;
+        }
+        if (botCommand.equals(MinionsConfiguration.CMD_JARS)) {
+            LOG.debug("Handling jars.");
+            sendJars();
+            return;
+        }
+
+        try {
+            String minionsCommand = parseMinionsCommand(body);
+            minions.lock();
+            Minion minion = minions.get(minionsCommand);
+            if (minion != null) {
+                LOG.debug(format("Handling command: %s", minionsCommand));
+                String subMessage;
+                int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
+                subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
+                minion.onCommandWrapper(room, occupantNick, subMessage);
+            } else {
+                LOG.debug(format("Minion does not exist: %s", minionsCommand));
+                room.sendMessage("No such minion: " + minionsCommand);
+            }
+            minions.unlock();
+        } catch (InterruptedException ie) {
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
+        }
     }
 
     private void sendHelp() {
