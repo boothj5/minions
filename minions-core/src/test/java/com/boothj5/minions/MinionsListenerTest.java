@@ -3,6 +3,7 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,10 @@ public class MinionsListenerTest {
     @Test
     public void sendsNothingOnEmptyBody() {
         given(message.getBody()).willReturn(null);
+        given(message.getFrom()).willReturn("room@conference.server.org/someone");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
+        given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         listener.processPacket(message);
 
@@ -67,11 +72,13 @@ public class MinionsListenerTest {
     }
 
 
-    // TODO message body may contain "delay"
     @Test
     public void sendsNothingOnDelayedMessage() {
-        given(message.getBody()).willReturn("Message body");
-        given(message.toXML()).willReturn("...delay...");
+        given(message.getBody()).willReturn("!hey there");
+        given(message.getFrom()).willReturn("room@conference.server.org/someone");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(mock(PacketExtension.class));
+        given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         listener.processPacket(message);
 
@@ -81,8 +88,10 @@ public class MinionsListenerTest {
     @Test
     public void sendsNothingOnMessageFromRoom() {
         given(message.getBody()).willReturn("Message body");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
+        given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         listener.processPacket(message);
 
@@ -92,8 +101,9 @@ public class MinionsListenerTest {
     @Test
     public void sendsNothingOnMessageFromSelf() {
         given(message.getBody()).willReturn("Message body");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
+        given(config.getPrefix()).willReturn("!");
         given(config.getMinionsNick()).willReturn("minions");
 
         listener.processPacket(message);
@@ -106,10 +116,10 @@ public class MinionsListenerTest {
         String messageBody = "Message body";
         String fromNick = "bobby";
         given(message.getBody()).willReturn(messageBody);
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/" + fromNick);
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         listener.processPacket(message);
 
@@ -119,10 +129,10 @@ public class MinionsListenerTest {
     @Test
     public void showsHelp() throws XMPPException {
         given(message.getBody()).willReturn("!help");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/bobby");
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         String cmd1 = "cmd1";
         String cmd1Help = "This is command 1";
@@ -155,10 +165,10 @@ public class MinionsListenerTest {
     @Test
     public void showsJars() throws XMPPException {
         given(message.getBody()).willReturn("!jars");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/bobby");
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         MinionJar jar1 = mock(MinionJar.class);
         String jar1Name = "some-minion.jar";
@@ -184,10 +194,10 @@ public class MinionsListenerTest {
     @Test
     public void sendMessageWhenNoMinionFound() throws XMPPException {
         given(message.getBody()).willReturn("!dosomething with these args");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/bobby");
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         given(minions.get("dosomething")).willReturn(null);
 
@@ -199,10 +209,10 @@ public class MinionsListenerTest {
     @Test
     public void callsMinion() throws XMPPException {
         given(message.getBody()).willReturn("!action arg1 arg2");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/bobby");
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         Minion minion = mock(Minion.class);
         given(minions.get("action")).willReturn(minion);
@@ -215,10 +225,10 @@ public class MinionsListenerTest {
     @Test
     public void callsMinionWhenNoArgs() throws XMPPException {
         given(message.getBody()).willReturn("!trolls");
-        given(message.toXML()).willReturn("xml");
         given(message.getFrom()).willReturn("room@conference.server.org/bobby");
-        given(config.getMinionsNick()).willReturn("minions");
+        given(message.getExtension("delay", "urn:xmpp:delay")).willReturn(null);
         given(config.getPrefix()).willReturn("!");
+        given(config.getMinionsNick()).willReturn("minions");
 
         Minion minion = mock(Minion.class);
         given(minions.get("trolls")).willReturn(minion);

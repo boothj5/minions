@@ -55,7 +55,7 @@ class MinionsListener implements PacketListener {
             return;
         }
 
-        if (stanza.toXML().contains("delay")) {
+        if (stanza.getExtension("delay", "urn:xmpp:delay") != null) {
             return;
         }
 
