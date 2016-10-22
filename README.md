@@ -2,7 +2,7 @@
 XMPP chat bot, with plugin architecture for implementing commands.
 
 # Overview
-Minions runs as a bot in a XMPP MUC chat room, and responds to commands.  Commands are implemented as plugins, and may be loaded at runtime by dropping the JAR file in the plugins directory.
+Minions runs as a bot in XMPP MUC chat rooms, and responds to commands.  Commands are implemented as plugins, and may be loaded at runtime by copying the JAR file in the plugins directory.
 
 # Project structure
 
@@ -28,10 +28,13 @@ Then create a YAML file with your configuration:
 `service:`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`server:` Optional server if not the same as domain part of the username.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`port:` Optional port if not the default `5222`.<br>
-`room:`<br>
-&nbsp;&nbsp;&nbsp;&nbsp;`jid:` The JID of the room to join.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;`nick:` Nickname to use in the room, `minions` by default.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;`password:` Password for the room if required.<br>
+`rooms:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`- jid:` The JID of the room to join.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`  nick:` Nickname to use in the room, `minions` by default.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`  password:` Password for the room if required.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`- jid:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`  nick:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`  password:`<br>
 `plugins:`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`refreshSeconds:` Polling interval to check for new plugins, defaults to `10` seconds.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`prefix:` The command prefix, defaults to `!`<br>
@@ -85,7 +88,7 @@ public class EchoMinion extends Minion {
 
 The plugin needs to be packaged as a fat jar (with dependencies) and must include two Manifest attributes:
 
-`MinionClass` - Implementation of the `Minion` interface.  
+`MinionClass` - Implementation of the `Minion` interface.
 `MinionCommand` - The command name.
 
 Example from `echo-minion`:

@@ -7,10 +7,11 @@ service:
     server: localhost
     port: 5242
 
-room:
-    jid: botroom@conference.ejabberd.local
-    nick: command-bot
-    password: m1n10n5
+rooms:
+    - jid: botroom@conference.ejabberd.local
+      nick: command-bot
+      password: m1n10n5
+    - jid: botroom2@conference.ejabberd.local
 
 plugins:
     dir: /home/boothj5/.local/share/minions/plugins
