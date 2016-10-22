@@ -30,6 +30,10 @@ class MinionsRoomImpl implements MinionsRoom {
         return muc.getNickname();
     }
 
+    public String getRoom() {
+        return muc.getRoom();
+    }
+
     @Override
     public void sendMessage(String message) throws MinionsException {
         try {

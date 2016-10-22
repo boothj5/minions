@@ -129,11 +129,9 @@ class MinionStore {
             for (String jarToLoad : jarsToLoad.keySet()) {
                 MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
                 minions.add(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
-            }
-
-            for (String jarToLoad : jarsToLoad.keySet()) {
                 currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
             }
+
             jarsToRemove.forEach(currentJars::remove);
 
             loaded = true;

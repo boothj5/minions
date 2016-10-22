@@ -23,6 +23,8 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 import static java.lang.String.format;
 
 class MinionsRunner {
@@ -49,20 +51,23 @@ class MinionsRunner {
             conn.login(config.getUser(), config.getPassword(), config.getResource());
             LOG.debug(format("Logged in: %s@%s", config.getUser(), config.getService()));
 
-            MultiUserChat muc = new MultiUserChat(conn, config.getRoom());
-            if (StringUtils.isBlank(config.getRoomPassword())) {
-                muc.join(config.getMinionsNick());
-            } else {
-                muc.join(config.getMinionsNick(), config.getRoomPassword());
+            for (MinionsRoomConfiguration roomConfig : config.getRooms()) {
+                MultiUserChat muc = new MultiUserChat(conn, roomConfig.getJid());
+                Optional<String> password = roomConfig.getPassword();
+                if (password.isPresent()) {
+                    muc.join(roomConfig.getNick(), password.get());
+                } else {
+                    muc.join(roomConfig.getNick());
+                }
+
+                LOG.debug(format("Joined: %s as %s", roomConfig.getJid(), roomConfig.getNick()));
+
+                MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
+
+                MinionsRoom room = new MinionsRoomImpl(muc);
+                MinionsListener listener = new MinionsListener(config, minions, room);
+                muc.addMessageListener(listener);
             }
-
-            LOG.debug(format("Joined: %s as %s", config.getRoom(), config.getMinionsNick()));
-
-            MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
-
-            MinionsRoom room = new MinionsRoomImpl(muc);
-            MinionsListener listener = new MinionsListener(config, minions, room);
-            muc.addMessageListener(listener);
 
             Object lock = new Object();
             synchronized (lock) {

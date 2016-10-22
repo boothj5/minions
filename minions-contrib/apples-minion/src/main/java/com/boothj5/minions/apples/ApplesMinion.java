@@ -4,8 +4,11 @@ import com.boothj5.minions.Minion;
 import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ApplesMinion extends Minion {
-    public static final String MINIONS_APPLES_PROPERTY = "minions.apples";
+    private static Map<String, Integer> applesByRoom = new HashMap<>();
 
     @Override
     public String getHelp() {
@@ -13,14 +16,8 @@ public class ApplesMinion extends Minion {
     }
 
     @Override
-    public void onRemove() {
-        System.clearProperty(MINIONS_APPLES_PROPERTY);
-    }
-
-    @Override
     public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
-        String currentStr = System.getProperty(MINIONS_APPLES_PROPERTY);
-        int total = currentStr == null ? 0 : Integer.valueOf(currentStr);
+        Integer total = applesByRoom.getOrDefault(muc.getRoom(), 0);
 
         switch (message) {
             case "give":
@@ -30,7 +27,7 @@ public class ApplesMinion extends Minion {
                 } else {
                     muc.sendMessage(from + ": Thanks, now I have " + total + " apples :)");
                 }
-                System.setProperty(MINIONS_APPLES_PROPERTY, String.valueOf(total));
+                applesByRoom.put(muc.getRoom(), total);
                 break;
             case "take":
                 if (total == 0) {
@@ -44,6 +41,7 @@ public class ApplesMinion extends Minion {
                     } else {
                         muc.sendMessage(from + ": Here you go, now I've got " + total + " apples left.");
                     }
+                    applesByRoom.put(muc.getRoom(), total);
                 }
                 break;
             case "":
@@ -57,7 +55,5 @@ public class ApplesMinion extends Minion {
                 muc.sendMessage(from + ": give or take?");
                 break;
         }
-
-        System.setProperty(MINIONS_APPLES_PROPERTY, String.valueOf(total));
     }
 }

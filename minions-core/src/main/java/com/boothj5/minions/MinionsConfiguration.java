@@ -16,6 +16,8 @@
 
 package com.boothj5.minions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 class MinionsConfiguration {
@@ -24,36 +26,35 @@ class MinionsConfiguration {
 
     private static final String DEFAULT_RESOURCE = "minions-core";
     private static final int DEFAULT_PORT = 5222;
-    private static final String DEFAULT_ROOM_NICK = "minions";
     private static final String DEFAULT_PLUGINS_DIR = System.getProperty("user.home") + "/.local/share/minions/plugins";
     private static final int DEFAULT_REFRESH_SECONDS = 10;
     private static final String DEFAULT_PREFIX = "!";
-    private String userService;
 
     private String userName;
     private String userPassword;
     private String userResource = DEFAULT_RESOURCE;
+    private String userService;
     private String serviceServer;
     private int servicePort = DEFAULT_PORT;
-    private String roomJid;
-    private String minionsNick = DEFAULT_ROOM_NICK;
-    private String roomPassword;
+
+    private List<MinionsRoomConfiguration> rooms = new ArrayList<>();
+
     private String pluginsDir = DEFAULT_PLUGINS_DIR;
     private int pluginsRefreshSeconds = DEFAULT_REFRESH_SECONDS;
     private String pluginsPrefix = DEFAULT_PREFIX;
 
-    MinionsConfiguration(Map<String, Map<String, Object>> config) throws MinionsException {
-        Map<String, Object> user = config.get("user");
-        Map<String, Object> service = config.get("service");
-        Map<String, Object> room = config.get("room");
-        Map<String, Object> plugins = config.get("plugins");
+    MinionsConfiguration(Map<String, Object> config) throws MinionsException {
+        Object user = config.get("user");
+        Object service = config.get("service");
+        Object rooms = config.get("rooms");
+        Object plugins = config.get("plugins");
 
         validateUser(user);
-        validateRoom(room);
+        validateRooms(rooms);
 
         loadUserConfig(user);
         loadServiceConfig(service);
-        loadRoomConfig(room);
+        loadRoomsConfig(rooms);
         loadPluginsConfig(plugins);
     }
 
@@ -81,14 +82,6 @@ class MinionsConfiguration {
         return servicePort;
     }
 
-    String getRoom() {
-        return roomJid;
-    }
-
-    String getMinionsNick() {
-        return minionsNick;
-    }
-
     int getRefreshSeconds() {
         return pluginsRefreshSeconds;
     }
@@ -101,77 +94,94 @@ class MinionsConfiguration {
         return pluginsDir;
     }
 
-    String getRoomPassword() {
-        return roomPassword;
+    List<MinionsRoomConfiguration> getRooms() {
+        return rooms;
     }
 
-    private void validateUser(Map<String, Object> user) throws MinionsException {
+    private void validateUser(Object user) throws MinionsException {
         if (user == null) {
             throw new MinionsException("Missing configuration property: user");
-        } else {
-            if (user.get("name") == null) {
-                throw new MinionsException("Missing configuration property: user.name");
-            } else {
-                String jid = (String) user.get("name");
-                if (!jid.contains("@")) {
-                    throw new MinionsException("Invalid property user.name, specify a valid Jabber ID");
-                }
-            }
-            if (user.get("password") == null) {
-                throw new MinionsException("Missing configuration property: user.password");
-            }
+        }
+
+        Map<String, String> userProps = (Map<String, String>)user;
+
+        if (userProps.get("name") == null) {
+            throw new MinionsException("Missing configuration property: user.name");
+        }
+
+        String jid = userProps.get("name");
+        if (!jid.contains("@")) {
+            throw new MinionsException("Invalid property user.name, specify a valid Jabber ID");
+        }
+
+        if (userProps.get("password") == null) {
+            throw new MinionsException("Missing configuration property: user.password");
         }
     }
 
-    private void validateRoom(Map<String, Object> room) throws MinionsException {
-        if (room == null) {
-            throw new MinionsException("Missing configuration property: room");
-        } else {
-            if (room.get("jid") == null) {
-                throw new MinionsException("Missing configuration property: room.jid");
-            }
+    private void validateRooms(Object rooms) throws MinionsException {
+        if (rooms == null) {
+            throw new MinionsException("Missing configuration property: rooms");
+        }
+
+        List<Map<String, String>> roomsList = (List<Map<String, String>>) rooms;
+        if (roomsList.size() == 0) {
+            throw new MinionsException("Must have at least one room configured.");
         }
     }
 
-    private void loadPluginsConfig(Map<String, Object> plugins) {
-        if (plugins != null) {
-            if (plugins.get("dir") != null) {
-                pluginsDir = (String) plugins.get("dir");
-            }
-            if (plugins.get("refreshSeconds") != null) {
-                pluginsRefreshSeconds = (int) plugins.get("refreshSeconds");
-            }
-            if (plugins.get("prefix") != null) {
-                pluginsPrefix = (String) plugins.get("prefix");
-            }
+    private void loadPluginsConfig(Object plugins) {
+        if (plugins == null) {
+            return;
+        }
+
+        Map<String, Object> pluginsProps = (Map<String, Object>)plugins;
+
+        if (pluginsProps.get("dir") != null) {
+            pluginsDir = (String)pluginsProps.get("dir");
+        }
+        if (pluginsProps.get("refreshSeconds") != null) {
+            pluginsRefreshSeconds = (int)pluginsProps.get("refreshSeconds");
+        }
+        if (pluginsProps.get("prefix") != null) {
+            pluginsPrefix = (String)pluginsProps.get("prefix");
         }
     }
 
-    private void loadRoomConfig(Map<String, Object> room) {
-        roomJid = (String) room.get("jid");
-        if (room.get("nick") != null) {
-            minionsNick = (String) room.get("nick");
-        }
-        roomPassword = (String) room.get("password");
-    }
+    private void loadRoomsConfig(Object roomsConf) throws MinionsException {
+        List<Map<String, String>> roomsList = (List<Map<String, String>>)roomsConf;
 
-    private void loadServiceConfig(Map<String, Object> service) {
-        if (service != null) {
-            serviceServer = (String) service.get("server");
-            if (service.get("port") != null) {
-                servicePort = (int) service.get("port");
-            }
+        for (Map<String, String> room : roomsList) {
+            String roomJid = room.get("jid");
+            String minionsNick = room.get("nick");
+            String roomPassword = room.get("password");
+
+            rooms.add(new MinionsRoomConfiguration(roomJid, minionsNick, roomPassword));
         }
     }
 
-    private void loadUserConfig(Map<String, Object> user) {
-        String jid = (String) user.get("name");
+    private void loadServiceConfig(Object service) {
+        if (service == null) {
+            return;
+        }
+
+        Map<String, Object> serviceProps = (Map<String, Object>)service;
+
+        serviceServer = (String)serviceProps.get("server");
+        if (serviceProps.get("port") != null) {
+            servicePort = (int)serviceProps.get("port");
+        }
+    }
+
+    private void loadUserConfig(Object user) {
+        Map<String, String> userProps = (Map<String, String>)user;
+        String jid = userProps.get("name");
         String[] split = jid.split("@");
         userName = split[0];
         userService = split[1];
-        userPassword = (String) user.get("password");
-        if (user.get("resource") != null) {
-            userResource = (String) user.get("resource");
+        userPassword = userProps.get("password");
+        if (userProps.get("resource") != null) {
+            userResource = userProps.get("resource");
         }
     }
 }

@@ -66,7 +66,7 @@ class MinionsListener implements PacketListener {
         }
 
         String occupantNick = resource.get();
-        if (occupantNick.equals(config.getMinionsNick())) {
+        if (occupantNick.equals(room.getNick())) {
             return;
         }
 
