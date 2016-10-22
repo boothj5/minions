@@ -30,11 +30,11 @@ Then create a YAML file with your configuration:
 &nbsp;&nbsp;&nbsp;&nbsp;`port:` Optional port if not the default `5222`.<br>
 `rooms:`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`- jid:` The JID of the room to join.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`nick:` Nickname to use in the room, `minions` by default.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`password:` Password for the room if required.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`nick:` Nickname to use in the room, `minions` by default.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`password:` Password for the room if required.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`- jid:`<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`nick:`<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`password:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`nick:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`password:`<br>
 `plugins:`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`refreshSeconds:` Polling interval to check for new plugins, defaults to `10` seconds.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`prefix:` The command prefix, defaults to `!`<br>
