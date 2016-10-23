@@ -37,17 +37,19 @@ class MinionJar {
     private final String command;
     private final String className;
 
-    MinionJar(File file) throws IOException {
+    MinionJar(File file) {
         name = file.getName();
         timestamp = file.lastModified();
-        url = file.toURI().toURL();
-        InputStream in = new FileInputStream(file);
-        JarInputStream stream = new JarInputStream(in);
-        Manifest manifest = stream.getManifest();
-        command = manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
-        className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
-        stream.close();
-        in.close();
+
+        try (InputStream in = new FileInputStream(file);
+                JarInputStream st = new JarInputStream(in)) {
+            url = file.toURI().toURL();
+            Manifest manifest = st.getManifest();
+            command = manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
+            className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
+        } catch (IOException e) {
+            throw new MinionsException("Error loading minions jar: " + name, e);
+        }
     }
 
     String getName() {

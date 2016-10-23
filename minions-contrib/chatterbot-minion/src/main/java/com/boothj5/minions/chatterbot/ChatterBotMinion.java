@@ -1,7 +1,6 @@
 package com.boothj5.minions.chatterbot;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
@@ -47,7 +46,7 @@ public class ChatterBotMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onMessage(MinionsRoom muc, String from, String message) {
         String myNick = muc.getNick();
         String[] split = message.split("[:]");
         if (split.length > 0) {
@@ -67,7 +66,7 @@ public class ChatterBotMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         switch (message) {
             case "set cleverbot":
                 chosenSession = cleverBotSession;

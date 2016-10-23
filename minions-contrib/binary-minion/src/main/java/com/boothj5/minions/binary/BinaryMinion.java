@@ -1,7 +1,6 @@
 package com.boothj5.minions.binary;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +12,7 @@ public class BinaryMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         try {
             String[] split = StringUtils.split(message, " ");
             String command = split[0];

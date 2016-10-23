@@ -1,7 +1,6 @@
 package com.boothj5.minions.apples;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 import java.util.HashMap;
@@ -16,7 +15,7 @@ public class ApplesMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         Integer total = applesByRoom.getOrDefault(muc.getRoom(), 0);
 
         switch (message) {

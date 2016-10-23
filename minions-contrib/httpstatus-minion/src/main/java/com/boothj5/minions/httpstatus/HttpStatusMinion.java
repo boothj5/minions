@@ -1,7 +1,6 @@
 package com.boothj5.minions.httpstatus;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -19,7 +18,7 @@ public class HttpStatusMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         String[] split = StringUtils.split(message, " ");
         String uri = split[0];
         try {

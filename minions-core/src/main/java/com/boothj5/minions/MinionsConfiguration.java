@@ -43,7 +43,7 @@ class MinionsConfiguration {
     private int pluginsRefreshSeconds = DEFAULT_REFRESH_SECONDS;
     private String pluginsPrefix = DEFAULT_PREFIX;
 
-    MinionsConfiguration(Map<String, Object> config) throws MinionsException {
+    MinionsConfiguration(Map<String, Object> config) {
         Object user = config.get("user");
         Object service = config.get("service");
         Object rooms = config.get("rooms");
@@ -98,7 +98,7 @@ class MinionsConfiguration {
         return rooms;
     }
 
-    private void validateUser(Object user) throws MinionsException {
+    private void validateUser(Object user) {
         if (user == null) {
             throw new MinionsException("Missing configuration property: user");
         }
@@ -119,7 +119,7 @@ class MinionsConfiguration {
         }
     }
 
-    private void validateRooms(Object rooms) throws MinionsException {
+    private void validateRooms(Object rooms) {
         if (rooms == null) {
             throw new MinionsException("Missing configuration property: rooms");
         }
@@ -148,7 +148,7 @@ class MinionsConfiguration {
         }
     }
 
-    private void loadRoomsConfig(Object roomsConf) throws MinionsException {
+    private void loadRoomsConfig(Object roomsConf) {
         List<Map<String, String>> roomsList = (List<Map<String, String>>)roomsConf;
 
         for (Map<String, String> room : roomsList) {

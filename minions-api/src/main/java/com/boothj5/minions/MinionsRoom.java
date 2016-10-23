@@ -19,5 +19,5 @@ package com.boothj5.minions;
 public interface MinionsRoom {
     String getNick();
     String getRoom();
-    void sendMessage(String message) throws MinionsException;
+    void sendMessage(String message);
 }

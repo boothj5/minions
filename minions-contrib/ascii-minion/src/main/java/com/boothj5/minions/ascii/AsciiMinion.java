@@ -1,7 +1,6 @@
 package com.boothj5.minions.ascii;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 import java.awt.*;
@@ -15,7 +14,7 @@ public class AsciiMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom minionsRoom, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom minionsRoom, String from, String message) {
         String response = writeMessage(message);
         minionsRoom.sendMessage(response);
     }

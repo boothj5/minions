@@ -23,7 +23,7 @@ class MinionsRoomConfiguration {
     private final String nick;
     private final String password;
 
-    MinionsRoomConfiguration(String jid, String nick, String password) throws MinionsException {
+    MinionsRoomConfiguration(String jid, String nick, String password) {
         if (jid == null) {
             throw new MinionsException("Missing configuration property: room.jid");
         }
@@ -52,7 +52,7 @@ class MinionsRoomConfiguration {
 
         MinionsRoomConfiguration that = (MinionsRoomConfiguration) o;
 
-        if (jid != null ? !jid.equals(that.jid) : that.jid != null) return false;
+        if (!jid.equals(that.jid)) return false;
         if (!nick.equals(that.nick)) return false;
         return password != null ? password.equals(that.password) : that.password == null;
 
@@ -60,7 +60,7 @@ class MinionsRoomConfiguration {
 
     @Override
     public int hashCode() {
-        int result = jid != null ? jid.hashCode() : 0;
+        int result = jid.hashCode();
         result = 31 * result + nick.hashCode();
         result = 31 * result + (password != null ? password.hashCode() : 0);
         return result;

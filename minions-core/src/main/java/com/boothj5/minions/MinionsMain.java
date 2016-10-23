@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 class MinionsMain {
-    public static void main(String[] args) throws MinionsException {
+    public static void main(String[] args) {
         if (args.length < 1) {
             throw new MinionsException("No configuration file specified.");
         }

@@ -16,7 +16,7 @@
 
 package com.boothj5.minions;
 
-public class MinionsException extends Exception {
+public class MinionsException extends RuntimeException {
 
     public MinionsException(String message) {
         super(message);
@@ -24,5 +24,9 @@ public class MinionsException extends Exception {
 
     public MinionsException(Throwable cause) {
         super(cause);
+    }
+
+    public MinionsException(String message, Throwable t) {
+        super(message, t);
     }
 }

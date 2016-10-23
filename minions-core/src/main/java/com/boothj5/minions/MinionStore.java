@@ -80,7 +80,7 @@ class MinionStore {
         return minions.get(command);
     }
 
-    private void load() throws MinionsException {
+    private void load() {
         try {
             Map<String, MinionJar> newJars = new HashMap<>();
             Map<String, MinionJar> jarsToLoad = new HashMap<>();

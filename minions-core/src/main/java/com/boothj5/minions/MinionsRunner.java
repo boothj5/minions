@@ -36,7 +36,7 @@ class MinionsRunner {
         this.config = config;
     }
 
-    void run() throws MinionsException {
+    void run() {
         try {
             LOG.debug("Starting MinionsRunner");
             ConnectionConfiguration connectionConfiguration;

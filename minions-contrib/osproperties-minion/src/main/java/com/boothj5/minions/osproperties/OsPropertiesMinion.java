@@ -1,7 +1,6 @@
 package com.boothj5.minions.osproperties;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 import java.util.Enumeration;
@@ -15,7 +14,7 @@ public class OsPropertiesMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         StringBuilder result = new StringBuilder();
         Properties properties = System.getProperties();
         Enumeration keys = properties.keys();

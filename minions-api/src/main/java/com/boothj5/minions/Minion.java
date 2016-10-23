@@ -27,26 +27,26 @@ public abstract class Minion {
     final void onCommandWrapper(MinionsRoom muc, String from, String message) {
         try {
             onCommand(muc, from, message);
-        } catch (RuntimeException rte) {
-            LOG.error("Minions RuntimeException", rte);
         } catch (MinionsException me) {
             LOG.error("MinionsException", me);
+        } catch (RuntimeException rte) {
+            LOG.error("Minions RuntimeException", rte);
         }
     }
 
     final void onMessageWrapper(MinionsRoom muc, String from, String message) {
         try {
             onMessage(muc, from, message);
-        } catch (RuntimeException rte) {
-            LOG.error("Minions RuntimeException", rte);
         } catch (MinionsException me) {
             LOG.error("MinionsException", me);
+        } catch (RuntimeException rte) {
+            LOG.error("Minions RuntimeException", rte);
         }
     }
 
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {}
+    public void onMessage(MinionsRoom muc, String from, String message) {}
 
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {}
+    public void onCommand(MinionsRoom muc, String from, String message) {}
 
     public void onRemove() {}
 }

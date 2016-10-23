@@ -1,7 +1,6 @@
 package com.boothj5.minions.coster;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,7 +26,7 @@ public class CosterMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         String[] tokens = StringUtils.split(message, " ");
         String command = tokens[0];
         StringBuffer out;
@@ -107,7 +106,7 @@ public class CosterMinion extends Minion {
         }
     }
 
-    private void showOwed(MinionsRoom muc, Map<String, Map<String, Float>> owers) throws MinionsException {
+    private void showOwed(MinionsRoom muc, Map<String, Map<String, Float>> owers) {
         StringBuffer out;
         out = new StringBuffer("\n");
         for (String ower : owers.keySet()) {

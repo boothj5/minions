@@ -62,7 +62,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsUserName() throws MinionsException {
+    public void returnsUserName() {
         Map<String, Object> config = new HashMap<>();
         addValidRooms(config);
         Map<String, Object> user = new HashMap<>();
@@ -77,7 +77,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsUserService() throws MinionsException {
+    public void returnsUserService() {
         Map<String, Object> config = new HashMap<>();
         addValidRooms(config);
         Map<String, Object> user = new HashMap<>();
@@ -92,7 +92,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsUserPassword() throws MinionsException {
+    public void returnsUserPassword() {
         Map<String, Object> config = new HashMap<>();
         addValidRooms(config);
         Map<String, Object> user = new HashMap<>();
@@ -108,7 +108,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsUserResource() throws MinionsException {
+    public void returnsUserResource() {
         Map<String, Object> config = new HashMap<>();
         addValidRooms(config);
         Map<String, Object> user = new HashMap<>();
@@ -125,7 +125,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultUserResource() throws MinionsException {
+    public void returnsDefaultUserResource() {
         Map<String, Object> config = new HashMap<>();
         addValidRooms(config);
         Map<String, Object> user = new HashMap<>();
@@ -141,7 +141,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsServiceServer() throws MinionsException {
+    public void returnsServiceServer() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -157,7 +157,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsNullServiceServer() throws MinionsException {
+    public void returnsNullServiceServer() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -170,7 +170,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsServicePort() throws MinionsException {
+    public void returnsServicePort() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -186,7 +186,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultServicePortWhenNotSpecified() throws MinionsException {
+    public void returnsDefaultServicePortWhenNotSpecified() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -199,7 +199,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultServicePortWhenNoService() throws MinionsException {
+    public void returnsDefaultServicePortWhenNoService() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -256,7 +256,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsRooms() throws MinionsException {
+    public void returnsRooms() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         Map<String, String> room1 = new HashMap<>();
@@ -288,7 +288,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsPluginsDir() throws MinionsException {
+    public void returnsPluginsDir() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -304,7 +304,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsDirWhenNotSpecified() throws MinionsException {
+    public void returnsDefaultPluginsDirWhenNotSpecified() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -318,7 +318,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsDirWhenNoPlugins() throws MinionsException {
+    public void returnsDefaultPluginsDirWhenNoPlugins() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -331,7 +331,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsPluginsRefreshSeconds() throws MinionsException {
+    public void returnsPluginsRefreshSeconds() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -347,7 +347,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsRefreshSecondsWhenNotSpecified() throws MinionsException {
+    public void returnsDefaultPluginsRefreshSecondsWhenNotSpecified() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -362,7 +362,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsRefreshSecondsWhenNoPlugins() throws MinionsException {
+    public void returnsDefaultPluginsRefreshSecondsWhenNoPlugins() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -375,7 +375,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsPluginsPrefix() throws MinionsException {
+    public void returnsPluginsPrefix() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -391,7 +391,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsPrefixWhenNotSpecified() throws MinionsException {
+    public void returnsDefaultPluginsPrefixWhenNotSpecified() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);
@@ -406,7 +406,7 @@ public class MinionsConfigurationTest {
     }
 
     @Test
-    public void returnsDefaultPluginsPrefixWhenNoPlugins() throws MinionsException {
+    public void returnsDefaultPluginsPrefixWhenNoPlugins() {
         Map<String, Object> config = new HashMap<>();
         addValidUser(config);
         addValidRooms(config);

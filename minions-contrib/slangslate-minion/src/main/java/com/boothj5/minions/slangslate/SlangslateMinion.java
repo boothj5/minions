@@ -1,7 +1,6 @@
 package com.boothj5.minions.slangslate;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,12 +23,12 @@ public class SlangslateMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onMessage(MinionsRoom muc, String from, String message) {
         lastMessages.put(from, message);
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         String arg = message.trim();
 
         if ("".equals(arg)) {

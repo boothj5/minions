@@ -25,7 +25,7 @@ public class ChuckMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         HttpClient client = HttpClientBuilder.create().build();
         String url = "http://api.icndb.com/jokes/random";
 

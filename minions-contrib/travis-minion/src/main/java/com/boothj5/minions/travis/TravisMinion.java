@@ -26,7 +26,7 @@ public class TravisMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         HttpClient client = HttpClientBuilder.create().build();
 
         String[] split = message.trim().split(" ");
@@ -73,7 +73,7 @@ public class TravisMinion extends Minion {
 
         } catch (IOException e) {
             muc.sendMessage("Could not get project.");
-            throw new MinionsException(e);
+            throw new MinionsException("Could not get project.", e);
         }
     }
 }

@@ -27,7 +27,7 @@ public class SpellCheckerMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         try {
             List<RuleMatch> matches = langTool.check(message);
             String result = "";
@@ -47,7 +47,7 @@ public class SpellCheckerMinion extends Minion {
             }
         } catch (IOException e) {
             LOG.debug("Failed to initialise spell checker.");
-            throw new MinionsException(e);
+            throw new MinionsException("Failed to initialise spell checker.", e);
         }
     }
 }

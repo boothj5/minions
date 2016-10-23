@@ -1,7 +1,6 @@
 package com.boothj5.minions.calculator;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -15,7 +14,7 @@ public class CalculatorMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         try {
             Expression expression = new ExpressionBuilder(message).build();
             ValidationResult validationResult = expression.validate();

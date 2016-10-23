@@ -1,7 +1,6 @@
 package com.boothj5.minions.eddie;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 
 public class EddieMinion extends Minion {
@@ -11,7 +10,7 @@ public class EddieMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onMessage(MinionsRoom muc, String from, String message) {
         if (message.contains("\\m/")) {
             muc.sendMessage("\\m/");
         }

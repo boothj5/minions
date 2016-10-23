@@ -1,7 +1,6 @@
 package com.boothj5.minions.catfact;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
@@ -25,7 +24,7 @@ public class CatFactMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         try {
             HttpClient client = HttpClientBuilder.create().build();
             String url = "http://catfacts-api.appspot.com/api/facts?number=1";

@@ -28,7 +28,7 @@ class MinionsDir {
         dir = new File(minionsDir);
     }
 
-    List<MinionJar> listMinionJars() throws IOException {
+    List<MinionJar> listMinionJars() {
         List<MinionJar> result = new ArrayList<>();
 
         File[] files = dir.listFiles();

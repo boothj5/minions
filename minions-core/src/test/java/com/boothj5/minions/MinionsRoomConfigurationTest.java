@@ -11,7 +11,7 @@ public class MinionsRoomConfigurationTest {
     @Test
     public void throwsExceptionWhenNoJid() {
         try {
-            MinionsRoomConfiguration config = new MinionsRoomConfiguration(null, null, null);
+            new MinionsRoomConfiguration(null, null, null);
             fail("Expected MinionsException not thrown.");
         } catch (MinionsException me) {
             assertEquals("Missing configuration property: room.jid", me.getMessage());
@@ -19,35 +19,35 @@ public class MinionsRoomConfigurationTest {
     }
 
     @Test
-    public void returnsJid() throws MinionsException {
+    public void returnsJid() {
         MinionsRoomConfiguration config = new MinionsRoomConfiguration("jid", null, null);
 
         assertEquals("jid", config.getJid());
     }
 
     @Test
-    public void returnsNick() throws MinionsException {
+    public void returnsNick() {
         MinionsRoomConfiguration config = new MinionsRoomConfiguration("jid", "bob", null);
 
         assertEquals("bob", config.getNick());
     }
 
     @Test
-    public void defaultsNick() throws MinionsException {
+    public void defaultsNick() {
         MinionsRoomConfiguration config = new MinionsRoomConfiguration("jid", null, null);
 
         assertEquals("minions", config.getNick());
     }
 
     @Test
-    public void returnsNoPassword() throws MinionsException {
+    public void returnsNoPassword() {
         MinionsRoomConfiguration config = new MinionsRoomConfiguration("jid", null, null);
 
         assertFalse(config.getPassword().isPresent());
     }
 
     @Test
-    public void returnsPassword() throws MinionsException {
+    public void returnsPassword() {
         MinionsRoomConfiguration config = new MinionsRoomConfiguration("jid", null, "pass");
 
         assertEquals("pass", config.getPassword().get());

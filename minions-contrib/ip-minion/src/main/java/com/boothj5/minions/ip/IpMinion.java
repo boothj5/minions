@@ -1,7 +1,6 @@
 package com.boothj5.minions.ip;
 
 import com.boothj5.minions.Minion;
-import com.boothj5.minions.MinionsException;
 import com.boothj5.minions.MinionsRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
@@ -28,7 +27,7 @@ public class IpMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) throws MinionsException {
+    public void onCommand(MinionsRoom muc, String from, String message) {
         muc.sendMessage("");
         try {
             HttpClient client = HttpClientBuilder.create().build();

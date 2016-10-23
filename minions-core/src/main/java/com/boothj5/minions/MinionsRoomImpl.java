@@ -35,7 +35,7 @@ class MinionsRoomImpl implements MinionsRoom {
     }
 
     @Override
-    public void sendMessage(String message) throws MinionsException {
+    public void sendMessage(String message) {
         try {
             muc.sendMessage(message);
         } catch (XMPPException e) {
