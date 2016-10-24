@@ -27,8 +27,6 @@ public abstract class Minion {
     final void onCommandWrapper(MinionsRoom muc, String from, String message) {
         try {
             onCommand(muc, from, message);
-        } catch (MinionsException me) {
-            LOG.error("MinionsException", me);
         } catch (RuntimeException rte) {
             LOG.error("Minions RuntimeException", rte);
         }
@@ -37,8 +35,6 @@ public abstract class Minion {
     final void onMessageWrapper(MinionsRoom muc, String from, String message) {
         try {
             onMessage(muc, from, message);
-        } catch (MinionsException me) {
-            LOG.error("MinionsException", me);
         } catch (RuntimeException rte) {
             LOG.error("Minions RuntimeException", rte);
         }
