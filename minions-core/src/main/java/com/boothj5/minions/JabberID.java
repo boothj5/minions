@@ -42,8 +42,8 @@ class JabberID {
         String[] splitJid = jid.split("/");
         if (splitJid.length < 2) {
             return Optional.empty();
-        } else {
-            return Optional.of(splitJid[1]);
         }
+
+        return Optional.of(splitJid[1]);
     }
 }
