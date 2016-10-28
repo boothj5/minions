@@ -31,7 +31,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 class MinionStore {
-    private static final Logger LOG = LoggerFactory.getLogger(MinionsRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinionStore.class);
     private final MultiUserChat muc;
     private final Minions minions;
     private final String minionsDirProp;
