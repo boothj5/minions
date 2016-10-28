@@ -19,7 +19,6 @@ package com.boothj5.minions;
 import java.util.Optional;
 
 class JabberID {
-
     private final String jid;
 
     JabberID(String jid) {

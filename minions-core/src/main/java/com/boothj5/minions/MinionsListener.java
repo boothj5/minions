@@ -157,5 +157,4 @@ class MinionsListener implements PacketListener {
         String[] tokens = StringUtils.split(message, " ");
         return tokens[0].substring(config.getPrefix().length());
     }
-
 }
