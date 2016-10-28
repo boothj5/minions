@@ -150,14 +150,11 @@ class MinionsConfiguration {
 
     private void loadRoomsConfig(Object roomsConf) {
         List<Map<String, String>> roomsList = (List<Map<String, String>>)roomsConf;
-
-        for (Map<String, String> room : roomsList) {
-            String roomJid = room.get("jid");
-            String minionsNick = room.get("nick");
-            String roomPassword = room.get("password");
-
-            rooms.add(new MinionsRoomConfiguration(roomJid, minionsNick, roomPassword));
-        }
+        roomsList.forEach(room ->
+            rooms.add(new MinionsRoomConfiguration(
+                room.get("jid"),
+                room.get("nick"),
+                room.get("password"))));
     }
 
     private void loadServiceConfig(Object service) {
