@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class Minions {
+class MinionsMap {
     private final HashMap<String, Minion> map;
 
-    Minions() {
+    MinionsMap() {
         this.map = new HashMap<>();
     }
 

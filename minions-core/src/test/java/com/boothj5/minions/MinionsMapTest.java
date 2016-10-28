@@ -6,20 +6,20 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class MinionsTest {
+public class MinionsMapTest {
 
     @Test
     public void returnsEmptyCommandList() {
-        Minions minions = new Minions();
+        MinionsMap minionsMap = new MinionsMap();
 
-        List<String> command = minions.getCommands();
+        List<String> command = minionsMap.getCommands();
 
         assertEquals(0, command.size());
     }
 
     @Test
     public void addsToCommandList() {
-        Minions minions = new Minions();
+        MinionsMap minions = new MinionsMap();
         Minion minion = new Minion() {
             @Override
             public String getHelp() {
@@ -42,7 +42,7 @@ public class MinionsTest {
 
     @Test
     public void addsMinion() {
-        Minions minions = new Minions();
+        MinionsMap minions = new MinionsMap();
         Minion minion = new Minion() {
             @Override
             public String getHelp() {
@@ -64,7 +64,7 @@ public class MinionsTest {
 
     @Test
     public void removesMinion() {
-        Minions minions = new Minions();
+        MinionsMap minions = new MinionsMap();
         Minion minion = new Minion() {
             @Override
             public String getHelp() {

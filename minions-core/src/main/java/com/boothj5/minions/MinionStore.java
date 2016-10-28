@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionStore.class);
     private final MultiUserChat muc;
-    private final Minions minions;
+    private final MinionsMap minionsMap;
     private final String minionsDirProp;
     private final Map<String, MinionJar> currentJars;
     private boolean loaded;
@@ -54,7 +54,7 @@ class MinionStore {
 
     MinionStore(String minionsDirProp, int refreshSeconds, MultiUserChat muc) {
         this.minionsDirProp = minionsDirProp;
-        this.minions = new Minions();
+        this.minionsMap = new MinionsMap();
         this.currentJars = new HashMap<>();
         this.muc = muc;
         this.loaded = false;
@@ -73,11 +73,11 @@ class MinionStore {
     }
 
     List<String> commandList() {
-        return minions.getCommands();
+        return minionsMap.getCommands();
     }
 
     Minion get(String command) {
-        return minions.get(command);
+        return minionsMap.get(command);
     }
 
     private void load() {
@@ -115,7 +115,7 @@ class MinionStore {
 
             for (String currentJar : currentJars.keySet()) {
                 if (!newJars.containsKey(currentJar)) {
-                    minions.remove(currentJars.get(currentJar).getCommand());
+                    minionsMap.remove(currentJars.get(currentJar).getCommand());
                     jarsToRemove.add(currentJar);
                     LOG.debug("Removed JAR: " + currentJar);
                     if (loaded) {
@@ -128,7 +128,7 @@ class MinionStore {
 
             for (String jarToLoad : jarsToLoad.keySet()) {
                 MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
-                minions.add(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
+                minionsMap.add(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
                 currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
             }
 
@@ -149,6 +149,6 @@ class MinionStore {
     }
 
     void onRoomMessage(String body, String from, MinionsRoom muc) {
-        minions.onRoomMessage(body, from, muc);
+        minionsMap.onRoomMessage(body, from, muc);
     }
 }
