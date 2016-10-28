@@ -18,7 +18,9 @@ package com.boothj5.minions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class MinionsDir {
     private final File dir;
@@ -28,15 +30,13 @@ class MinionsDir {
     }
 
     List<MinionJar> listMinionJars() {
-        List<MinionJar> result = new ArrayList<>();
-
         File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                result.add(new MinionJar(file));
-            }
+        if (files == null) {
+            return new ArrayList<>();
         }
 
-        return result;
+        return Arrays.stream(files)
+            .map(MinionJar::new)
+            .collect(Collectors.toList());
     }
 }
