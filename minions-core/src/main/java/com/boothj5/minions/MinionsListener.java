@@ -33,13 +33,13 @@ import static java.lang.String.format;
 class MinionsListener implements PacketListener {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsListener.class);
 
-    private final MinionStore minions;
+    private final MinionStore minionsStore;
     private final MinionsRoom room;
     private final MinionsConfiguration config;
 
-    MinionsListener(MinionsConfiguration config, MinionStore minions, MinionsRoom room) {
+    MinionsListener(MinionsConfiguration config, MinionStore minionsStore, MinionsRoom room) {
         this.config = config;
-        this.minions = minions;
+        this.minionsStore = minionsStore;
         this.room = room;
     }
 
@@ -71,7 +71,7 @@ class MinionsListener implements PacketListener {
         }
 
         if (!body.startsWith(config.getPrefix())) {
-            minions.onRoomMessage(body, occupantNick, room);
+            minionsStore.onRoomMessage(body, occupantNick, room);
             return;
         }
 
@@ -89,8 +89,8 @@ class MinionsListener implements PacketListener {
 
         try {
             String minionsCommand = parseMinionsCommand(body);
-            minions.lock();
-            Minion minion = minions.get(minionsCommand);
+            minionsStore.lock();
+            Minion minion = minionsStore.get(minionsCommand);
             if (minion != null) {
                 LOG.debug(format("Handling command: %s", minionsCommand));
                 String subMessage;
@@ -101,7 +101,7 @@ class MinionsListener implements PacketListener {
                 LOG.debug(format("Minion does not exist: %s", minionsCommand));
                 room.sendMessage("No such minion: " + minionsCommand);
             }
-            minions.unlock();
+            minionsStore.unlock();
         } catch (InterruptedException ie) {
             LOG.error("Interrupted waiting for minions lock", ie);
         } catch (MinionsException me) {
@@ -111,18 +111,18 @@ class MinionsListener implements PacketListener {
 
     private void sendHelp() {
         try {
-            minions.lock();
-            List<String> commands = minions.commandList();
+            minionsStore.lock();
+            List<String> commands = minionsStore.commandList();
             StringBuilder builder = new StringBuilder();
             for (String command : commands) {
                 builder.append("\n");
                 builder.append(config.getPrefix());
                 builder.append(command);
                 builder.append(" ");
-                builder.append(minions.get(command).getHelp());
+                builder.append(minionsStore.get(command).getHelp());
             }
             room.sendMessage(builder.toString());
-            minions.unlock();
+            minionsStore.unlock();
         } catch (InterruptedException ie) {
             LOG.error("Interrupted waiting for minions lock", ie);
         } catch (MinionsException me) {
@@ -132,8 +132,8 @@ class MinionsListener implements PacketListener {
 
     private void sendJars() {
         try {
-            minions.lock();
-            List<MinionJar> jars = minions.getJars();
+            minionsStore.lock();
+            List<MinionJar> jars = minionsStore.getJars();
             StringBuilder builder = new StringBuilder();
             for (MinionJar jar : jars) {
                 builder.append("\n");
@@ -145,7 +145,7 @@ class MinionsListener implements PacketListener {
                 builder.append(format);
             }
             room.sendMessage(builder.toString());
-            minions.unlock();
+            minionsStore.unlock();
         } catch (InterruptedException ie) {
             LOG.error("Interrupted waiting for minions lock", ie);
         } catch (MinionsException e) {
