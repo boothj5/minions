@@ -16,19 +16,13 @@
 
 package com.boothj5.minions;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-
-import static java.lang.String.format;
 
 class MinionsListener implements PacketListener {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsListener.class);
@@ -71,90 +65,22 @@ class MinionsListener implements PacketListener {
         }
 
         if (!body.startsWith(config.getPrefix())) {
-            minionsStore.onRoomMessage(body, occupantNick, room);
+            minionsStore.onMessage(body, occupantNick);
             return;
         }
 
         String botCommand = body.substring(config.getPrefix().length());
         if (botCommand.equals(MinionsConfiguration.CMD_HELP)) {
             LOG.debug("Handling help.");
-            sendHelp();
+            minionsStore.onHelp();
             return;
         }
         if (botCommand.equals(MinionsConfiguration.CMD_JARS)) {
             LOG.debug("Handling jars.");
-            sendJars();
+            minionsStore.onJars();
             return;
         }
 
-        try {
-            String minionsCommand = parseMinionsCommand(body);
-            minionsStore.lock();
-            Minion minion = minionsStore.get(minionsCommand);
-            if (minion != null) {
-                LOG.debug(format("Handling command: %s", minionsCommand));
-                String subMessage;
-                int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
-                subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
-                minion.onCommandWrapper(room, occupantNick, subMessage);
-            } else {
-                LOG.debug(format("Minion does not exist: %s", minionsCommand));
-                room.sendMessage("No such minion: " + minionsCommand);
-            }
-            minionsStore.unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException me) {
-            LOG.error("Error sending message to room", me);
-        }
-    }
-
-    private void sendHelp() {
-        try {
-            minionsStore.lock();
-            List<String> commands = minionsStore.commandList();
-            StringBuilder builder = new StringBuilder();
-            for (String command : commands) {
-                builder.append("\n");
-                builder.append(config.getPrefix());
-                builder.append(command);
-                builder.append(" ");
-                builder.append(minionsStore.get(command).getHelp());
-            }
-            room.sendMessage(builder.toString());
-            minionsStore.unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException me) {
-            LOG.error("Error sending message to room", me);
-        }
-    }
-
-    private void sendJars() {
-        try {
-            minionsStore.lock();
-            List<MinionJar> jars = minionsStore.getJars();
-            StringBuilder builder = new StringBuilder();
-            for (MinionJar jar : jars) {
-                builder.append("\n");
-                builder.append(jar.getName());
-                builder.append(", last updated: ");
-                Date date = new Date(jar.getTimestamp());
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-                String format = simpleDateFormat.format(date);
-                builder.append(format);
-            }
-            room.sendMessage(builder.toString());
-            minionsStore.unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String parseMinionsCommand(String message) {
-        String[] tokens = StringUtils.split(message, " ");
-        return tokens[0].substring(config.getPrefix().length());
+        minionsStore.onCommand(body, occupantNick);
     }
 }

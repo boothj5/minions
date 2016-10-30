@@ -16,42 +16,74 @@
 
 package com.boothj5.minions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-class MinionsMap {
+class MinionsMap implements Map<String, Minion> {
     private final HashMap<String, Minion> map;
 
     MinionsMap() {
         this.map = new HashMap<>();
     }
 
-    List<String> getCommands() {
-        ArrayList<String> result = new ArrayList<>();
-        result.addAll(map.keySet());
-
-        return result;
+    @Override
+    public int size() {
+        return map.size();
     }
 
-    Minion get(String command) {
-        return map.get(command);
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
     }
 
-    void remove(String command) {
-        Minion minionToRemove = map.get(command);
+    @Override
+    public boolean containsKey(Object key) {
+        return map.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return map.containsValue(value);
+    }
+
+    @Override
+    public Minion get(Object key) {
+        return map.get(key);
+    }
+
+    @Override
+    public Minion put(String key, Minion value) {
+        return map.put(key, value);
+    }
+
+    @Override
+    public Minion remove(Object key) {
+        Minion minionToRemove = map.get(key);
         minionToRemove.onRemove();
-        map.remove(command);
+        return map.remove(key);
     }
 
-    void add(String command, Minion minion) {
-        map.put(command, minion);
+    @Override
+    public void putAll(Map<? extends String, ? extends Minion> m) {
+        map.putAll(m);
     }
 
-    void onRoomMessage(String body, String from, MinionsRoom muc) {
-        for (String name : map.keySet()) {
-            Minion minion = map.get(name);
-            minion.onMessageWrapper(muc, from, body);
-        }
+    @Override
+    public void clear() {
+        map.clear();
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return map.keySet();
+    }
+
+    @Override
+    public Collection<Minion> values() {
+        return map.values();
+    }
+
+    @Override
+    public Set<Entry<String, Minion>> entrySet() {
+        return map.entrySet();
     }
 }

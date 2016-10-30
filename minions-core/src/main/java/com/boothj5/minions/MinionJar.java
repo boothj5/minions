@@ -68,11 +68,14 @@ class MinionJar {
         return command;
     }
 
-    Minion loadMinionClass(URLClassLoader loader)
-            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Class<?> clazz = Class.forName(className, true, loader);
-        Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
-        Constructor<? extends Minion> ctr = minionClazz.getConstructor();
-        return ctr.newInstance();
+    Minion loadMinionClass(URLClassLoader loader) {
+        try {
+            Class<?> clazz = Class.forName(className, true, loader);
+            Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
+            Constructor<? extends Minion> ctr = minionClazz.getConstructor();
+            return ctr.newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new MinionsException("Error loading minions class: ", e);
+        }
     }
 }

@@ -2,9 +2,10 @@ package com.boothj5.minions;
 
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MinionsMapTest {
 
@@ -12,7 +13,7 @@ public class MinionsMapTest {
     public void returnsEmptyCommandList() {
         MinionsMap minionsMap = new MinionsMap();
 
-        List<String> command = minionsMap.getCommands();
+        Set<String> command = minionsMap.keySet();
 
         assertEquals(0, command.size());
     }
@@ -32,12 +33,11 @@ public class MinionsMapTest {
 
             }
         };
-        minions.add("testcmd2", minion);
+        minions.put("testcmd2", minion);
 
-        List<String> commands = minions.getCommands();
-        String command = commands.get(0);
+        Set<String> commands = minions.keySet();
 
-        assertEquals("testcmd2", command);
+        assertTrue(commands.contains("testcmd2"));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MinionsMapTest {
 
             }
         };
-        minions.add("testcmd2", minion);
+        minions.put("testcmd2", minion);
 
         Minion actualMinion = minions.get("testcmd2");
 
@@ -77,11 +77,11 @@ public class MinionsMapTest {
             }
         };
 
-        minions.add("testcmd3", minion);
-        assertEquals(minions.getCommands().size(), 1);
+        minions.put("testcmd3", minion);
+        assertEquals(minions.keySet().size(), 1);
         minions.remove("testcmd3");
 
-        assertEquals(minions.getCommands().size(), 0);
+        assertEquals(minions.keySet().size(), 0);
     }
 
 }

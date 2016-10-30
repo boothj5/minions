@@ -16,81 +16,71 @@
 
 package com.boothj5.minions;
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.String.format;
+
 class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionStore.class);
-    private final MultiUserChat muc;
+    private final MinionsConfiguration config;
+    private final MinionsRoom room;
     private final MinionsMap minionsMap;
-    private final String minionsDirProp;
+    private final MinionsDir dir;
     private final Map<String, MinionJar> currentJars;
     private boolean loaded;
 
     private boolean isLocked = false;
 
-    synchronized void lock() throws InterruptedException {
-        while(isLocked){
+    private synchronized void lock() throws InterruptedException {
+        while (isLocked) {
             wait();
         }
         isLocked = true;
     }
 
-    synchronized void unlock() {
+    private synchronized void unlock() {
         isLocked = false;
         notify();
     }
 
-    MinionStore(String minionsDirProp, int refreshSeconds, MultiUserChat muc) {
-        this.minionsDirProp = minionsDirProp;
+    MinionStore(MinionsDir dir, MinionsConfiguration config, MinionsRoom room) {
+        this.config = config;
+        this.dir = dir;
+        this.room = room;
         this.minionsMap = new MinionsMap();
         this.currentJars = new HashMap<>();
-        this.muc = muc;
         this.loaded = false;
 
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleWithFixedDelay(() -> {
-            try {
-                lock();
-                load();
-                unlock();
-            } catch (MinionsException | InterruptedException e) {
-                LOG.error("Error loading minions.", e);
-                e.printStackTrace();
-            }
-        }, 0, refreshSeconds, TimeUnit.SECONDS);
-    }
+        load();
 
-    List<String> commandList() {
-        return minionsMap.getCommands();
-    }
-
-    Minion get(String command) {
-        return minionsMap.get(command);
+        if (config.getRefreshSeconds() > 0) {
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+            executor.scheduleWithFixedDelay(this::load,
+                config.getRefreshSeconds(),
+                config.getRefreshSeconds(),
+                TimeUnit.SECONDS);
+        }
     }
 
     private void load() {
         try {
+            lock();
+            List<URL> urlList = new ArrayList<>();
             Map<String, MinionJar> newJars = new HashMap<>();
             Map<String, MinionJar> jarsToLoad = new HashMap<>();
-
-            List<URL> urlList = new ArrayList<>();
             List<String> jarsToRemove = new ArrayList<>();
 
-            MinionsDir minionsDir = new MinionsDir(minionsDirProp);
-            List<MinionJar> newMinionJars = minionsDir.listMinionJars();
-
+            List<MinionJar> newMinionJars = dir.listMinionJars();
             for (MinionJar newMinionJar : newMinionJars) {
                 newJars.put(newMinionJar.getName(), newMinionJar);
                 if (currentJars.containsKey(newMinionJar.getName())) {
@@ -100,7 +90,7 @@ class MinionStore {
                         urlList.add(newMinionJar.getURL());
                         LOG.debug("Updated JAR: " + newMinionJar.getName());
                         if (loaded) {
-                            muc.sendMessage("Updated JAR: " + newMinionJar.getName());
+                            room.sendMessage("Updated JAR: " + newMinionJar.getName());
                         }
                     }
                 } else {
@@ -108,7 +98,7 @@ class MinionStore {
                     urlList.add(newMinionJar.getURL());
                     LOG.debug("Added JAR: " + newMinionJar.getName());
                     if (loaded) {
-                        muc.sendMessage("Added JAR: " + newMinionJar.getName());
+                        room.sendMessage("Added JAR: " + newMinionJar.getName());
                     }
                 }
             }
@@ -119,7 +109,7 @@ class MinionStore {
                     jarsToRemove.add(currentJar);
                     LOG.debug("Removed JAR: " + currentJar);
                     if (loaded) {
-                        muc.sendMessage("Removed JAR: " + currentJar);
+                        room.sendMessage("Removed JAR: " + currentJar);
                     }
                 }
             }
@@ -128,27 +118,93 @@ class MinionStore {
 
             for (String jarToLoad : jarsToLoad.keySet()) {
                 MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
-                minionsMap.add(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
+                minionsMap.put(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
                 currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
             }
 
             jarsToRemove.forEach(currentJars::remove);
 
             loaded = true;
-
-        } catch (Throwable t) {
-            throw new MinionsException(t);
+            unlock();
+        } catch (MinionsException | InterruptedException e) {
+            LOG.error("Error loading minions.", e);
+            e.printStackTrace();
         }
     }
 
-    List<MinionJar> getJars() {
-        List<MinionJar> result = new ArrayList<>();
-        result.addAll(currentJars.values());
-
-        return result;
+    void onMessage(String body, String from) {
+        for (String name : minionsMap.keySet()) {
+            Minion minion = minionsMap.get(name);
+            minion.onMessageWrapper(room, from, body);
+        }
     }
 
-    void onRoomMessage(String body, String from, MinionsRoom muc) {
-        minionsMap.onRoomMessage(body, from, muc);
+    void onCommand(String body, String occupantNick) {
+        try {
+            String[] tokens = StringUtils.split(body, " ");
+            String minionsCommand = tokens[0].substring(config.getPrefix().length());
+            lock();
+            Minion minion = minionsMap.get(minionsCommand);
+            if (minion != null) {
+                LOG.debug(format("Handling command: %s", minionsCommand));
+                String subMessage;
+                int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
+                subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
+                minion.onCommandWrapper(room, occupantNick, subMessage);
+            } else {
+                LOG.debug(format("Minion does not exist: %s", minionsCommand));
+                room.sendMessage("No such minion: " + minionsCommand);
+            }
+            unlock();
+        } catch (InterruptedException ie) {
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
+        }
+    }
+
+    void onHelp() {
+        try {
+            lock();
+            Set<String> commands = minionsMap.keySet();
+            StringBuilder builder = new StringBuilder();
+            for (String command : commands) {
+                builder.append("\n");
+                builder.append(config.getPrefix());
+                builder.append(command);
+                builder.append(" ");
+                builder.append(minionsMap.get(command).getHelp());
+            }
+            room.sendMessage(builder.toString());
+            unlock();
+        } catch (InterruptedException ie) {
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
+        }
+    }
+
+    void onJars() {
+        try {
+            lock();
+            List<MinionJar> jars = new ArrayList<>();
+            jars.addAll(currentJars.values());
+            StringBuilder builder = new StringBuilder();
+            for (MinionJar jar : jars) {
+                builder.append("\n");
+                builder.append(jar.getName());
+                builder.append(", last updated: ");
+                Date date = new Date(jar.getTimestamp());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+                String format = simpleDateFormat.format(date);
+                builder.append(format);
+            }
+            room.sendMessage(builder.toString());
+            unlock();
+        } catch (InterruptedException ie) {
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException e) {
+            e.printStackTrace();
+        }
     }
 }

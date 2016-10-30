@@ -62,9 +62,9 @@ class MinionsRunner {
 
                 LOG.debug(format("Joined: %s as %s", roomConfig.getJid(), roomConfig.getNick()));
 
-                MinionStore minions = new MinionStore(config.getPluginsDir(), config.getRefreshSeconds(), muc);
-
                 MinionsRoom room = new MinionsRoomImpl(muc);
+                MinionsDir dir = new MinionsDir(config.getPluginsDir());
+                MinionStore minions = new MinionStore(dir, config, room);
                 MinionsListener listener = new MinionsListener(config, minions, room);
                 muc.addMessageListener(listener);
             }
