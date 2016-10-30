@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,13 +60,11 @@ class MinionStore {
     }
 
     void onMessage(String body, String from) {
-        for (String name : minionsMap.keySet()) {
-            Minion minion = minionsMap.get(name);
-            minion.onMessageWrapper(room, from, body);
-        }
+        minionsMap.values().forEach(
+            minion -> minion.onMessageWrapper(room, from, body));
     }
 
-    void onCommand(String body, String occupantNick) {
+    void onCommand(String body, String from) {
         try {
             String[] tokens = StringUtils.split(body, " ");
             String minionsCommand = tokens[0].substring(config.getPrefix().length());
@@ -78,7 +75,7 @@ class MinionStore {
                 String subMessage;
                 int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
                 subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
-                minion.onCommandWrapper(room, occupantNick, subMessage);
+                minion.onCommandWrapper(room, from, subMessage);
             } else {
                 LOG.debug(format("Minion does not exist: %s", minionsCommand));
                 room.sendMessage("No such minion: " + minionsCommand);
@@ -94,15 +91,13 @@ class MinionStore {
     void onHelp() {
         try {
             lock();
-            Set<String> commands = minionsMap.keySet();
             StringBuilder builder = new StringBuilder();
-            for (String command : commands) {
-                builder.append("\n");
-                builder.append(config.getPrefix());
-                builder.append(command);
-                builder.append(" ");
-                builder.append(minionsMap.get(command).getHelp());
-            }
+            minionsMap.entrySet().forEach(minion -> builder
+                .append("\n")
+                .append(config.getPrefix())
+                .append(minion.getKey())
+                .append(" ")
+                .append(minion.getValue().getHelp()));
             room.sendMessage(builder.toString());
             unlock();
         } catch (InterruptedException ie) {
@@ -115,18 +110,12 @@ class MinionStore {
     void onJars() {
         try {
             lock();
-            List<MinionJar> jars = new ArrayList<>();
-            jars.addAll(currentJars.values());
             StringBuilder builder = new StringBuilder();
-            for (MinionJar jar : jars) {
-                builder.append("\n");
-                builder.append(jar.getName());
-                builder.append(", last updated: ");
-                Date date = new Date(jar.getTimestamp());
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-                String format = simpleDateFormat.format(date);
-                builder.append(format);
-            }
+            currentJars.values().forEach(jar -> builder
+                .append("\n")
+                .append(jar.getName())
+                .append(", last updated: ")
+                .append(jar.getTimestampFormat()));
             room.sendMessage(builder.toString());
             unlock();
         } catch (InterruptedException ie) {
@@ -144,47 +133,46 @@ class MinionStore {
             Map<String, MinionJar> jarsToLoad = new HashMap<>();
             List<String> jarsToRemove = new ArrayList<>();
 
-            List<MinionJar> newMinionJars = dir.listMinionJars();
-            for (MinionJar newMinionJar : newMinionJars) {
-                newJars.put(newMinionJar.getName(), newMinionJar);
-                if (currentJars.containsKey(newMinionJar.getName())) {
-                    MinionJar currentMinionJar = currentJars.get(newMinionJar.getName());
-                    if (!currentMinionJar.getTimestamp().equals(newMinionJar.getTimestamp())) {
-                        jarsToLoad.put(newMinionJar.getName(), newMinionJar);
-                        urlList.add(newMinionJar.getURL());
-                        LOG.debug("Updated JAR: " + newMinionJar.getName());
+            dir.listMinionJars().forEach(jar -> {
+                newJars.put(jar.getName(), jar);
+                if (currentJars.containsKey(jar.getName())) {
+                    MinionJar currentMinionJar = currentJars.get(jar.getName());
+                    if (!currentMinionJar.getTimestamp().equals(jar.getTimestamp())) {
+                        jarsToLoad.put(jar.getName(), jar);
+                        urlList.add(jar.getURL());
+                        LOG.debug("Updated JAR: " + jar.getName());
                         if (loaded) {
-                            room.sendMessage("Updated JAR: " + newMinionJar.getName());
+                            room.sendMessage("Updated JAR: " + jar.getName());
                         }
                     }
                 } else {
-                    jarsToLoad.put(newMinionJar.getName(), newMinionJar);
-                    urlList.add(newMinionJar.getURL());
-                    LOG.debug("Added JAR: " + newMinionJar.getName());
+                    jarsToLoad.put(jar.getName(), jar);
+                    urlList.add(jar.getURL());
+                    LOG.debug("Added JAR: " + jar.getName());
                     if (loaded) {
-                        room.sendMessage("Added JAR: " + newMinionJar.getName());
+                        room.sendMessage("Added JAR: " + jar.getName());
                     }
                 }
-            }
+            });
 
-            for (String currentJar : currentJars.keySet()) {
-                if (!newJars.containsKey(currentJar)) {
-                    minionsMap.remove(currentJars.get(currentJar).getCommand());
-                    jarsToRemove.add(currentJar);
-                    LOG.debug("Removed JAR: " + currentJar);
+            currentJars.entrySet().stream()
+                .filter(jar -> !newJars.containsKey(jar.getKey()))
+                .forEach(jar -> {
+                    minionsMap.remove(jar.getValue().getCommand());
+                    jarsToRemove.add(jar.getKey());
+                    LOG.debug("Removed JAR: " + jar.getKey());
                     if (loaded) {
-                        room.sendMessage("Removed JAR: " + currentJar);
+                        room.sendMessage("Removed JAR: " + jar.getKey());
                     }
-                }
-            }
+                });
 
             URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
 
-            for (String jarToLoad : jarsToLoad.keySet()) {
-                MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
-                minionsMap.put(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
-                currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
-            }
+            jarsToLoad.entrySet().forEach(jar -> {
+                MinionJar minionJar = jarsToLoad.get(jar.getKey());
+                minionsMap.put(minionJar.getCommand(), minionJar.loadMinionClass(loader));
+                currentJars.put(jar.getKey(), jar.getValue());
+            });
 
             jarsToRemove.forEach(currentJars::remove);
 

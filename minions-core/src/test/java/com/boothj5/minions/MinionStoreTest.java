@@ -53,12 +53,12 @@ public class MinionStoreTest {
 
         given(jar1.getName()).willReturn("minion1.jar");
         given(jar1.getCommand()).willReturn("minion1");
-        given(jar1.getTimestamp()).willReturn(1481504412000L);
+        given(jar1.getTimestampFormat()).willReturn("21-May-2016 13:27:52");
         given(jar1.loadMinionClass(any(URLClassLoader.class))).willReturn(minion1);
 
         given(jar2.getName()).willReturn("minion2.jar");
         given(jar2.getCommand()).willReturn("minion2");
-        given(jar2.getTimestamp()).willReturn(1463833672000L);
+        given(jar2.getTimestampFormat()).willReturn("12-Dec-2016 01:00:12");
         given(jar2.loadMinionClass(any(URLClassLoader.class))).willReturn(minion2);
 
         given(dir.listMinionJars()).willReturn(Arrays.asList(jar1, jar2));
@@ -83,8 +83,8 @@ public class MinionStoreTest {
         store.onJars();
 
         verify(room).sendMessage("\n" +
-            "minion2.jar, last updated: 21-May-2016 13:27:52\n" +
-            "minion1.jar, last updated: 12-Dec-2016 01:00:12");
+            "minion2.jar, last updated: 12-Dec-2016 01:00:12\n" +
+            "minion1.jar, last updated: 21-May-2016 13:27:52");
     }
 
     @Test

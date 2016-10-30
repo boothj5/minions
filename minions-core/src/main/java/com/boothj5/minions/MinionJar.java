@@ -24,6 +24,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -58,6 +60,12 @@ class MinionJar {
 
     Long getTimestamp() {
         return timestamp;
+    }
+
+    String getTimestampFormat() {
+        Date date = new Date(getTimestamp());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+        return simpleDateFormat.format(date);
     }
 
     URL getURL() {

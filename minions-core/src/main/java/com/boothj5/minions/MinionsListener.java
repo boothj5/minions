@@ -59,13 +59,13 @@ class MinionsListener implements PacketListener {
             return;
         }
 
-        String occupantNick = resource.get();
-        if (occupantNick.equals(room.getNick())) {
+        String from = resource.get();
+        if (from.equals(room.getNick())) {
             return;
         }
 
         if (!body.startsWith(config.getPrefix())) {
-            minionsStore.onMessage(body, occupantNick);
+            minionsStore.onMessage(body, from);
             return;
         }
 
@@ -81,6 +81,6 @@ class MinionsListener implements PacketListener {
             return;
         }
 
-        minionsStore.onCommand(body, occupantNick);
+        minionsStore.onCommand(body, from);
     }
 }
