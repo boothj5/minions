@@ -18,72 +18,13 @@ package com.boothj5.minions;
 
 import java.util.*;
 
-class MinionsMap implements Map<String, Minion> {
-    private final HashMap<String, Minion> map;
-
-    MinionsMap() {
-        this.map = new HashMap<>();
-    }
-
-    @Override
-    public int size() {
-        return map.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return map.isEmpty();
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        return map.containsKey(key);
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-        return map.containsValue(value);
-    }
-
-    @Override
-    public Minion get(Object key) {
-        return map.get(key);
-    }
-
-    @Override
-    public Minion put(String key, Minion value) {
-        return map.put(key, value);
-    }
+class MinionsMap extends HashMap<String, Minion> {
 
     @Override
     public Minion remove(Object key) {
-        Minion minionToRemove = map.get(key);
+        Minion minionToRemove = super.get(key);
         minionToRemove.onRemove();
-        return map.remove(key);
-    }
 
-    @Override
-    public void putAll(Map<? extends String, ? extends Minion> m) {
-        map.putAll(m);
-    }
-
-    @Override
-    public void clear() {
-        map.clear();
-    }
-
-    @Override
-    public Set<String> keySet() {
-        return map.keySet();
-    }
-
-    @Override
-    public Collection<Minion> values() {
-        return map.values();
-    }
-
-    @Override
-    public Set<Entry<String, Minion>> entrySet() {
-        return map.entrySet();
+        return super.remove(key);
     }
 }

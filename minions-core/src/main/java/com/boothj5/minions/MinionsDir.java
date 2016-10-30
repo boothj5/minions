@@ -35,8 +35,10 @@ class MinionsDir {
             return new ArrayList<>();
         }
 
-        return Arrays.stream(files)
+        List<MinionJar> jars = Arrays.stream(files)
             .map(MinionJar::new)
             .collect(Collectors.toList());
+
+        return jars;
     }
 }

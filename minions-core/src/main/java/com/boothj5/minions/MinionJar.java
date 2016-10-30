@@ -18,10 +18,8 @@ package com.boothj5.minions;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
@@ -43,14 +41,13 @@ class MinionJar {
         name = file.getName();
         timestamp = file.lastModified();
 
-        try (InputStream in = new FileInputStream(file);
-                JarInputStream st = new JarInputStream(in)) {
+        try (InputStream in = new FileInputStream(file); JarInputStream st = new JarInputStream(in)) {
             url = file.toURI().toURL();
             Manifest manifest = st.getManifest();
             command = manifest.getMainAttributes().getValue(MANIFEST_COMMAND);
             className = manifest.getMainAttributes().getValue(MANIFEST_CLASS);
-        } catch (IOException e) {
-            throw new MinionsException("Error loading minions jar: " + name, e);
+        } catch (Throwable t) {
+            throw new MinionsException("Error loading minions jar: " + name, t);
         }
     }
 
@@ -65,6 +62,7 @@ class MinionJar {
     String getTimestampFormat() {
         Date date = new Date(getTimestamp());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+
         return simpleDateFormat.format(date);
     }
 
@@ -81,9 +79,10 @@ class MinionJar {
             Class<?> clazz = Class.forName(className, true, loader);
             Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
             Constructor<? extends Minion> ctr = minionClazz.getConstructor();
+
             return ctr.newInstance();
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new MinionsException("Error loading minions class: ", e);
+        } catch (Throwable t) {
+            throw new MinionsException("Error loading minions class: ", t);
         }
     }
 }

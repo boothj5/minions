@@ -26,10 +26,12 @@ class MinionsRoomImpl implements MinionsRoom {
         this.muc = muc;
     }
 
+    @Override
     public String getNick() {
         return muc.getNickname();
     }
 
+    @Override
     public String getRoom() {
         return muc.getRoom();
     }
