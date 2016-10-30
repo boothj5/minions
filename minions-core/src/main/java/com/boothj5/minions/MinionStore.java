@@ -41,18 +41,6 @@ class MinionStore {
 
     private boolean isLocked = false;
 
-    private synchronized void lock() throws InterruptedException {
-        while (isLocked) {
-            wait();
-        }
-        isLocked = true;
-    }
-
-    private synchronized void unlock() {
-        isLocked = false;
-        notify();
-    }
-
     MinionStore(MinionsDir dir, MinionsConfiguration config, MinionsRoom room) {
         this.config = config;
         this.dir = dir;
@@ -69,66 +57,6 @@ class MinionStore {
                 config.getRefreshSeconds(),
                 config.getRefreshSeconds(),
                 TimeUnit.SECONDS);
-        }
-    }
-
-    private void load() {
-        try {
-            lock();
-            List<URL> urlList = new ArrayList<>();
-            Map<String, MinionJar> newJars = new HashMap<>();
-            Map<String, MinionJar> jarsToLoad = new HashMap<>();
-            List<String> jarsToRemove = new ArrayList<>();
-
-            List<MinionJar> newMinionJars = dir.listMinionJars();
-            for (MinionJar newMinionJar : newMinionJars) {
-                newJars.put(newMinionJar.getName(), newMinionJar);
-                if (currentJars.containsKey(newMinionJar.getName())) {
-                    MinionJar currentMinionJar = currentJars.get(newMinionJar.getName());
-                    if (!currentMinionJar.getTimestamp().equals(newMinionJar.getTimestamp())) {
-                        jarsToLoad.put(newMinionJar.getName(), newMinionJar);
-                        urlList.add(newMinionJar.getURL());
-                        LOG.debug("Updated JAR: " + newMinionJar.getName());
-                        if (loaded) {
-                            room.sendMessage("Updated JAR: " + newMinionJar.getName());
-                        }
-                    }
-                } else {
-                    jarsToLoad.put(newMinionJar.getName(), newMinionJar);
-                    urlList.add(newMinionJar.getURL());
-                    LOG.debug("Added JAR: " + newMinionJar.getName());
-                    if (loaded) {
-                        room.sendMessage("Added JAR: " + newMinionJar.getName());
-                    }
-                }
-            }
-
-            for (String currentJar : currentJars.keySet()) {
-                if (!newJars.containsKey(currentJar)) {
-                    minionsMap.remove(currentJars.get(currentJar).getCommand());
-                    jarsToRemove.add(currentJar);
-                    LOG.debug("Removed JAR: " + currentJar);
-                    if (loaded) {
-                        room.sendMessage("Removed JAR: " + currentJar);
-                    }
-                }
-            }
-
-            URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
-
-            for (String jarToLoad : jarsToLoad.keySet()) {
-                MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
-                minionsMap.put(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
-                currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
-            }
-
-            jarsToRemove.forEach(currentJars::remove);
-
-            loaded = true;
-            unlock();
-        } catch (MinionsException | InterruptedException e) {
-            LOG.error("Error loading minions.", e);
-            e.printStackTrace();
         }
     }
 
@@ -206,5 +134,77 @@ class MinionStore {
         } catch (MinionsException e) {
             e.printStackTrace();
         }
+    }
+
+    private void load() {
+        try {
+            lock();
+            List<URL> urlList = new ArrayList<>();
+            Map<String, MinionJar> newJars = new HashMap<>();
+            Map<String, MinionJar> jarsToLoad = new HashMap<>();
+            List<String> jarsToRemove = new ArrayList<>();
+
+            List<MinionJar> newMinionJars = dir.listMinionJars();
+            for (MinionJar newMinionJar : newMinionJars) {
+                newJars.put(newMinionJar.getName(), newMinionJar);
+                if (currentJars.containsKey(newMinionJar.getName())) {
+                    MinionJar currentMinionJar = currentJars.get(newMinionJar.getName());
+                    if (!currentMinionJar.getTimestamp().equals(newMinionJar.getTimestamp())) {
+                        jarsToLoad.put(newMinionJar.getName(), newMinionJar);
+                        urlList.add(newMinionJar.getURL());
+                        LOG.debug("Updated JAR: " + newMinionJar.getName());
+                        if (loaded) {
+                            room.sendMessage("Updated JAR: " + newMinionJar.getName());
+                        }
+                    }
+                } else {
+                    jarsToLoad.put(newMinionJar.getName(), newMinionJar);
+                    urlList.add(newMinionJar.getURL());
+                    LOG.debug("Added JAR: " + newMinionJar.getName());
+                    if (loaded) {
+                        room.sendMessage("Added JAR: " + newMinionJar.getName());
+                    }
+                }
+            }
+
+            for (String currentJar : currentJars.keySet()) {
+                if (!newJars.containsKey(currentJar)) {
+                    minionsMap.remove(currentJars.get(currentJar).getCommand());
+                    jarsToRemove.add(currentJar);
+                    LOG.debug("Removed JAR: " + currentJar);
+                    if (loaded) {
+                        room.sendMessage("Removed JAR: " + currentJar);
+                    }
+                }
+            }
+
+            URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
+
+            for (String jarToLoad : jarsToLoad.keySet()) {
+                MinionJar minionJarToLoad = jarsToLoad.get(jarToLoad);
+                minionsMap.put(minionJarToLoad.getCommand(), minionJarToLoad.loadMinionClass(loader));
+                currentJars.put(jarToLoad, jarsToLoad.get(jarToLoad));
+            }
+
+            jarsToRemove.forEach(currentJars::remove);
+
+            loaded = true;
+            unlock();
+        } catch (MinionsException | InterruptedException e) {
+            LOG.error("Error loading minions.", e);
+            e.printStackTrace();
+        }
+    }
+
+    private synchronized void lock() throws InterruptedException {
+        while (isLocked) {
+            wait();
+        }
+        isLocked = true;
+    }
+
+    private synchronized void unlock() {
+        isLocked = false;
+        notify();
     }
 }
