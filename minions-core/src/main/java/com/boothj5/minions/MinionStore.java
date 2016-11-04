@@ -60,8 +60,16 @@ class MinionStore {
     }
 
     void onMessage(String from, String body) {
-        minionsMap.values().forEach(
-            minion -> minion.onMessageWrapper(from, body));
+        try {
+            lock();
+            minionsMap.values().forEach(
+                minion -> minion.onMessageWrapper(from, body));
+            unlock();
+        } catch (InterruptedException ie) {
+            LOG.error("Interrupted waiting for minions lock", ie);
+        } catch (MinionsException me) {
+            LOG.error("Error sending message to room", me);
+        }
     }
 
     void onCommand(String from, String body) {
