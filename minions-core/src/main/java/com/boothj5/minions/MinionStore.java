@@ -43,28 +43,28 @@ class MinionStore {
     MinionStore(MinionsDir dir, MinionsConfiguration config, MinionsRoom room) {
         this.config = config;
         this.dir = dir;
-        this.room = room;
+            this.room = room;
         this.minionsMap = new MinionsMap();
         this.currentJars = new HashMap<>();
         this.loaded = false;
 
-        load();
+        load(room);
 
         if (config.getRefreshSeconds() > 0) {
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleWithFixedDelay(this::load,
+            executor.scheduleWithFixedDelay(() -> load(room),
                 config.getRefreshSeconds(),
                 config.getRefreshSeconds(),
                 TimeUnit.SECONDS);
         }
     }
 
-    void onMessage(String body, String from) {
+    void onMessage(String from, String body) {
         minionsMap.values().forEach(
-            minion -> minion.onMessageWrapper(room, from, body));
+            minion -> minion.onMessageWrapper(from, body));
     }
 
-    void onCommand(String body, String from) {
+    void onCommand(String from, String body) {
         try {
             String[] tokens = StringUtils.split(body, " ");
             String minionsCommand = tokens[0].substring(config.getPrefix().length());
@@ -75,7 +75,7 @@ class MinionStore {
                 String subMessage;
                 int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
                 subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
-                minion.onCommandWrapper(room, from, subMessage);
+                minion.onCommandWrapper(from, subMessage);
             } else {
                 LOG.debug(format("Minion does not exist: %s", minionsCommand));
                 room.sendMessage("No such minion: " + minionsCommand);
@@ -125,7 +125,7 @@ class MinionStore {
         }
     }
 
-    private void load() {
+    private void load(MinionsRoom room) {
         try {
             lock();
             List<URL> urlList = new ArrayList<>();
@@ -170,7 +170,7 @@ class MinionStore {
 
             jarsToLoad.entrySet().forEach(jar -> {
                 MinionJar minionJar = jarsToLoad.get(jar.getKey());
-                minionsMap.put(minionJar.getCommand(), minionJar.loadMinionClass(loader));
+                minionsMap.put(minionJar.getCommand(), minionJar.loadMinionClass(loader, room));
                 currentJars.put(jar.getKey(), jar.getValue());
             });
 

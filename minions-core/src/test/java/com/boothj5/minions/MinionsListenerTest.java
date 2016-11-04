@@ -114,7 +114,7 @@ public class MinionsListenerTest {
 
         listener.processPacket(message);
 
-        verify(minionsStore).onMessage(messageBody, fromNick);
+        verify(minionsStore).onMessage(fromNick, messageBody);
     }
 
     @Test
@@ -153,6 +153,6 @@ public class MinionsListenerTest {
 
         listener.processPacket(message);
 
-        verify(minionsStore).onCommand("!dosomething with these args", "bobby");
+        verify(minionsStore).onCommand("bobby", "!dosomething with these args");
     }
 }

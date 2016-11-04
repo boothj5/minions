@@ -65,7 +65,7 @@ class MinionsListener implements PacketListener {
         }
 
         if (!body.startsWith(config.getPrefix())) {
-            minionsStore.onMessage(body, from);
+            minionsStore.onMessage(from, body);
             return;
         }
 
@@ -81,6 +81,6 @@ class MinionsListener implements PacketListener {
             return;
         }
 
-        minionsStore.onCommand(body, from);
+        minionsStore.onCommand(from, body);
     }
 }

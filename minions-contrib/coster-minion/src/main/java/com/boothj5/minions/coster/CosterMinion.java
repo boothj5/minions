@@ -20,13 +20,17 @@ public class CosterMinion extends Minion {
 
     private Transactions transactions = new Transactions();
 
+    public CosterMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return " - Split costs, see help for more information.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         String[] tokens = StringUtils.split(message, " ");
         String command = tokens[0];
         StringBuffer out;
@@ -42,34 +46,34 @@ public class CosterMinion extends Minion {
                     "\n" + "show - Show current spenders" +
                     "\n" + "split - Work out what people owe each other" +
                     "\n" + "split2 - Work out what people owe each other, and minimise transactions";
-                muc.sendMessage(help);
+                room.sendMessage(help);
                 break;
             case SPEND:
                 if (tokens.length < 2) {
-                    muc.sendMessage(from + ": You must specify an amount.");
+                    room.sendMessage(from + ": You must specify an amount.");
                 } else {
                     Float amount = round(Float.parseFloat(tokens[1]));
                     transactions.add(from, amount);
-                    muc.sendMessage(from + ": " + String.format("%.2f", transactions.get(from)));
+                    room.sendMessage(from + ": " + String.format("%.2f", transactions.get(from)));
                 }
                 break;
             case SPENDFOR:
                 if (tokens.length < 3) {
-                    muc.sendMessage(from + ": You must specify a user and amount.");
+                    room.sendMessage(from + ": You must specify a user and amount.");
                 } else {
                     String user = tokens[1];
                     Float amount = round(Float.parseFloat(tokens[2]));
                     transactions.add(user, amount);
-                    muc.sendMessage(user + ": " + String.format("%.2f", transactions.get(user)));
+                    room.sendMessage(user + ": " + String.format("%.2f", transactions.get(user)));
                 }
                 break;
             case CLEAR:
                 transactions.clear(from);
-                muc.sendMessage(from + ": 0.00");
+                room.sendMessage(from + ": 0.00");
                 break;
             case RESET:
                 transactions.clear();
-                muc.sendMessage("Cleared all amounts.");
+                room.sendMessage("Cleared all amounts.");
             case SHOW:
                 out = new StringBuffer("\n");
                 Float total = 0.0f;
@@ -82,31 +86,31 @@ public class CosterMinion extends Minion {
                 }
 
                 out.append("\nTOTAL: ").append(String.format("%.2f", total));
-                muc.sendMessage(out.toString());
+                room.sendMessage(out.toString());
                 break;
             case SPLIT:
                 if (transactions.size() > 1) {
                     Map<String, Map<String, Float>> owers = transactions.getOwers();
-                    showOwed(muc, owers);
+                    showOwed(owers);
                 } else {
-                    muc.sendMessage("No one owes anyone anything.");
+                    room.sendMessage("No one owes anyone anything.");
                 }
                 break;
             case SPLIT2:
                 if (transactions.size() > 1) {
                     Map<String, Map<String, Float>> owers = transactions.getReducedOwers();
-                    showOwed(muc, owers);
+                    showOwed(owers);
                 } else {
-                    muc.sendMessage("No one owes anyone anything.");
+                    room.sendMessage("No one owes anyone anything.");
                 }
                 break;
             default:
-                muc.sendMessage("Invalid coster command.");
+                room.sendMessage("Invalid coster command.");
                 break;
         }
     }
 
-    private void showOwed(MinionsRoom muc, Map<String, Map<String, Float>> owers) {
+    private void showOwed(Map<String, Map<String, Float>> owers) {
         StringBuffer out;
         out = new StringBuffer("\n");
         for (String ower : owers.keySet()) {
@@ -119,6 +123,6 @@ public class CosterMinion extends Minion {
                     .append("\n");
             }
         }
-        muc.sendMessage(out.toString());
+        room.sendMessage(out.toString());
     }
 }

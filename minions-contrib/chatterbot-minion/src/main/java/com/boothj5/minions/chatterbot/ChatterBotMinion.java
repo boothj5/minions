@@ -17,7 +17,8 @@ public class ChatterBotMinion extends Minion {
     private ChatterBotSession cleverBotSession;
     private ChatterBotSession chosenSession;
 
-    public ChatterBotMinion() {
+    public ChatterBotMinion(MinionsRoom room) {
+        super(room);
         ChatterBotFactory factory = new ChatterBotFactory();
         ChatterBot cleverBot;
         ChatterBot jabberwackyBot;
@@ -46,8 +47,8 @@ public class ChatterBotMinion extends Minion {
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) {
-        String myNick = muc.getNick();
+    public void onMessage(String from, String message) {
+        String myNick = room.getNick();
         String[] split = message.split("[:]");
         if (split.length > 0) {
             boolean match = split[0].equalsIgnoreCase(myNick);
@@ -56,9 +57,9 @@ public class ChatterBotMinion extends Minion {
                 if (text.length() > 0) {
                     String response = getReply(text);
                     if (response == null) {
-                        muc.sendMessage("Error talking to chatterbot: " + botName);
+                        room.sendMessage("Error talking to chatterbot: " + botName);
                     } else {
-                        muc.sendMessage(from + ": " + response);
+                        room.sendMessage(from + ": " + response);
                     }
                 }
             }
@@ -66,26 +67,26 @@ public class ChatterBotMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         switch (message) {
             case "set cleverbot":
                 chosenSession = cleverBotSession;
                 botName = "cleverbot";
                 LOG.debug("Bot set to cleverbot");
-                muc.sendMessage("Bot set to cleverbot");
+                room.sendMessage("Bot set to cleverbot");
                 break;
             case "set jabberwacky":
                 chosenSession = jabberwackyBotSession;
                 botName = "jabberwacky";
                 LOG.debug("Bot set to jabberwacky");
-                muc.sendMessage("Bot set to jabberwacky");
+                room.sendMessage("Bot set to jabberwacky");
                 break;
             default:
                 String response = getReply(message);
                 if (response == null) {
-                    muc.sendMessage("Error talking to chatterbot: " + botName);
+                    room.sendMessage("Error talking to chatterbot: " + botName);
                 } else {
-                    muc.sendMessage(from + ": " + response);
+                    room.sendMessage(from + ": " + response);
                 }
                 break;
         }

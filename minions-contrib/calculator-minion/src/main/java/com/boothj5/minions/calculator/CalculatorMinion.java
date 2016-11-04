@@ -8,24 +8,28 @@ import net.objecthunter.exp4j.ValidationResult;
 
 public class CalculatorMinion extends Minion {
 
+    public CalculatorMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "[expression] - Calculate result of evaluating expression.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         try {
             Expression expression = new ExpressionBuilder(message).build();
             ValidationResult validationResult = expression.validate();
             if (!validationResult.isValid()) {
-                muc.sendMessage(from + ": " + validationResult.getErrors());
+                room.sendMessage(from + ": " + validationResult.getErrors());
             } else {
                 double result = expression.evaluate();
-                muc.sendMessage(from + ": " + result);
+                room.sendMessage(from + ": " + result);
             }
         } catch (RuntimeException rte) {
-            muc.sendMessage(from + ": Invalid usage.");
+            room.sendMessage(from + ": Invalid usage.");
         }
     }
 }

@@ -16,7 +16,8 @@ public class TravisMinion extends Minion {
 
     private final ObjectMapper objectMapper;
 
-    public TravisMinion () {
+    public TravisMinion(MinionsRoom room) {
+        super(room);
         this.objectMapper = new ObjectMapper();
     }
 
@@ -26,12 +27,12 @@ public class TravisMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         HttpClient client = HttpClientBuilder.create().build();
 
         String[] split = message.trim().split(" ");
         if (split.length != 2) {
-            muc.sendMessage("Please enter a project and branch, e.g. boothj5/profanity master");
+            room.sendMessage("Please enter a project and branch, e.g. boothj5/profanity master");
             return;
         }
 
@@ -69,10 +70,10 @@ public class TravisMinion extends Minion {
                     "Author: " + travisCommit.getAuthorName() + " (" + travisCommit.getAuthorEmail() + ")\n" +
                     "Committer: " + travisCommit.getCommitterName() + " (" + travisCommit.getCommitterEmail() + ")\n" +
                     "View diff: " + travisCommit.getCompareUrl();
-            muc.sendMessage(result);
+            room.sendMessage(result);
 
         } catch (IOException e) {
-            muc.sendMessage("Could not get project.");
+            room.sendMessage("Could not get project.");
             throw new MinionsException("Could not get project.", e);
         }
     }

@@ -14,7 +14,8 @@ import java.io.IOException;
 public class CatFactMinion extends Minion {
     private final ObjectMapper objectMapper;
 
-    public CatFactMinion() {
+    public CatFactMinion(MinionsRoom room) {
+        super(room);
         this.objectMapper = new ObjectMapper();
     }
 
@@ -24,7 +25,7 @@ public class CatFactMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         try {
             HttpClient client = HttpClientBuilder.create().build();
             String url = "http://catfacts-api.appspot.com/api/facts?number=1";
@@ -33,12 +34,12 @@ public class CatFactMinion extends Minion {
             String body = EntityUtils.toString(response.getEntity());
             CatFactResponse catFactResponse = objectMapper.readValue(body, CatFactResponse.class);
             if (!"true".equals(catFactResponse.getSuccess())) {
-                muc.sendMessage("Could not get cat fact.");
+                room.sendMessage("Could not get cat fact.");
             } else {
-                muc.sendMessage(catFactResponse.getFacts().get(0));
+                room.sendMessage(catFactResponse.getFacts().get(0));
             }
         } catch (IOException e) {
-            muc.sendMessage("Could not get cat fact.");
+            room.sendMessage("Could not get cat fact.");
         }
     }
 }

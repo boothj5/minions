@@ -16,7 +16,8 @@ import java.util.Enumeration;
 public class IpMinion extends Minion {
     private final ObjectMapper objectMapper;
 
-    public IpMinion() {
+    public IpMinion(MinionsRoom room) {
+        super(room);
         this.objectMapper = new ObjectMapper();
     }
 
@@ -27,8 +28,8 @@ public class IpMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
-        muc.sendMessage("");
+    public void onCommand(String from, String message) {
+        room.sendMessage("");
         try {
             HttpClient client = HttpClientBuilder.create().build();
             String url = "http://jsonip.com/";
@@ -36,9 +37,9 @@ public class IpMinion extends Minion {
             HttpResponse response = client.execute(get);
             String body = EntityUtils.toString(response.getEntity());
             IpResponse ipResponse = objectMapper.readValue(body, IpResponse.class);
-            muc.sendMessage("Internet IP Address: " + ipResponse.getIp());
+            room.sendMessage("Internet IP Address: " + ipResponse.getIp());
         } catch (IOException e) {
-            muc.sendMessage("Could not get external IP address.");
+            room.sendMessage("Could not get external IP address.");
         }
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -46,7 +47,7 @@ public class IpMinion extends Minion {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
                 String displayName = networkInterface.getDisplayName();
                 if (!"lo".equals(displayName)) {
-                    muc.sendMessage("Interface " + displayName + ":");
+                    room.sendMessage("Interface " + displayName + ":");
                     Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
                     while (inetAddresses.hasMoreElements()) {
                         InetAddress inetAddress = inetAddresses.nextElement();
@@ -55,15 +56,15 @@ public class IpMinion extends Minion {
                             inetAddressString = inetAddressString.substring(1);
                         }
                         if (inetAddress instanceof Inet6Address) {
-                            muc.sendMessage("  IPv6 Address: " + inetAddressString);
+                            room.sendMessage("  IPv6 Address: " + inetAddressString);
                         } else if (inetAddress instanceof Inet4Address) {
-                            muc.sendMessage("  IPv4 Address: " + inetAddressString);
+                            room.sendMessage("  IPv4 Address: " + inetAddressString);
                         }
                     }
                 }
             }
         } catch (SocketException e) {
-            muc.sendMessage("Could not get local IP address.");
+            room.sendMessage("Could not get local IP address.");
         }
     }
 }

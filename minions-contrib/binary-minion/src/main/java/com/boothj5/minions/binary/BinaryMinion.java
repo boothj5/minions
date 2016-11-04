@@ -6,13 +6,17 @@ import org.apache.commons.lang3.StringUtils;
 
 public class BinaryMinion extends Minion {
 
+    public BinaryMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "to|from [value] - Convert integer to binary, or binary to integer.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         try {
             String[] split = StringUtils.split(message, " ");
             String command = split[0];
@@ -21,20 +25,20 @@ public class BinaryMinion extends Minion {
                 case "to": {
                     Integer integer = Integer.valueOf(value);
                     String result = Integer.toBinaryString(integer);
-                    muc.sendMessage(from + ": " + result);
+                    room.sendMessage(from + ": " + result);
                     break;
                 }
                 case "from": {
                     int result = Integer.parseInt(value, 2);
-                    muc.sendMessage(from + ": " + String.valueOf(result));
+                    room.sendMessage(from + ": " + String.valueOf(result));
                     break;
                 }
                 default:
-                    muc.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
+                    room.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
                     break;
             }
         } catch (RuntimeException re) {
-            muc.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
+            room.sendMessage(from + ": " + "Invalid command, use 'to [value]' or 'from [value]'");
         }
     }
 }

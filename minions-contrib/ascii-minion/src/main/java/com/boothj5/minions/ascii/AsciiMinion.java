@@ -8,15 +8,19 @@ import java.awt.image.BufferedImage;
 
 public class AsciiMinion extends Minion {
 
+    public AsciiMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "text - Render text in ASCII";
     }
 
     @Override
-    public void onCommand(MinionsRoom minionsRoom, String from, String message) {
+    public void onCommand(String from, String message) {
         String response = writeMessage(message);
-        minionsRoom.sendMessage(response);
+        room.sendMessage(response);
     }
 
     private String writeMessage(String message) {

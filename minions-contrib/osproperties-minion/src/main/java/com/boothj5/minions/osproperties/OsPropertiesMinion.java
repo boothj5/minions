@@ -8,13 +8,17 @@ import java.util.Properties;
 
 public class OsPropertiesMinion extends Minion {
 
+    public OsPropertiesMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "- Show OS system properties.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         StringBuilder result = new StringBuilder();
         Properties properties = System.getProperties();
         Enumeration keys = properties.keys();
@@ -27,6 +31,6 @@ public class OsPropertiesMinion extends Minion {
                 result.append(key).append(": ").append(value).append("\n");
             }
         }
-        muc.sendMessage(result.toString());
+        room.sendMessage(result.toString());
     }
 }

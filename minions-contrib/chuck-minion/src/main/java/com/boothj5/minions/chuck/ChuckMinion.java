@@ -15,7 +15,8 @@ import java.io.IOException;
 public class ChuckMinion extends Minion {
     private final ObjectMapper objectMapper;
 
-    public ChuckMinion() {
+    public ChuckMinion(MinionsRoom room) {
+        super(room);
         this.objectMapper = new ObjectMapper();
     }
 
@@ -25,7 +26,7 @@ public class ChuckMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         HttpClient client = HttpClientBuilder.create().build();
         String url = "http://api.icndb.com/jokes/random";
 
@@ -44,12 +45,12 @@ public class ChuckMinion extends Minion {
             if (chuckResponse.getType().equals("success")) {
                 String joke = chuckResponse.getValue().getJoke();
                 String unescaped = joke.replace("&quot;", "\"");
-                muc.sendMessage(unescaped);
+                room.sendMessage(unescaped);
             } else {
-                muc.sendMessage("Could not find Chuck.");
+                room.sendMessage("Could not find Chuck.");
             }
         } catch (IOException e) {
-            muc.sendMessage("Could not find Chuck.");
+            room.sendMessage("Could not find Chuck.");
             throw new MinionsException(e);
         }
     }

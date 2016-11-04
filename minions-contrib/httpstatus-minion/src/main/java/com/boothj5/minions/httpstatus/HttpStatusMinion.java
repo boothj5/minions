@@ -12,13 +12,17 @@ import java.io.IOException;
 
 public class HttpStatusMinion extends Minion {
 
+    public HttpStatusMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "[url] - Get the http status code for a URL.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         String[] split = StringUtils.split(message, " ");
         String uri = split[0];
         try {
@@ -26,9 +30,9 @@ public class HttpStatusMinion extends Minion {
             HttpGet get = new HttpGet(uri);
             HttpResponse response = client.execute(get);
             response.getEntity().getContent().close();
-            muc.sendMessage("Status " + uri + ": " + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase());
+            room.sendMessage("Status " + uri + ": " + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase());
         } catch (IOException e) {
-            muc.sendMessage("Could not connect " + uri + ": " + e.getMessage());
+            room.sendMessage("Could not connect " + uri + ": " + e.getMessage());
         }
     }
 }

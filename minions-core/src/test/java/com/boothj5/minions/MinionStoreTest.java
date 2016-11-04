@@ -36,7 +36,7 @@ public class MinionStoreTest {
     @Mock
     Minion minion2;
 
-    MinionStore store;
+    private MinionStore store;
 
     @Before
     public void setup() {
@@ -54,12 +54,12 @@ public class MinionStoreTest {
         given(jar1.getName()).willReturn("minion1.jar");
         given(jar1.getCommand()).willReturn("minion1");
         given(jar1.getTimestampFormat()).willReturn("21-May-2016 13:27:52");
-        given(jar1.loadMinionClass(any(URLClassLoader.class))).willReturn(minion1);
+        given(jar1.loadMinionClass(any(URLClassLoader.class), any(MinionsRoom.class))).willReturn(minion1);
 
         given(jar2.getName()).willReturn("minion2.jar");
         given(jar2.getCommand()).willReturn("minion2");
         given(jar2.getTimestampFormat()).willReturn("12-Dec-2016 01:00:12");
-        given(jar2.loadMinionClass(any(URLClassLoader.class))).willReturn(minion2);
+        given(jar2.loadMinionClass(any(URLClassLoader.class), any(MinionsRoom.class))).willReturn(minion2);
 
         given(dir.listMinionJars()).willReturn(Arrays.asList(jar1, jar2));
 
@@ -89,16 +89,16 @@ public class MinionStoreTest {
 
     @Test
     public void callsOnMessage() {
-        store.onMessage("Hello", "bobby");
+        store.onMessage("bobby", "Hello");
 
-        verify(minion1).onMessage(room, "bobby", "Hello");
-        verify(minion2).onMessage(room, "bobby", "Hello");
+        verify(minion1).onMessage("bobby", "Hello");
+        verify(minion2).onMessage("bobby", "Hello");
     }
 
     @Test
     public void callsOnCommand() {
-        store.onCommand("!minion2 test args", "bruce");
+        store.onCommand("bruce", "!minion2 test args");
 
-        verify(minion2).onCommand(room, "bruce", "test args");
+        verify(minion2).onCommand("bruce", "test args");
     }
 }

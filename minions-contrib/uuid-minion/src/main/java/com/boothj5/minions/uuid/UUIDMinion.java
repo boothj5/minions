@@ -6,14 +6,19 @@ import com.boothj5.minions.MinionsRoom;
 import java.util.UUID;
 
 public class UUIDMinion extends Minion {
+
+    public UUIDMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "- Generate a UUID.";
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         UUID uuid = UUID.randomUUID();
-        muc.sendMessage(from + ": " + uuid.toString());
+        room.sendMessage(from + ": " + uuid.toString());
     }
 }

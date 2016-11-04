@@ -17,22 +17,26 @@ public class SlangslateMinion extends Minion {
 
     private Map<String, String> lastMessages = new HashMap<>();
 
+    public SlangslateMinion(MinionsRoom room) {
+        super(room);
+    }
+
     @Override
     public String getHelp() {
         return "[term|user] - Translate internet slang term or user's last message";
     }
 
     @Override
-    public void onMessage(MinionsRoom muc, String from, String message) {
+    public void onMessage(String from, String message) {
         lastMessages.put(from, message);
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         String arg = message.trim();
 
         if ("".equals(arg)) {
-            muc.sendMessage(from + " nothing doesn't mean anything.");
+            room.sendMessage(from + " nothing doesn't mean anything.");
 
         } else if (lastMessages.containsKey(arg)) {
             String origMessage = lastMessages.get(arg);
@@ -44,12 +48,12 @@ public class SlangslateMinion extends Minion {
                 transMessage += transWord != null ? transWord + " " : origWord + " ";
             }
 
-            muc.sendMessage(arg + " said: " + transMessage);
+            room.sendMessage(arg + " said: " + transMessage);
 
         } else {
             String translated = translate(arg);
             String responseMessage = translated != null ? arg + " = " + translated : "Soz " + from + ", idk";
-            muc.sendMessage(responseMessage);
+            room.sendMessage(responseMessage);
         }
     }
 

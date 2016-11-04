@@ -21,28 +21,33 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Minion {
     private static final Logger LOG = LoggerFactory.getLogger(Minion.class);
+    protected final MinionsRoom room;
 
     public abstract String getHelp();
 
-    final void onCommandWrapper(MinionsRoom muc, String from, String message) {
+    public Minion(MinionsRoom room) {
+        this.room = room;
+    }
+
+    final void onCommandWrapper(String from, String message) {
         try {
-            onCommand(muc, from, message);
+            onCommand(from, message);
         } catch (RuntimeException rte) {
             LOG.error("Minions RuntimeException", rte);
         }
     }
 
-    final void onMessageWrapper(MinionsRoom muc, String from, String message) {
+    final void onMessageWrapper(String from, String message) {
         try {
-            onMessage(muc, from, message);
+            onMessage(from, message);
         } catch (RuntimeException rte) {
             LOG.error("Minions RuntimeException", rte);
         }
     }
 
-    public void onMessage(MinionsRoom muc, String from, String message) {}
+    public void onMessage(String from, String message) {}
 
-    public void onCommand(MinionsRoom muc, String from, String message) {}
+    public void onCommand(String from, String message) {}
 
     public void onRemove() {}
 }

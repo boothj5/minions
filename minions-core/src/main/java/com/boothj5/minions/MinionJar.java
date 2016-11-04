@@ -74,13 +74,13 @@ class MinionJar {
         return command;
     }
 
-    Minion loadMinionClass(URLClassLoader loader) {
+    Minion loadMinionClass(URLClassLoader loader, MinionsRoom room) {
         try {
             Class<?> clazz = Class.forName(className, true, loader);
             Class<? extends Minion> minionClazz = clazz.asSubclass(Minion.class);
-            Constructor<? extends Minion> ctr = minionClazz.getConstructor();
+            Constructor<? extends Minion> ctr = minionClazz.getConstructor(MinionsRoom.class);
 
-            return ctr.newInstance();
+            return ctr.newInstance(room);
         } catch (Throwable t) {
             throw new MinionsException("Error loading minions class: ", t);
         }

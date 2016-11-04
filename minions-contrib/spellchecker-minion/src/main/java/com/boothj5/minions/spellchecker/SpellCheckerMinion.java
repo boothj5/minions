@@ -16,7 +16,8 @@ public class SpellCheckerMinion extends Minion {
     private static final Logger LOG = LoggerFactory.getLogger(SpellCheckerMinion.class);
     private final JLanguageTool langTool;
 
-    public SpellCheckerMinion() throws IOException {
+    public SpellCheckerMinion(MinionsRoom room) throws IOException {
+        super(room);
         langTool = new JLanguageTool(new BritishEnglish());
         langTool.activateDefaultPatternRules();
     }
@@ -27,7 +28,7 @@ public class SpellCheckerMinion extends Minion {
     }
 
     @Override
-    public void onCommand(MinionsRoom muc, String from, String message) {
+    public void onCommand(String from, String message) {
         try {
             List<RuleMatch> matches = langTool.check(message);
             String result = "";
@@ -41,9 +42,9 @@ public class SpellCheckerMinion extends Minion {
                 }
             }
             if (!result.equals("")) {
-                muc.sendMessage(result);
+                room.sendMessage(result);
             } else {
-                muc.sendMessage("No suggestions.");
+                room.sendMessage("No suggestions.");
             }
         } catch (IOException e) {
             LOG.debug("Failed to initialise spell checker.");
