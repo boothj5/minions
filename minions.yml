@@ -13,6 +13,10 @@ rooms:
       password: m1n10n5
     - jid: botroom2@conference.ejabberd.local
 
+admins:
+    - adminuser@service.org
+    - myadmin@localchat.com
+
 plugins:
     dir: /home/boothj5/.local/share/minions/plugins
     refreshSeconds: 30
