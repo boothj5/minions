@@ -3,6 +3,10 @@ package com.boothj5.minions.eddie;
 import com.boothj5.minions.Minion;
 import com.boothj5.minions.MinionsRoom;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+
 public class EddieMinion extends Minion {
 
     public EddieMinion(MinionsRoom room) {
@@ -30,5 +34,14 @@ public class EddieMinion extends Minion {
         if (message.toLowerCase().contains("eddie")) {
             room.sendMessage("http://maiden-world.com/images/wallpaper/Iron_Maiden_032_1.jpg");
         }
+    }
+
+    @Override
+    public void onCommand(String from, String message) {
+        Temporal now = LocalDate.now();
+        Temporal concert = LocalDate.of(2017, 5, 27);
+        long days = ChronoUnit.DAYS.between(now, concert);
+
+        room.sendMessage("Only " + days + " to go... \\m/");
     }
 }
