@@ -29,6 +29,19 @@ class JabberID {
         return jid;
     }
 
+    Optional<String> getBareJid() {
+        if (jid == null) {
+            return Optional.empty();
+        }
+
+        if (jid.indexOf('/') == -1) {
+            return Optional.empty();
+        }
+
+        String[] splitJid = jid.split("/");
+        return Optional.of(splitJid[0]);
+    }
+
     Optional<String> getResource() {
         if (jid == null) {
             return Optional.empty();

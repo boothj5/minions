@@ -39,6 +39,8 @@ class MinionsConfiguration {
 
     private List<MinionsRoomConfiguration> rooms = new ArrayList<>();
 
+    private List<String> admins;
+
     private String pluginsDir = DEFAULT_PLUGINS_DIR;
     private int pluginsRefreshSeconds = DEFAULT_REFRESH_SECONDS;
     private String pluginsPrefix = DEFAULT_PREFIX;
@@ -48,6 +50,7 @@ class MinionsConfiguration {
         Object service = config.get("service");
         Object rooms = config.get("rooms");
         Object plugins = config.get("plugins");
+        Object admins = config.get("admins");
 
         validateUser(user);
         validateRooms(rooms);
@@ -56,6 +59,7 @@ class MinionsConfiguration {
         loadServiceConfig(service);
         loadRoomsConfig(rooms);
         loadPluginsConfig(plugins);
+        loadAdmins(admins);
     }
 
     String getUser() {
@@ -96,6 +100,10 @@ class MinionsConfiguration {
 
     List<MinionsRoomConfiguration> getRooms() {
         return rooms;
+    }
+
+    public List<String> getAdmins() {
+        return admins;
     }
 
     private void validateUser(Object user) {
@@ -180,5 +188,11 @@ class MinionsConfiguration {
         if (userProps.get("resource") != null) {
             userResource = userProps.get("resource");
         }
+    }
+
+    private void loadAdmins(Object admins) {
+        this.admins = (List<String>)admins == null
+            ? new ArrayList<>()
+            : (List<String>)admins;
     }
 }

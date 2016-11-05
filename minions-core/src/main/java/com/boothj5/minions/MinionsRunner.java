@@ -17,12 +17,16 @@
 package com.boothj5.minions;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jivesoftware.smack.ChatManager;
+import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -51,6 +55,8 @@ class MinionsRunner {
             conn.login(config.getUser(), config.getPassword(), config.getResource());
             LOG.debug(format("Logged in: %s@%s", config.getUser(), config.getService()));
 
+            Map<String, MinionsRoom> rooms = new HashMap<>();
+
             for (MinionsRoomConfiguration roomConfig : config.getRooms()) {
                 MultiUserChat muc = new MultiUserChat(conn, roomConfig.getJid());
                 Optional<String> password = roomConfig.getPassword();
@@ -63,11 +69,16 @@ class MinionsRunner {
                 LOG.debug(format("Joined: %s as %s", roomConfig.getJid(), roomConfig.getNick()));
 
                 MinionsRoom room = new MinionsRoomImpl(muc);
+                rooms.put(room.getRoom(), room);
                 MinionsDir dir = new MinionsDir(config.getPluginsDir());
                 MinionStore minions = new MinionStore(dir, config, room);
                 MinionsListener listener = new MinionsListener(config, minions, room);
                 muc.addMessageListener(listener);
             }
+
+            ChatManager chatManager = conn.getChatManager();
+            ChatManagerListener adminChatManagerListener = new AdminChatManagerListener(config, rooms);
+            chatManager.addChatListener(adminChatManagerListener);
 
             Object lock = new Object();
             synchronized (lock) {
