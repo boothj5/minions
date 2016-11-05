@@ -47,10 +47,29 @@ class AdminChatMessageListener implements MessageListener {
 
         String[] splitBody = body.split(" ", 3);
         switch (splitBody[0]) {
+            case "help":    handleHelp(chat, splitBody);    break;
             case "rooms":   handleRooms(chat, splitBody);   break;
             case "send":    handleSend(chat, splitBody);    break;
             case "me":      handleMe(chat, splitBody);      break;
             default:        handleDefault(chat);            break;
+        }
+    }
+
+    private void handleHelp(Chat chat, String[] tokens) {
+        try {
+            if (tokens.length != 1) {
+                chat.sendMessage("Invalid command usage... duh");
+                return;
+            }
+
+            String help = "\n" +
+                "help - This help\n" +
+                "rooms - List rooms I'm currently in\n" +
+                "send <room> <message> - Send a message to the specified room\n" +
+                "me <room> <message> - Send a /me message to the specified room";
+            chat.sendMessage(help);
+        } catch (XMPPException e) {
+            e.printStackTrace();
         }
     }
 
