@@ -42,6 +42,6 @@ public class EddieMinion extends Minion {
         Temporal concert = LocalDate.of(2017, 5, 27);
         long days = ChronoUnit.DAYS.between(now, concert);
 
-        room.sendMessage("Only " + days + " to go... \\m/");
+        room.sendMessage("Only " + days + " days to go... \\m/");
     }
 }
