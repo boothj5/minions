@@ -18,7 +18,7 @@ class AdminChatManagerListener implements ChatManagerListener {
     @Override
     public void chatCreated(Chat chat, boolean createdLocally) {
         if (!createdLocally) {
-            chat.addMessageListener(new AdminChatMessageListener(config, rooms));
+            chat.addMessageListener(new AdminMessageListener(config, rooms));
         }
     }
 }

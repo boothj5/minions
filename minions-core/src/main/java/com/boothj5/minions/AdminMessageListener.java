@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Optional;
 
-class AdminChatMessageListener implements MessageListener {
+class AdminMessageListener implements MessageListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminChatMessageListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminMessageListener.class);
     private final MinionsConfiguration config;
     private final Map<String, MinionsRoom> rooms;
 
-    AdminChatMessageListener(MinionsConfiguration config, Map<String, MinionsRoom> rooms) {
+    AdminMessageListener(MinionsConfiguration config, Map<String, MinionsRoom> rooms) {
         this.config = config;
         this.rooms = rooms;
     }
@@ -24,6 +24,11 @@ class AdminChatMessageListener implements MessageListener {
     @Override
     public void processMessage(Chat chat, Message message) {
         String body = message.getBody();
+        if (body == null) {
+            LOG.debug("No message body.");
+            return;
+        }
+
         LOG.debug("Admin message received - " + message.getFrom() + ": " + body);
 
         String from = message.getFrom();
@@ -40,10 +45,6 @@ class AdminChatMessageListener implements MessageListener {
             return;
         }
 
-        if (body == null) {
-            LOG.debug("No message body.");
-            return;
-        }
 
         String[] splitBody = body.split(" ", 3);
         switch (splitBody[0]) {
