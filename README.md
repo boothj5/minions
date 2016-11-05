@@ -33,6 +33,9 @@ Then create a YAML file with your configuration:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`nick:` Nickname to use in the room, `minions` by default.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`password:` Password for the room if required.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`- ...`<br>
+`admins:`<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`- barejid` Bare JID of an admin user.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;`- ...`<br>
 `plugins:`<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`refreshSeconds:` Polling interval to check for new plugins, defaults to `10` seconds.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;`prefix:` The command prefix, defaults to `!`<br>
