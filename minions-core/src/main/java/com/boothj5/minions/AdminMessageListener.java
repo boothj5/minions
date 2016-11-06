@@ -88,8 +88,8 @@ class AdminMessageListener implements MessageListener {
                 "send <room> <message> - Send a message to the specified room\n" +
                 "me <room> <message> - Send a /me message to the specified room";
             chat.sendMessage(help);
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error("Error handling help command", t);
         }
     }
 
@@ -107,8 +107,8 @@ class AdminMessageListener implements MessageListener {
                 .append(" as ")
                 .append(room.getNick()));
             chat.sendMessage(builder.toString());
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error("Error handling rooms command", t);
         }
     }
 
@@ -126,15 +126,16 @@ class AdminMessageListener implements MessageListener {
             }
 
             StringBuilder builder = new StringBuilder("\n" + room.getRoom() + " occupants:\n");
-            List<String> nicks = room.getOccupants().stream()
-                .map(JabberID::new)
-                .filter(jid -> jid.getResource().isPresent())
-                .filter(jid -> !jid.getResource().get().equals(room.getNick()))
-                .map(jid -> jid.getResource().get())
+
+            List<String> occupants = room.getOccupants().stream().
+                map(occupant -> room.getOccupantPresence(occupant).isPresent()
+                    ? occupant + " (" + room.getOccupantPresence(occupant).get() + ")"
+                    : occupant)
                 .collect(Collectors.toList());
-            chat.sendMessage(builder.append(String.join("\n", nicks)).toString());
-        } catch (XMPPException e) {
-            e.printStackTrace();
+
+            chat.sendMessage(builder.append(String.join("\n", occupants)).toString());
+        } catch (Throwable t) {
+            LOG.error("Error handling occupants command", t);
         }
     }
 
@@ -151,8 +152,8 @@ class AdminMessageListener implements MessageListener {
                 return;
             }
             room.sendMessage(tokens[2]);
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error("Error handling send command", t);
         }
     }
 
@@ -177,8 +178,8 @@ class AdminMessageListener implements MessageListener {
     private void handleDefault(Chat chat) {
         try {
             chat.sendMessage("I didn't understand that...");
-        } catch (XMPPException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error("Error handling me command", t);
         }
     }
 }

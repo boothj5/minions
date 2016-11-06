@@ -17,10 +17,12 @@
 package com.boothj5.minions;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MinionsRoom {
     String getNick();
     String getRoom();
     List<String> getOccupants();
+    Optional<String> getOccupantPresence(String nick);
     void sendMessage(String message);
 }

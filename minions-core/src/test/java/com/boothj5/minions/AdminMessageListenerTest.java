@@ -8,15 +8,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdminMessageListenerTest {
@@ -302,12 +297,13 @@ public class AdminMessageListenerTest {
         MinionsRoom room = mock(MinionsRoom.class);
         given(room.getNick()).willReturn("bot");
         given(room.getRoom()).willReturn("room@conference.server.org");
-        List<String> occupants = Arrays.asList(
-            "room@conference.server.org/mike",
-            "room@conference.server.org/sarah",
-            "room@conference.server.org/dave",
-            "room@conference.server.org/alice");
+        List<String> occupants = Arrays.asList("mike", "sarah", "dave", "alice");
         given(room.getOccupants()).willReturn(occupants);
+
+        given(room.getOccupantPresence("mike")).willReturn(Optional.of("online"));
+        given(room.getOccupantPresence("sarah")).willReturn(Optional.of("chat"));
+        given(room.getOccupantPresence("dave")).willReturn(Optional.empty());
+        given(room.getOccupantPresence("alice")).willReturn(Optional.of("dnd"));
         Map<String, MinionsRoom> rooms = new HashMap<>();
         rooms.put("room@conference.server.org", room);
         listener = new AdminMessageListener(config, rooms);
@@ -317,7 +313,7 @@ public class AdminMessageListenerTest {
 
         listener.processMessage(chat, message);
 
-        verify(chat).sendMessage("\nroom@conference.server.org occupants:\nmike\nsarah\ndave\nalice");
+        verify(chat).sendMessage("\nroom@conference.server.org occupants:\nmike (online)\nsarah (chat)\ndave\nalice (dnd)");
     }
 
     @Test

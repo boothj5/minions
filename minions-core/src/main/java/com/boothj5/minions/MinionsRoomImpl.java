@@ -17,10 +17,13 @@
 package com.boothj5.minions;
 
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 class MinionsRoomImpl implements MinionsRoom {
     private final MultiUserChat muc;
@@ -36,10 +39,31 @@ class MinionsRoomImpl implements MinionsRoom {
 
     @Override
     public List<String> getOccupants() {
-        List<String> occupants = new ArrayList<>();
-        muc.getOccupants().forEachRemaining(occupants::add);
+        List<String> fullJids = new ArrayList<>();
+        muc.getOccupants().forEachRemaining(fullJids::add);
 
-        return occupants;
+        List<String> nicks = fullJids.stream()
+            .map(JabberID::new)
+            .filter(jid -> jid.getResource().isPresent())
+            .filter(jid -> !jid.getResource().get().equals(this.getNick()))
+            .map(jid -> jid.getResource().get())
+            .collect(Collectors.toList());
+
+        return nicks;
+    }
+
+    @Override
+    public Optional<String> getOccupantPresence(String nick) {
+        Presence presence = muc.getOccupantPresence(this.getRoom() + "/" + nick);
+        if (presence == null) {
+            return Optional.empty();
+        }
+
+        if (presence.getMode() == null || presence.getMode().equals(Presence.Mode.available)) {
+            return Optional.of("online");
+        }
+
+        return Optional.of(presence.getMode().toString());
     }
 
     @Override
