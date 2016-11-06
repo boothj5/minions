@@ -62,13 +62,12 @@ class MinionStore {
     void onMessage(String from, String body) {
         try {
             lock();
+            LOG.debug(format("%s: Handling message - %s", room.getRoom(), body));
             minionsMap.values().forEach(
                 minion -> minion.onMessageWrapper(from, body));
             unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException me) {
-            LOG.error("Error sending message to room", me);
+        } catch (Throwable t) {
+            LOG.error(format("%s: Error handling message - %s", room.getRoom(), body), t);
         }
     }
 
@@ -79,20 +78,18 @@ class MinionStore {
             lock();
             Minion minion = minionsMap.get(minionsCommand);
             if (minion != null) {
-                LOG.debug(format("Handling command: %s", minionsCommand));
+                LOG.debug(format("%s: Handling command - %s", room.getRoom(), minionsCommand));
                 String subMessage;
                 int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
                 subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
                 minion.onCommandWrapper(from, subMessage);
             } else {
-                LOG.debug(format("Minion does not exist: %s", minionsCommand));
+                LOG.debug(format("%s: Minion does not exist - %s", room.getRoom(), minionsCommand));
                 room.sendMessage("No such minion: " + minionsCommand);
             }
             unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException me) {
-            LOG.error("Error sending message to room", me);
+        } catch (Throwable t) {
+            LOG.error(format("%s: Error handling command - %s", room.getRoom(), body), t);
         }
     }
 
@@ -108,10 +105,8 @@ class MinionStore {
                 .append(minion.getValue().getHelp()));
             room.sendMessage(builder.toString());
             unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException me) {
-            LOG.error("Error sending message to room", me);
+        } catch (Throwable t) {
+            LOG.error(format("%s: Error getting help", room.getRoom()), t);
         }
     }
 
@@ -126,10 +121,8 @@ class MinionStore {
                 .append(jar.getTimestampFormat()));
             room.sendMessage(builder.toString());
             unlock();
-        } catch (InterruptedException ie) {
-            LOG.error("Interrupted waiting for minions lock", ie);
-        } catch (MinionsException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error(format("%s: Error getting jars", room.getRoom()), t);
         }
     }
 
@@ -148,7 +141,7 @@ class MinionStore {
                     if (!currentMinionJar.getTimestamp().equals(jar.getTimestamp())) {
                         jarsToLoad.put(jar.getName(), jar);
                         urlList.add(jar.getURL());
-                        LOG.debug("Updated JAR: " + jar.getName());
+                        LOG.debug(format("%s: Updated %s", room.getRoom(), jar.getName()));
                         if (loaded) {
                             room.sendMessage("Updated JAR: " + jar.getName());
                         }
@@ -156,7 +149,7 @@ class MinionStore {
                 } else {
                     jarsToLoad.put(jar.getName(), jar);
                     urlList.add(jar.getURL());
-                    LOG.debug("Added JAR: " + jar.getName());
+                    LOG.debug(format("%s: Added %s", room.getRoom(), jar.getName()));
                     if (loaded) {
                         room.sendMessage("Added JAR: " + jar.getName());
                     }
@@ -168,7 +161,7 @@ class MinionStore {
                 .forEach(jar -> {
                     minionsMap.remove(jar.getValue().getCommand());
                     jarsToRemove.add(jar.getKey());
-                    LOG.debug("Removed JAR: " + jar.getKey());
+                    LOG.debug(format("%s: Removed %s", room.getRoom(), jar.getKey()));
                     if (loaded) {
                         room.sendMessage("Removed JAR: " + jar.getKey());
                     }
@@ -186,9 +179,8 @@ class MinionStore {
 
             loaded = true;
             unlock();
-        } catch (MinionsException | InterruptedException e) {
-            LOG.error("Error loading minions.", e);
-            e.printStackTrace();
+        } catch (Throwable t) {
+            LOG.error(format("%s: Error loading minions.", room.getRoom()), t);
         }
     }
 
