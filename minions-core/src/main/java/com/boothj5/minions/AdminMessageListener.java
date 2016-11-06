@@ -75,33 +75,6 @@ class AdminMessageListener implements MessageListener {
         }
     }
 
-    private void handleOccupants(Chat chat, String[] tokens) {
-        try {
-            if (tokens.length != 2) {
-                chat.sendMessage("Invalid command usage... duh");
-                return;
-            }
-
-            MinionsRoom room = rooms.get(tokens[1]);
-            if (room == null) {
-                chat.sendMessage("Room doesn't exist :/");
-            } else {
-                StringBuilder builder = new StringBuilder("\n" + room.getRoom() + " occupants:\n");
-
-                List<String> nicks = room.getOccupants().stream()
-                    .map(JabberID::new)
-                    .filter(jid -> jid.getResource().isPresent())
-                    .filter(jid -> !jid.getResource().get().equals(room.getNick()))
-                    .map(jid -> jid.getResource().get())
-                    .collect(Collectors.toList());
-
-                chat.sendMessage(builder.append(String.join("\n", nicks)).toString());
-            }
-        } catch (XMPPException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void handleHelp(Chat chat, String[] tokens) {
         try {
             if (tokens.length != 1) {
@@ -140,6 +113,32 @@ class AdminMessageListener implements MessageListener {
         }
     }
 
+    private void handleOccupants(Chat chat, String[] tokens) {
+        try {
+            if (tokens.length != 2) {
+                chat.sendMessage("Invalid command usage... duh");
+                return;
+            }
+
+            MinionsRoom room = rooms.get(tokens[1]);
+            if (room == null) {
+                chat.sendMessage("Room doesn't exist :/");
+                return;
+            }
+
+            StringBuilder builder = new StringBuilder("\n" + room.getRoom() + " occupants:\n");
+            List<String> nicks = room.getOccupants().stream()
+                .map(JabberID::new)
+                .filter(jid -> jid.getResource().isPresent())
+                .filter(jid -> !jid.getResource().get().equals(room.getNick()))
+                .map(jid -> jid.getResource().get())
+                .collect(Collectors.toList());
+            chat.sendMessage(builder.append(String.join("\n", nicks)).toString());
+        } catch (XMPPException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void handleSend(Chat chat, String[] tokens) {
         try {
             if (tokens.length != 3) {
@@ -150,9 +149,9 @@ class AdminMessageListener implements MessageListener {
             MinionsRoom room = rooms.get(tokens[1]);
             if (room == null) {
                 chat.sendMessage("Room doesn't exist :/");
-            } else {
-                room.sendMessage(tokens[2]);
+                return;
             }
+            room.sendMessage(tokens[2]);
         } catch (XMPPException e) {
             e.printStackTrace();
         }
@@ -168,9 +167,9 @@ class AdminMessageListener implements MessageListener {
             MinionsRoom room = rooms.get(tokens[1]);
             if (room == null) {
                 chat.sendMessage("Room doesn't exist :/");
-            } else {
-                room.sendMessage("/me " + tokens[2]);
+                return;
             }
+            room.sendMessage("/me " + tokens[2]);
         } catch (XMPPException e) {
             e.printStackTrace();
         }
