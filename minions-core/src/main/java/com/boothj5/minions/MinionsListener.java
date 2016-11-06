@@ -27,13 +27,13 @@ import java.util.Optional;
 class MinionsListener implements PacketListener {
     private static final Logger LOG = LoggerFactory.getLogger(MinionsListener.class);
 
-    private final MinionStore minionsStore;
+    private final MinionStore store;
     private final MinionsRoom room;
     private final MinionsConfiguration config;
 
-    MinionsListener(MinionsConfiguration config, MinionStore minionsStore, MinionsRoom room) {
+    MinionsListener(MinionsConfiguration config, MinionStore store, MinionsRoom room) {
         this.config = config;
-        this.minionsStore = minionsStore;
+        this.store = store;
         this.room = room;
     }
 
@@ -65,22 +65,22 @@ class MinionsListener implements PacketListener {
         }
 
         if (!body.startsWith(config.getPrefix())) {
-            minionsStore.onMessage(from, body);
+            store.onMessage(from, body);
             return;
         }
 
         String botCommand = body.substring(config.getPrefix().length());
         if (botCommand.equals(MinionsConfiguration.CMD_HELP)) {
             LOG.debug("Handling help.");
-            minionsStore.onHelp();
+            store.onHelp();
             return;
         }
         if (botCommand.equals(MinionsConfiguration.CMD_JARS)) {
             LOG.debug("Handling jars.");
-            minionsStore.onJars();
+            store.onJars();
             return;
         }
 
-        minionsStore.onCommand(from, body);
+        store.onCommand(from, body);
     }
 }

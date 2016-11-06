@@ -43,14 +43,14 @@ class MinionsRunner {
     void run() {
         try {
             LOG.debug("Starting MinionsRunner");
-            ConnectionConfiguration connectionConfiguration;
+            ConnectionConfiguration connConfig;
             if (StringUtils.isNotBlank(config.getServer())) {
-                connectionConfiguration = new ConnectionConfiguration(config.getServer(), config.getPort(), config.getService());
+                connConfig = new ConnectionConfiguration(config.getServer(), config.getPort(), config.getService());
             } else {
-                connectionConfiguration = new ConnectionConfiguration(config.getService(), config.getPort());
+                connConfig = new ConnectionConfiguration(config.getService(), config.getPort());
             }
 
-            XMPPConnection conn = new XMPPConnection(connectionConfiguration);
+            XMPPConnection conn = new XMPPConnection(connConfig);
             conn.connect();
             conn.login(config.getUser(), config.getPassword(), config.getResource());
             LOG.debug(format("Logged in: %s@%s", config.getUser(), config.getService()));
@@ -77,8 +77,8 @@ class MinionsRunner {
             }
 
             ChatManager chatManager = conn.getChatManager();
-            ChatManagerListener adminChatManagerListener = new AdminChatManagerListener(config, rooms);
-            chatManager.addChatListener(adminChatManagerListener);
+            ChatManagerListener chatListener = new AdminManagerListener(config, rooms);
+            chatManager.addChatListener(chatListener);
 
             Object lock = new Object();
             synchronized (lock) {

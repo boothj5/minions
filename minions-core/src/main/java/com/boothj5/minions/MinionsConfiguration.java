@@ -102,7 +102,7 @@ class MinionsConfiguration {
         return rooms;
     }
 
-    public List<String> getAdmins() {
+    List<String> getAdmins() {
         return admins;
     }
 

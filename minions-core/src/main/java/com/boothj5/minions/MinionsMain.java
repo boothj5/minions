@@ -34,9 +34,9 @@ class MinionsMain {
             Yaml yaml = new Yaml();
             InputStream is = new FileInputStream(new File(args[0]));
             Map<String, Object> yamlConfig = (Map<String, Object>)yaml.load(is);
-            MinionsConfiguration minionsConfiguration = new MinionsConfiguration(yamlConfig);
-            final MinionsRunner minionsRunner = new MinionsRunner(minionsConfiguration);
-            minionsRunner.run();
+            MinionsConfiguration conf = new MinionsConfiguration(yamlConfig);
+            MinionsRunner runner = new MinionsRunner(conf);
+            runner.run();
         } catch (FileNotFoundException e) {
             throw new MinionsException("Could not find configuration file: " + args[0]);
         }

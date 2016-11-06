@@ -33,7 +33,7 @@ class MinionStore {
     private static final Logger LOG = LoggerFactory.getLogger(MinionStore.class);
     private final MinionsConfiguration config;
     private final MinionsRoom room;
-    private final MinionsMap minionsMap;
+    private final MinionsMap map;
     private final MinionsDir dir;
     private final Map<String, MinionJar> currentJars;
     private boolean loaded;
@@ -43,8 +43,8 @@ class MinionStore {
     MinionStore(MinionsDir dir, MinionsConfiguration config, MinionsRoom room) {
         this.config = config;
         this.dir = dir;
-            this.room = room;
-        this.minionsMap = new MinionsMap();
+        this.room = room;
+        this.map = new MinionsMap();
         this.currentJars = new HashMap<>();
         this.loaded = false;
 
@@ -63,8 +63,7 @@ class MinionStore {
         try {
             lock();
             LOG.debug(format("%s: Handling message - %s", room.getRoom(), body));
-            minionsMap.values().forEach(
-                minion -> minion.onMessageWrapper(from, body));
+            map.values().forEach(minion -> minion.onMessageWrapper(from, body));
             unlock();
         } catch (Throwable t) {
             LOG.error(format("%s: Error handling message - %s", room.getRoom(), body), t);
@@ -74,18 +73,17 @@ class MinionStore {
     void onCommand(String from, String body) {
         try {
             String[] tokens = StringUtils.split(body, " ");
-            String minionsCommand = tokens[0].substring(config.getPrefix().length());
+            String command = tokens[0].substring(config.getPrefix().length());
             lock();
-            Minion minion = minionsMap.get(minionsCommand);
+            Minion minion = map.get(command);
             if (minion != null) {
-                LOG.debug(format("%s: Handling command - %s", room.getRoom(), minionsCommand));
-                String subMessage;
-                int argsIndex = config.getPrefix().length() + minionsCommand.length() + 1;
-                subMessage = argsIndex < body.length() ? body.substring(argsIndex) : "";
-                minion.onCommandWrapper(from, subMessage);
+                LOG.debug(format("%s: Handling command - %s", room.getRoom(), command));
+                int argsIndex = config.getPrefix().length() + command.length() + 1;
+                String args = argsIndex < body.length() ? body.substring(argsIndex) : "";
+                minion.onCommandWrapper(from, args);
             } else {
-                LOG.debug(format("%s: Minion does not exist - %s", room.getRoom(), minionsCommand));
-                room.sendMessage("No such minion: " + minionsCommand);
+                LOG.debug(format("%s: Minion does not exist - %s", room.getRoom(), command));
+                room.sendMessage("No such minion: " + command);
             }
             unlock();
         } catch (Throwable t) {
@@ -97,7 +95,7 @@ class MinionStore {
         try {
             lock();
             StringBuilder builder = new StringBuilder();
-            minionsMap.entrySet().forEach(minion -> builder
+            map.entrySet().forEach(minion -> builder
                 .append("\n")
                 .append(config.getPrefix())
                 .append(minion.getKey())
@@ -129,18 +127,19 @@ class MinionStore {
     private void load(MinionsRoom room) {
         try {
             lock();
-            List<URL> urlList = new ArrayList<>();
+            List<URL> urls = new ArrayList<>();
             Map<String, MinionJar> newJars = new HashMap<>();
+
             Map<String, MinionJar> jarsToLoad = new HashMap<>();
             List<String> jarsToRemove = new ArrayList<>();
 
             dir.listMinionJars().forEach(jar -> {
                 newJars.put(jar.getName(), jar);
                 if (currentJars.containsKey(jar.getName())) {
-                    MinionJar currentMinionJar = currentJars.get(jar.getName());
-                    if (!currentMinionJar.getTimestamp().equals(jar.getTimestamp())) {
+                    MinionJar currentJar = currentJars.get(jar.getName());
+                    if (!currentJar.getTimestamp().equals(jar.getTimestamp())) {
                         jarsToLoad.put(jar.getName(), jar);
-                        urlList.add(jar.getURL());
+                        urls.add(jar.getURL());
                         LOG.debug(format("%s: Updated %s", room.getRoom(), jar.getName()));
                         if (loaded) {
                             room.sendMessage("Updated JAR: " + jar.getName());
@@ -148,7 +147,7 @@ class MinionStore {
                     }
                 } else {
                     jarsToLoad.put(jar.getName(), jar);
-                    urlList.add(jar.getURL());
+                    urls.add(jar.getURL());
                     LOG.debug(format("%s: Added %s", room.getRoom(), jar.getName()));
                     if (loaded) {
                         room.sendMessage("Added JAR: " + jar.getName());
@@ -159,7 +158,7 @@ class MinionStore {
             currentJars.entrySet().stream()
                 .filter(jar -> !newJars.containsKey(jar.getKey()))
                 .forEach(jar -> {
-                    minionsMap.remove(jar.getValue().getCommand());
+                    map.remove(jar.getValue().getCommand());
                     jarsToRemove.add(jar.getKey());
                     LOG.debug(format("%s: Removed %s", room.getRoom(), jar.getKey()));
                     if (loaded) {
@@ -167,11 +166,10 @@ class MinionStore {
                     }
                 });
 
-            URLClassLoader loader = new URLClassLoader(urlList.toArray(new URL[urlList.size()]));
-
+            URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
             jarsToLoad.entrySet().forEach(jar -> {
-                MinionJar minionJar = jarsToLoad.get(jar.getKey());
-                minionsMap.put(minionJar.getCommand(), minionJar.loadMinionClass(loader, room));
+                MinionJar jarToLoad = jarsToLoad.get(jar.getKey());
+                map.put(jarToLoad.getCommand(), jarToLoad.loadMinionClass(loader, room));
                 currentJars.put(jar.getKey(), jar.getValue());
             });
 
