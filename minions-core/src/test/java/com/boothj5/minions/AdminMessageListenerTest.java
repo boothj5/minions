@@ -80,6 +80,7 @@ public class AdminMessageListenerTest {
         verify(chat).sendMessage("\n" +
             "help - This help\n" +
             "rooms - List rooms I'm currently in\n" +
+            "occupants <room> - List occupants in room\n" +
             "send <room> <message> - Send a message to the specified room\n" +
             "me <room> <message> - Send a /me message to the specified room");
     }
@@ -290,5 +291,78 @@ public class AdminMessageListenerTest {
         listener.processMessage(chat, message);
 
         verify(chat).sendMessage("I didn't understand that...");
+    }
+
+    @Test
+    public void respondsWithOccupants() throws XMPPException {
+        MinionsConfiguration config = mock(MinionsConfiguration.class);
+        List<String> admins = Arrays.asList("someone@server.org", "eddie@maiden.org", "bobster@jabber.org");
+        given(config.getAdmins()).willReturn(admins);
+
+        MinionsRoom room = mock(MinionsRoom.class);
+        given(room.getNick()).willReturn("bot");
+        given(room.getRoom()).willReturn("room@conference.server.org");
+        List<String> occupants = Arrays.asList(
+            "room@conference.server.org/mike",
+            "room@conference.server.org/sarah",
+            "room@conference.server.org/dave",
+            "room@conference.server.org/alice");
+        given(room.getOccupants()).willReturn(occupants);
+        Map<String, MinionsRoom> rooms = new HashMap<>();
+        rooms.put("room@conference.server.org", room);
+        listener = new AdminMessageListener(config, rooms);
+
+        given(message.getBody()).willReturn("occupants room@conference.server.org");
+        given(message.getFrom()).willReturn("eddie@maiden.org/laptop");
+
+        listener.processMessage(chat, message);
+
+        verify(chat).sendMessage("\nroom@conference.server.org occupants:\nmike\nsarah\ndave\nalice");
+    }
+
+    @Test
+    public void respondsWithErrorWhenRoomDoesntExist() throws XMPPException {
+        MinionsConfiguration config = mock(MinionsConfiguration.class);
+        List<String> admins = Arrays.asList("someone@server.org", "eddie@maiden.org", "bobster@jabber.org");
+        given(config.getAdmins()).willReturn(admins);
+
+        MinionsRoom room = mock(MinionsRoom.class);
+        given(room.getNick()).willReturn("bot");
+        given(room.getRoom()).willReturn("room@conference.server.org");
+        List<String> occupants = Arrays.asList("mike", "sarah", "dave", "alice");
+        given(room.getOccupants()).willReturn(occupants);
+        Map<String, MinionsRoom> rooms = new HashMap<>();
+        rooms.put("room@conference.server.org", room);
+        listener = new AdminMessageListener(config, rooms);
+
+        given(message.getBody()).willReturn("occupants bad@conference.server.org");
+        given(message.getFrom()).willReturn("eddie@maiden.org/laptop");
+
+        listener.processMessage(chat, message);
+
+        verify(chat).sendMessage("Room doesn't exist :/");
+    }
+
+    @Test
+    public void respondsWithErrorWhenInvalidArgNum() throws XMPPException {
+        MinionsConfiguration config = mock(MinionsConfiguration.class);
+        List<String> admins = Arrays.asList("someone@server.org", "eddie@maiden.org", "bobster@jabber.org");
+        given(config.getAdmins()).willReturn(admins);
+
+        MinionsRoom room = mock(MinionsRoom.class);
+        given(room.getNick()).willReturn("bot");
+        given(room.getRoom()).willReturn("room@conference.server.org");
+        List<String> occupants = Arrays.asList("mike", "sarah", "dave", "alice");
+        given(room.getOccupants()).willReturn(occupants);
+        Map<String, MinionsRoom> rooms = new HashMap<>();
+        rooms.put("room@conference.server.org", room);
+        listener = new AdminMessageListener(config, rooms);
+
+        given(message.getBody()).willReturn("occupants asdf asdfasdf asdf");
+        given(message.getFrom()).willReturn("eddie@maiden.org/laptop");
+
+        listener.processMessage(chat, message);
+
+        verify(chat).sendMessage("Invalid command usage... duh");
     }
 }

@@ -16,8 +16,11 @@
 
 package com.boothj5.minions;
 
+import java.util.List;
+
 public interface MinionsRoom {
     String getNick();
     String getRoom();
+    List<String> getOccupants();
     void sendMessage(String message);
 }

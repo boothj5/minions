@@ -23,8 +23,10 @@ import org.jivesoftware.smack.packet.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 class AdminMessageListener implements MessageListener {
 
@@ -64,11 +66,39 @@ class AdminMessageListener implements MessageListener {
 
         String[] splitBody = body.split(" ", 3);
         switch (splitBody[0]) {
-            case "help":    handleHelp(chat, splitBody);    break;
-            case "rooms":   handleRooms(chat, splitBody);   break;
-            case "send":    handleSend(chat, splitBody);    break;
-            case "me":      handleMe(chat, splitBody);      break;
-            default:        handleDefault(chat);            break;
+            case "help":        handleHelp(chat, splitBody);        break;
+            case "rooms":       handleRooms(chat, splitBody);       break;
+            case "send":        handleSend(chat, splitBody);        break;
+            case "me":          handleMe(chat, splitBody);          break;
+            case "occupants":   handleOccupants(chat, splitBody);   break;
+            default:            handleDefault(chat);                break;
+        }
+    }
+
+    private void handleOccupants(Chat chat, String[] tokens) {
+        try {
+            if (tokens.length != 2) {
+                chat.sendMessage("Invalid command usage... duh");
+                return;
+            }
+
+            MinionsRoom room = rooms.get(tokens[1]);
+            if (room == null) {
+                chat.sendMessage("Room doesn't exist :/");
+            } else {
+                StringBuilder builder = new StringBuilder("\n" + room.getRoom() + " occupants:\n");
+
+                List<String> nicks = room.getOccupants().stream()
+                    .map(JabberID::new)
+                    .filter(jid -> jid.getResource().isPresent())
+                    .filter(jid -> !jid.getResource().get().equals(room.getNick()))
+                    .map(jid -> jid.getResource().get())
+                    .collect(Collectors.toList());
+
+                chat.sendMessage(builder.append(String.join("\n", nicks)).toString());
+            }
+        } catch (XMPPException e) {
+            e.printStackTrace();
         }
     }
 
@@ -82,6 +112,7 @@ class AdminMessageListener implements MessageListener {
             String help = "\n" +
                 "help - This help\n" +
                 "rooms - List rooms I'm currently in\n" +
+                "occupants <room> - List occupants in room\n" +
                 "send <room> <message> - Send a message to the specified room\n" +
                 "me <room> <message> - Send a /me message to the specified room";
             chat.sendMessage(help);

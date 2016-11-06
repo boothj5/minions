@@ -19,6 +19,9 @@ package com.boothj5.minions;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class MinionsRoomImpl implements MinionsRoom {
     private final MultiUserChat muc;
 
@@ -29,6 +32,14 @@ class MinionsRoomImpl implements MinionsRoom {
     @Override
     public String getNick() {
         return muc.getNickname();
+    }
+
+    @Override
+    public List<String> getOccupants() {
+        List<String> occupants = new ArrayList<>();
+        muc.getOccupants().forEachRemaining(occupants::add);
+
+        return occupants;
     }
 
     @Override
