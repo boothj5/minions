@@ -63,8 +63,7 @@ class AdminMessageListener implements MessageListener {
             return;
         }
 
-
-        String[] splitBody = body.split(" ", 3);
+        String[] splitBody = body.trim().split(" ", 3);
         switch (splitBody[0]) {
             case "help":        handleHelp(chat, splitBody);        break;
             case "rooms":       handleRooms(chat, splitBody);       break;
